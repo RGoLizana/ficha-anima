@@ -184,6 +184,15 @@ def narrow(formula, sheet, names, consts=None):
                         return f"({r0}+({f_ or '1'})-1)"
             except Exception:
                 pass
+        if fn in ("COLUMN", "ROW") and len(args) == 1 and args[0].strip().upper().startswith("IF("):
+            # ROW(IF(c,A,B)): en Excel IF devuelve una referencia; en el motor un valor -> IF(c,ROW(A),ROW(B))
+            try:
+                toks = Tokenizer("=" + args[0].strip()).items
+                inner, end, _ = split_call(toks, 0)
+                if end == len(toks) and len(inner) == 3:
+                    return f"IF({text(inner[0])},{fn}({text(inner[1])}),{fn}({text(inner[2])}))"
+            except Exception:
+                pass
         if fn == "MATCH" and (len(args) == 2 or len(args) == 3 and args[2].strip() in ("1", "-1")):
             # MATCH aproximado de HyperFormula falla con textos: función propia (src/engine)
             return f"MATCHAPPROX({','.join(args)})"

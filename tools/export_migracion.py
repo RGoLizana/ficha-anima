@@ -33,6 +33,26 @@ def tramos(m):
     return out
 
 
+ANCLAS_HOJAS = ["Principal", "General", "PDs", "Combate", "Místicos", "Psíquicos", "Personalización"]
+
+
+def anclas(tpl):
+    """Etiquetas fijas (texto constante, hasta la fila 140) repartidas por cada hoja de entrada de la 8.7.0. Sirven para avisar
+    cuando una ficha 8.7.0 tiene otra disposición (filas o columnas añadidas por un gremio) y sus datos podrían desplazarse."""
+    out = {}
+    for h in ANCLAS_HOJAS:
+        c = []
+        for row in tpl[h].iter_rows(min_row=1, max_row=140, max_col=52):
+            for x in row:
+                v = x.value
+                if isinstance(v, str) and not v.startswith("=") and 4 <= len(v.strip()) <= 30 and x.column <= 52:
+                    c.append((x.row, x.coordinate, " ".join(v.split())))
+        c.sort()
+        paso = max(1, len(c) // 12)
+        out[h] = {k: v for _, k, v in c[::paso][:12]}
+    return out
+
+
 def main():
     tpl = openpyxl.load_workbook(TEMPLATE)
     versiones = {}
@@ -50,7 +70,7 @@ def main():
     defectos = {f"{h}!{x['celda']}": x["defecto"] for h, xs in inv.items() for x in xs if x["defecto"] is not None}
     path = os.path.join(ROOT, "src", "data", "migracion.json")
     with open(path, "w", encoding="utf-8") as f:
-        json.dump({"entradas": entradas, "defectos": defectos, "versiones": versiones, "renombres": RENAMES},
+        json.dump({"entradas": entradas, "defectos": defectos, "versiones": versiones, "renombres": RENAMES, "anclas": anclas(tpl)},
                   f, ensure_ascii=False, separators=(",", ":"))
     print(f"src/data/migracion.json: {os.path.getsize(path) // 1024} KB")
 

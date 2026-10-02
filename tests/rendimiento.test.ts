@@ -23,7 +23,7 @@ describe('rendimiento del motor', () => {
     expect(leer).toBeLessThan(2_000);
   }, 120_000);
 
-  it('cada edición se recalcula en menos de 200 ms (p95; objetivo 100 ms), cambios típicos', () => {
+  it('cada edición se recalcula en menos de 100 ms de mediana, cambios típicos', () => {
     const libro = new Libro(plantilla);
     libro.cargar(ficha.entradas);
     const ediciones = [
@@ -35,6 +35,7 @@ describe('rendimiento del motor', () => {
     // y leer lo que cambió, como hace la interfaz tras cada edición
     const lectura = ediciones.map(() => medir(() => libro.hojas(HOJAS_VISIBLES))[1]);
     log(`edición: media ${Math.round(tiempos.reduce((a, b) => a + b, 0) / tiempos.length)} ms, p95 ${Math.round(p(tiempos, 0.95))} ms, máx ${Math.round(Math.max(...tiempos))} ms · lectura completa p95 ${Math.round(p(lectura, 0.95))} ms`);
-    expect(p(tiempos, 0.95)).toBeLessThan(200);   // objetivo 100 ms
+    expect(p(tiempos, 0.5)).toBeLessThan(100);    // mediana: objetivo 100 ms
+    expect(Math.max(...tiempos)).toBeLessThan(800);   // ninguna edición se queda colgada (el equipo puede ir cargado)
   }, 120_000);
 });

@@ -8,7 +8,7 @@ import type { Entrada, Entradas } from '../engine/libro';
 interface Version { filas: Record<string, number[][]>; mover: Record<string, number[][]> }
 const M = mapa as unknown as {
   entradas: Record<string, string>; defectos: Entradas;
-  versiones: Record<string, Version>; renombres: Record<string, string>;
+  versiones: Record<string, Version>; renombres: Record<string, string>; anclas: Record<string, Record<string, string>>;
 };
 const ACTUAL = '8.7.0';
 const ENTRADAS = new Set(Object.entries(M.entradas).flatMap(([h, cs]) => cs.split(' ').map((c) => `${h}!${c}`)));
@@ -83,10 +83,19 @@ export function leerFicha(datos: Uint8Array): Importada {
   const saltadas: string[] = [];
   const muestra = (v: Entrada) => (typeof v === 'string' && v.length > 20 ? JSON.stringify(v.slice(0, 20) + '…') : JSON.stringify(v));
 
+  const desplazadas: string[] = [];
   for (const hoja of Object.keys(M.entradas)) {
     const xml = hojas[hoja];
     if (xml === undefined) continue;
-    for (const c of celdas(xml, sst, libres)) {
+    const cs = celdas(xml, sst, libres);
+    if (!mig) { // ficha 8.7.0: ¿las etiquetas fijas siguen en su sitio? (un gremio puede haber añadido filas o columnas)
+      const ancla = M.anclas?.[hoja] ?? {};
+      const textos = new Map(cs.map((c) => [`${letras(c.col)}${c.fila}`, typeof c.valor === 'string' ? c.valor.split(/\s+/).filter(Boolean).join(' ') : '']));
+      const claves = Object.keys(ancla);
+      const mal = claves.filter((k) => textos.get(k) !== ancla[k]).length;
+      if (claves.length && mal / claves.length >= 0.4) desplazadas.push(hoja);
+    }
+    for (const c of cs) {
       const v = c.valor;
       if (v === undefined || v === '' || c.formula) continue;
       const origen = `${hoja}!${letras(c.col)}${c.fila}`;
@@ -112,6 +121,33 @@ export function leerFicha(datos: Uint8Array): Importada {
       else if (M.defectos[destino] !== valor) saltadas.push(`${origen}=${muestra(valor)} (no es una entrada en la ${ACTUAL})`);
     }
   }
+  if (desplazadas.length) avisos.push(`La disposición de ${desplazadas.join(', ')} no es la de la ${ACTUAL} base (¿ficha de gremio con filas o columnas añadidas?): los datos de esas hojas pueden haberse leído desplazados.`);
   if (saltadas.length) avisos.push(`${saltadas.length} celdas no se pudieron importar: ${saltadas.join(', ')}`);
   return { entradas, version, avisos };
+}
+
+/** Valores calculados que Excel dejó guardados en cada celda de las hojas de la ficha: {"Hoja!A1": valor} (errores como "#N/A"). */
+export function valoresGuardados(datos: Uint8Array): Record<string, Entrada> {
+  const { hojas, sst } = abrir(datos);
+  const out: Record<string, Entrada> = {};
+  for (const [hoja, xml] of Object.entries(hojas)) {
+    for (const m of xml.matchAll(/<c\b([^>]*?)(?:\/>|>([\s\S]*?)<\/c>)/g)) {
+      const a = atributos(m[1]), cuerpo = m[2] ?? '';
+      if (!/^[A-Z]+\d+$/.test(a.r ?? '')) continue;
+      const v = /<v>([\s\S]*?)<\/v>/.exec(cuerpo)?.[1];
+      let valor: Entrada | undefined;
+      if (a.t === 's') valor = v === undefined ? undefined : sst[+v];
+      else if (a.t === 'inlineStr') valor = runs(cuerpo);
+      else if (a.t === 'str' || a.t === 'e') valor = v === undefined ? undefined : texto(v);
+      else if (a.t === 'b') valor = v === '1';
+      else if (v !== undefined) valor = numero(v);
+      if (valor !== undefined && valor !== '') out[`${hoja}!${a.r}`] = valor;
+    }
+  }
+  return out;
+}
+
+/** Versión de la plantilla de un libro de ficha ("8.7.0", "" si no se encuentra). */
+export function versionDe(datos: Uint8Array): string {
+  return abrir(datos).sst.map((s) => /Ficha Excel\. Versi[oó]n (\d+\.\d+\.\d+)/.exec(s)?.[1]).find(Boolean) ?? '';
 }

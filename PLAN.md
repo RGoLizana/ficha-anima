@@ -255,3 +255,14 @@ escribía sobre una fórmula (PDs!Z188).
 - **Limpieza de datos del compendio** (tipos canónicos, diario Sí/No, mantenimiento, disciplinas unificadas) y **nombre del PDF**
   `<Nombre> <nivel>`. **Rendimiento** medido: motor construye en ~3,6 s, carga una ficha en ~0,4 s, edita en ~8 ms de media (p95 50 ms)
   y el compendio pinta 640 filas en ~30-60 ms (`tests/rendimiento.test.ts`); las tarjetas se pintan de 60 en 60.
+- **Exportar a Excel** (`src/export/xlsm.ts`, `src/export/base.ts`, `src/ui/ExportarExcel.tsx`): escribe la ficha sobre la plantilla
+  base (.xlsm 8.7.0 que aporta el usuario una vez y se recuerda en el navegador; no se distribuye con la web). Solo reescribe las
+  celdas de entrada, conserva macros, estilos y fórmulas y Excel recalcula al abrir. Descarga «Nombre nivel.xlsm». Comprobado abriendo
+  el resultado con Excel real (2.050 valores calculados iguales al golden) y con ida y vuelta por el importador.
+- **Verificación con fichas reales** (`golden/*.xlsm`, `tests/golden.motor.test.ts`, `tests/golden.ui.test.tsx`; solo local, los .xlsm no
+  están en el repositorio): 3 fichas 8.7.0 (Akemi, Scátchach, Aglaea) y 4 de versiones antiguas (Alice 8.6.3, Julia y Katarina 8.4.2,
+  Medusa 8.5.0). Akemi y Scátchach: 13.4k celdas calculadas iguales a Excel, 0 errores. Corregido: `ROW(IF(...))` (desplegables de armas de
+  Personalización vacíos), migración 8.4.1/8.4.2 del bloque derecho de Personalización y aviso al importar una ficha con otra disposición.
+  Aglaea es de gremio (fila insertada en General): se avisa y no se compara.
+- **Contenido propio de gremio** (en curso): biblioteca JSON compartible de vías/subvías, disciplinas psíquicas y Ars Magnus (`src/gremio/`);
+  cada elemento elegido solo consume nivel de vía, CV, CM y PD sumándose a 4 totales de la plantilla, sin tocar las tablas.

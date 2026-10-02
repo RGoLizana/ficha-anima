@@ -34,6 +34,9 @@ _PRE_86 = {
     "Sheele": [(range(5, 6), range(4, 7), 0, 9)],   # tipo de Sheele, vinculada: D5,F5 -> M5,O5
 }
 _PRE_85 = {**_PRE_86, "Personalización": [(range(23, 60), range(3, 18), 5, 0)]}  # bloque izquierdo (C:Q) +5 filas
+# 8.4.1 y 8.4.2: el bloque derecho de Personalización (V:AF) está 2 filas más arriba que en la 8.7.0; el emparejamiento por
+# etiquetas de la columna izquierda deja huecos en las filas 76-79 (legados de sangre) y 123 (calidad de la 3.ª marioneta)
+_PRE_843 = {**_PRE_85, "Personalización": _PRE_85["Personalización"] + [(range(76, 80), range(22, 33), 2, 0), (range(123, 124), range(22, 33), 2, 0)]}
 MOVES = {
     # Sheele se movió en 8.6.3; PDs en 8.6.0; Personalización en 8.5.0 (comprobado con las plantillas de cada versión)
     "8.6.2": {"Sheele": _PRE_86["Sheele"]},
@@ -41,8 +44,8 @@ MOVES = {
     "8.6.0": {"Sheele": _PRE_86["Sheele"]},
     "8.5.0": _PRE_86,
     "8.4.3": _PRE_85,
-    "8.4.2": _PRE_85,
-    "8.4.1": _PRE_85,
+    "8.4.2": _PRE_843,
+    "8.4.1": _PRE_843,
 }
 
 # Opciones de desplegable renombradas en 8.7.0
