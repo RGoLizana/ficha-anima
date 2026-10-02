@@ -1,0 +1,29 @@
+{
+  "name": "ficha-anima",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:tools": "python -m unittest discover -s tools -p test_*.py",
+    "test:all": "npm test && npm run test:tools",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@preact/signals": "^2.11.3",
+    "hyperformula": "^3.4.0",
+    "preact": "^11.0.0"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.10.6",
+    "@testing-library/preact": "^3.2.4",
+    "@types/node": "^26.6.4",
+    "happy-dom": "^20.14.5",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.2",
+    "vitest": "^5.0.3"
+  }
+}

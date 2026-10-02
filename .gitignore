@@ -1,0 +1,13 @@
+node_modules
+dist
+*.log
+
+# Excel y PDF originales: son ficheros del usuario (y la plantilla es de terceros). Los datos que usa la web
+# ya están extraídos en JSON (public/plantilla.json, src/data, golden/*.json, ref/*.json).
+*.xlsm
+*.xlsx
+ref/pdf/*.pdf
+ref/pdf/web/
+
+# configuración local del editor
+.claude/
