@@ -1,6 +1,7 @@
 // Una ficha guarda SOLO lo que introduce el jugador, como en el Excel: {"Hoja!Celda": valor}.
 // Todo lo demás lo calcula el motor de fórmulas (src/engine) con la plantilla 8.7.0.
 import type { Entrada, Entradas } from '../engine/libro';
+import { entradasConsumo, parseElegidos, type Elegido } from '../gremio/modelo';
 
 export const VERSION = 2;
 export const NOMBRE = 'General!F22';
@@ -22,6 +23,8 @@ export interface Ficha {
   resumen?: Resumen;
   /** Estado de la partida (Modo juego). Aparte de `entradas`: no entra en el motor ni cambia ningún cálculo. */
   sesion?: Sesion;
+  /** Elementos propios del gremio que tiene el personaje (vías, disciplinas, Ars Magnus) y lo que consumen. Se suma a los totales. */
+  propio?: Elegido[];
 }
 
 export const RECURSOS = ['pv', 'zeon', 'ki', 'cv', 'cans', 'acc'] as const;
@@ -61,6 +64,9 @@ export function parseSesion(d: unknown): Sesion | undefined {
   };
 }
 
+/** Lo que se carga en el motor: las entradas del Excel más lo que consumen los elementos propios del gremio. */
+export const entradasMotor = (f: Ficha): Entradas => ({ ...f.entradas, ...entradasConsumo(f.propio ?? []) });
+
 export const nombreDe = (f: Ficha) => String(f.entradas[NOMBRE] ?? '');
 
 export function nueva(nombre = 'Nuevo personaje'): Ficha {
@@ -88,6 +94,7 @@ export function parse(data: unknown): Ficha {
     }
   }
   const sesion = parseSesion(d.sesion);
+  const propio = parseElegidos(d.propio);
   return {
     version: VERSION,
     id: typeof d.id === 'string' ? d.id : crypto.randomUUID(),
@@ -96,5 +103,6 @@ export function parse(data: unknown): Ficha {
     actualizada: typeof d.actualizada === 'string' ? d.actualizada : new Date().toISOString(),
     resumen: typeof d.resumen === 'object' && d.resumen !== null ? (d.resumen as Resumen) : undefined,
     ...(sesion ? { sesion } : {}),
+    ...(propio.length ? { propio } : {}),
   };
 }

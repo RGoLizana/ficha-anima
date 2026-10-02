@@ -2,8 +2,10 @@ import { useEffect, useMemo, useState } from 'preact/hooks';
 import type { ComponentChildren } from 'preact';
 import { abrir, abierta, valores } from '../engine';
 import { buscar } from '../store';
-import { nombreDe } from '../model/ficha';
+import { nombreDe, entradasMotor } from '../model/ficha';
 import { txt } from './campos';
+import { biblioteca } from '../gremio/almacen';
+import type { Biblioteca } from '../gremio/modelo';
 import '../compendio.css';
 
 // Compendio de magia y mentalismo (#/compendio o #/compendio/<id de ficha>): consulta de todas las vías, conjuros,
@@ -45,6 +47,31 @@ const almacen = {
   set(k: string, v: unknown) { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* sin almacenamiento: sigue en memoria */ } },
 };
 
+/** Datos oficiales + biblioteca propia del gremio (vías, subvías, disciplinas y poderes). Los nombres que ya existen se ignoran. */
+function fusionar(D: Datos, B: Biblioteca): { D: Datos; propias: Set<string> } {
+  const propias = new Set<string>();
+  const vias = D.magia.vias.map((v) => v.n.toLowerCase()), subs = D.magia.subvias.map((v) => v.n.toLowerCase()), discs = D.psiquica.disciplinas.map((d) => d.n.toLowerCase());
+  const nuevasVias = B.vias.filter((v) => ![...vias, ...subs].includes(v.n.toLowerCase()));
+  const nuevasDisc = B.disciplinas.filter((d) => !discs.includes(d.n.toLowerCase()));
+  for (const v of nuevasVias) propias.add(v.n);
+  for (const d of nuevasDisc) propias.add(d.n);
+  return {
+    propias,
+    D: {
+      magia: {
+        vias: [...D.magia.vias, ...nuevasVias.filter((v) => v.tipo !== 'Subvía').map((v) => ({ n: v.n, tipo: v.tipo === 'Vía mayor' ? 'Mayor' : 'Menor', opuestas: [], subvias: [] }))],
+        subvias: [...D.magia.subvias, ...nuevasVias.filter((v) => v.tipo === 'Subvía').map((v) => ({ n: v.n, prohibidas: [] }))],
+        conjuros: [...D.magia.conjuros, ...nuevasVias.flatMap((v) => v.conjuros.map((c) => ({ n: c.n, v: v.n, l: c.l, d: c.d, t: c.t, a: c.a, c: null, g: c.g, e: c.e })))],
+      },
+      psiquica: {
+        ...D.psiquica,
+        disciplinas: [...D.psiquica.disciplinas, ...nuevasDisc.map((d) => ({ n: d.n, mod: d.mod }))],
+        poderes: [...D.psiquica.poderes, ...nuevasDisc.flatMap((d) => d.poderes.map((p) => ({ n: p.n, d: d.n, l: p.l, m: p.m, a: p.a, f: p.f })))],
+      },
+    },
+  };
+}
+
 function preparar(D: Datos) {
   const conjuros: Item[] = D.magia.conjuros.map((c) => {
     const tipos = tiposDe(c.t);
@@ -58,7 +85,7 @@ function preparar(D: Datos) {
 }
 
 export function Compendio({ id }: { id?: string }) {
-  const [D, setD] = useState<Datos | null>(null);
+  const [D0, setD] = useState<Datos | null>(null);
   const [tab, setTab] = useState<Tab>('magia');
   const [sel, setSel] = useState({ magia: '', psi: '' });
   const [filtros, setFiltros] = useState<{ magia: Filtros; psi: Filtros }>({ magia: VACIOS, psi: VACIOS });
@@ -75,8 +102,12 @@ export function Compendio({ id }: { id?: string }) {
 
   useEffect(() => { void import('../data/compendio.json').then((m) => setD(m.default as unknown as Datos)); }, []);
   const f = id ? buscar(id) : undefined;
-  useEffect(() => { if (f) void abrir(id!, f.entradas); }, [id]);
+  useEffect(() => { if (f) void abrir(id!, entradasMotor(f)); }, [id]);
 
+  const B = biblioteca.value;
+  const fus = useMemo(() => (D0 ? fusionar(D0, B) : null), [D0, B]);
+  const D = fus?.D ?? null;
+  const propias = fus?.propias ?? new Set<string>();
   const P = useMemo(() => (D ? preparar(D) : null), [D]);
   const guardarFav = (s: Set<string>) => { setFav(s); almacen.set('anima.compendio.fav', [...s]); };
   const alternarFav = (x: Item) => { const s = new Set(fav); if (!s.delete(x.id)) s.add(x.id); guardarFav(s); if (abierto === x.id && tab === 'fav' && !s.has(x.id)) setAbierto(null); };
@@ -162,7 +193,7 @@ export function Compendio({ id }: { id?: string }) {
     const cab = (
       <div class="ficha-cab">
         <div>
-          <p class="eyebrow">{x.k === 'magia' ? (x.grupo === 'Libre acceso' ? 'Libre acceso' : `${SUB.includes(x.grupo) ? 'Subvía' : 'Vía'} de ${x.grupo}`) : `Disciplina: ${x.grupo}`}</p>
+          <p class="eyebrow">{x.k === 'magia' ? (x.grupo === 'Libre acceso' ? 'Libre acceso' : `${SUB.includes(x.grupo) ? 'Subvía' : 'Vía'} de ${x.grupo}`) : `Disciplina: ${x.grupo}`}{propias.has(x.grupo) ? ' · del gremio' : ''}</p>
           <H {...(nivel === 2 ? { id: 'det-t', tabIndex: -1 } : {})}>{x.n}</H>
         </div>
         <div class="acc">{Estrella({ x })}{Comparar({ x })}{nivel === 2 && <button class="ico cerrar" aria-label="Cerrar detalle" onClick={() => setAbierto(null)}>{'✕'}</button>}</div>
@@ -212,6 +243,7 @@ export function Compendio({ id }: { id?: string }) {
               {x.k === 'magia'
                 ? <>{(!grupoSel || tab === 'fav') && <span>{x.grupo}</span>}<span>{x.t}</span><span>{x.a}</span>{x.diario && <span class="flag">DIARIO</span>}{x.mant && <span class="flag">MANT.</span>}{!!x.cerr?.length && <span class="flag" title="Vía cerrada">CERRADO</span>}</>
                 : <>{(!grupoSel || tab === 'fav') && <span>{x.grupo}</span>}<span>{x.a}</span>{x.mant && <span class="flag">MANTENIDO</span>}</>}
+              {propias.has(x.grupo) && <span class="flag" title="Contenido propio del gremio">GREMIO</span>}
               {Marca({ x })}
             </span></span>
         </button>
@@ -260,9 +292,10 @@ export function Compendio({ id }: { id?: string }) {
         <div><dt>Prohibida para</dt><dd>{s.prohibidas.map((v) => <span class="pill tachado" key={v}>{v}</span>)}</dd></div>
       </>;
     }
+    const nota = B.vias.find((v) => v.n === g)?.nota;
     return (
       <section class={`ctx ${tab}`} aria-labelledby="ctx-t">
-        <div class="ctx-cab"><h2 id="ctx-t">{g}</h2>{cab}</div><dl class="ctx-dl">{dl}</dl>
+        <div class="ctx-cab"><h2 id="ctx-t">{g}</h2>{cab}{propias.has(g) && <span class="pill oro">Del gremio</span>}</div>{nota && propias.has(g) && <p class="nota">{nota}</p>}<dl class="ctx-dl">{dl}</dl>
         <p class="muted small">{total} {tab === 'magia' ? 'conjuros' : 'poderes'} en {g}</p>
       </section>
     );

@@ -165,6 +165,30 @@ describe('Compendio', () => {
     expect(ley()).not.toContain('Comparar');
   }, T);
 
+  it('el contenido propio del gremio sale en el compendio marcado, junto a lo oficial', async () => {
+    const { guardarBiblioteca } = await import('../src/gremio/almacen');
+    const { BIBLIOTECA_VACIA } = await import('../src/gremio/modelo');
+    guardarBiblioteca({ ...BIBLIOTECA_VACIA,
+      vias: [{ n: 'Ars Gnosis', tipo: 'Vía mayor', nota: 'Vía del gremio', conjuros: [{ n: 'Chispa gnóstica', l: 4, t: 'Efecto', a: 'Activa', d: 'No', g: [[6, 40, 'No', 'base'], [8, 80, 10, 'int'], [10, 120, 10, 'avz'], [12, 200, 15, 'arc']], e: 'Un destello del gremio' },
+        { n: 'Fuego', l: 2, t: 'Efecto', a: 'Activa', d: 'No', g: [[1, 1, 'No', ''], [1, 1, 'No', ''], [1, 1, 'No', ''], [1, 1, 'No', '']], e: '' }] },
+        { n: 'Luz', tipo: 'Subvía', nota: '', conjuros: [] }],                      // «Luz» ya existe: se ignora
+      disciplinas: [{ n: 'Resonancia', mod: 'Sin modificador', poderes: [{ n: 'Eco', l: 1, m: 'Sí', a: 'Pasiva', f: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'] }] }] });
+    try {
+      await abrirCompendio();
+      expect(contador()).toBe('642');                                             // 640 oficiales + 2 conjuros propios; la subvía «Luz» (ya oficial) se ignora
+      expect([...document.querySelectorAll('.explorador .exp-btn')].filter((b) => /^Luz/.test(b.textContent!))).toHaveLength(1);
+      fireEvent.click(boton(/^Ars Gnosis/, document.querySelector('.explorador')!));
+      expect(document.querySelector('.ctx')!.textContent).toContain('Del gremio');
+      expect(document.querySelector('.ctx')!.textContent).toContain('Vía del gremio');
+      expect(filas()).toHaveLength(2);
+      expect(filas()[0].textContent).toContain('GREMIO');
+      fireEvent.click(document.getElementById('tab-psi')!);
+      fireEvent.click(boton(/^Resonancia/, document.querySelector('.explorador')!));
+      expect(contador()).toBe('1');
+      expect(filas()[0].textContent).toContain('GREMIO');
+    } finally { guardarBiblioteca(BIBLIOTECA_VACIA); }
+  }, T);
+
   it('sin ficha no hay botón Mi personaje', async () => {
     await abrirCompendio();
     expect(boton('Mi personaje')).toBeUndefined();

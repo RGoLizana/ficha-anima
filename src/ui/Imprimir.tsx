@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'preact/hooks';
 import { buscar } from '../store';
 import { abrir, abierta, valores } from '../engine';
-import { nombreDe } from '../model/ficha';
+import { nombreDe, entradasMotor } from '../model/ficha';
 import { PaginaPdf, type ValorPdf } from '../pdf/Pagina';
 import { tramosNotas } from '../pdf/notas';
 import { txt } from './campos';
@@ -10,7 +10,7 @@ import { txt } from './campos';
 // navegador (destino "Guardar como PDF"); el texto queda seleccionable.
 export function Imprimir({ id }: { id: string }) {
   const f = buscar(id);
-  useEffect(() => { if (f) void abrir(id, f.entradas); }, [id]);
+  useEffect(() => { if (f) void abrir(id, entradasMotor(f)); }, [id]);
   const [op, setOp] = useState({ pagNotas: true, idiomas: true, notas: true });
   if (!f) return <main class="container stack"><h1 class="title">Ficha no encontrada</h1><a href="#/">Volver a la lista</a></main>;
 

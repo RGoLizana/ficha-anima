@@ -2,7 +2,7 @@ import { Fragment } from 'preact';
 import { useEffect } from 'preact/hooks';
 import { buscar, actualizar, exportar, guardado, guardarResumen } from '../store';
 import { abrir, abierta, errorMotor, motor, valores } from '../engine';
-import { nombreDe } from '../model/ficha';
+import { nombreDe, entradasMotor } from '../model/ficha';
 import { Icon } from './Icon';
 import { ExportarExcel } from './ExportarExcel';
 import { Dato, Panel, txt } from './campos';
@@ -20,6 +20,7 @@ import { Psiquica } from './Psiquica';
 import { GrimorioVias, GrimorioDisciplinas } from './GrimoriosInfo';
 import { Sheele } from './Sheele';
 import { Elan } from './Elan';
+import { Gremio } from './Gremio';
 import { Equipo } from './Equipo';
 import { GrimorioPsiquica } from './GrimorioPsiquica';
 import { Personalizacion } from './Personalizacion';
@@ -43,13 +44,14 @@ const SECCIONES = [
   { id: 'notas', t: 'Notas', paso: 1 },
   // aparte: contenido extra que no está en las reglas de Anima
   { id: 'personalizacion', t: 'Personalización', paso: 8, extra: true },
+  { id: 'gremio', t: 'Gremio', paso: 11, extra: true },
 ];
 
 export function FichaView({ id, seccion }: { id: string; seccion: string }) {
   const f = buscar(id);
 
   useEffect(() => {
-    if (f) void abrir(id, f.entradas);
+    if (f) void abrir(id, entradasMotor(f));
   }, [id]);
 
   // copia de unos valores calculados para la lista de fichas
@@ -100,9 +102,9 @@ export function FichaView({ id, seccion }: { id: string; seccion: string }) {
 
       <div class="sheet">
         <nav class="sections" aria-label="Secciones">
-          {SECCIONES.map((s) => (
+          {SECCIONES.map((s, i) => (
             <Fragment key={s.id}>
-              {s.extra && <div class="nav-extra" role="separator">Fuera de las reglas</div>}
+              {s.extra && !SECCIONES[i - 1]?.extra && <div class="nav-extra" role="separator">Fuera de las reglas</div>}
               <a href={`#/ficha/${id}/${s.id}`} class={(s.id === sec.id ? 'active ' : '') + (s.extra ? 'extra' : '')}
                 aria-current={s.id === sec.id ? 'page' : undefined}>{s.t}</a>
             </Fragment>
@@ -127,6 +129,7 @@ export function FichaView({ id, seccion }: { id: string; seccion: string }) {
           {listo && sec.id === 'elan' && <Elan f={f} />}
           {listo && sec.id === 'equipo' && <Equipo f={f} />}
           {listo && sec.id === 'personalizacion' && <Personalizacion f={f} />}
+          {listo && sec.id === 'gremio' && <Gremio f={f} />}
           {sec.id === 'notas' && (
             <Panel title="Notas">
               <textarea rows={16} value={f.notas} aria-label="Notas"

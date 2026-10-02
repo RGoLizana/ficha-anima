@@ -74,10 +74,10 @@ describe('lista de fichas', () => {
 });
 
 describe('ficha: navegación y estructura', () => {
-  it('Personalización va aparte, al final, bajo "Fuera de las reglas"', async () => {
+  it('Personalización y Gremio van aparte, al final, bajo "Fuera de las reglas"', async () => {
     abrirFicha('lock');
     const nav = [...document.querySelectorAll('.sections > *')].map((e) => e.textContent);
-    expect(nav.slice(-2)).toEqual(['Fuera de las reglas', 'Personalización']);
+    expect(nav.slice(-3)).toEqual(['Fuera de las reglas', 'Personalización', 'Gremio']);
     expect(nav).toContain('Notas');
   }, T);
 

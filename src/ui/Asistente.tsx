@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'preact/hooks';
 import { buscar, guardado } from '../store';
 import { abrir, abierta, errorMotor, motor, valores } from '../engine';
-import { nombreDe } from '../model/ficha';
+import { nombreDe, entradasMotor } from '../model/ficha';
 import { Icon } from './Icon';
 import { Avisos, Campo, Dato, Panel, txt } from './campos';
 import { Caracteristicas } from './Principal';
@@ -16,7 +16,7 @@ const rango = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i)
 export function Asistente({ id }: { id: string }) {
   const f = buscar(id);
   const [paso, setPaso] = useState(0);
-  useEffect(() => { if (f) void abrir(id, f.entradas); }, [id]);
+  useEffect(() => { if (f) void abrir(id, entradasMotor(f)); }, [id]);
   const listo = abierta.value === id && Object.keys(valores.value).length > 0;
 
   if (!f) {

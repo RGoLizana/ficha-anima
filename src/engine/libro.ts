@@ -43,6 +43,23 @@ export function sustituirIndirect(f: string, resolver: (arg: string) => string):
 /** Contenido de celda para HyperFormula: los textos llevan ' para que "1." no se convierta en número. */
 const contenido = (v: Entrada) => (typeof v === 'string' && !v.startsWith("'") ? "'" + v : v);
 
+/** Contenido propio de un gremio (src/gremio): hoja interna «Gremio» con lo que consume el personaje, sumada a 4 totales de la
+ *  plantilla: nivel de magia usado, CV usados, CM usado y PD gastados de cada categoría. No se tocan las tablas. Con ceros no cambia nada. */
+const PARCHES_GREMIO: [string, string, string][] = [
+  ['Místicos', 'E12', 'Gremio!$B$1'], ['Psíquicos', 'E12', 'Gremio!$B$2'], ['Ki', 'E29', 'Gremio!$B$3'],
+  ['PDs', 'K194', 'Gremio!$B$4'], ['PDs', 'M194', 'Gremio!$B$5'], ['PDs', 'O194', 'Gremio!$B$6'], ['PDs', 'Q194', 'Gremio!$B$7'], ['PDs', 'S194', 'Gremio!$B$8'],
+];
+function conGremio(p: Plantilla): Plantilla {
+  const sheets = { ...p.sheets };
+  for (const [hoja, celda, extra] of PARCHES_GREMIO) {
+    const h = (sheets[hoja] = { ...sheets[hoja] });
+    const f = h[celda];
+    if (typeof f === 'string' && f.startsWith('=')) h[celda] = `${f}+${extra}`;
+  }
+  sheets.Gremio = Object.fromEntries(Array.from({ length: 8 }, (_, i) => [`B${i + 1}`, 0]));
+  return { ...p, sheets };
+}
+
 export class Libro {
   private hf: HyperFormula;
   private cargadas = new Set<string>();
@@ -50,6 +67,7 @@ export class Libro {
 
   constructor(plantilla: Plantilla) {
     registerExcelCompat();
+    plantilla = conGremio(plantilla);
     this.plantilla = plantilla;
     const sheets: Record<string, Entrada[][]> = {};
     for (const [name, cells] of Object.entries(plantilla.sheets)) {

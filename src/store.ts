@@ -1,5 +1,6 @@
 import { signal, effect } from '@preact/signals';
 import { nueva, parse, nombreDe, NOMBRE, type Ficha, type Resumen, type Sesion } from './model/ficha';
+import { entradasConsumo, type Elegido } from './gremio/modelo';
 import { abierta, poner, type Entrada } from './engine';
 
 const KEY = 'anima.fichas';
@@ -52,6 +53,12 @@ export function editar(id: string, clave: string, valor: Entrada | null) {
     return { ...f, entradas, actualizada: new Date().toISOString() };
   });
   if (abierta.value === id) void poner(clave, valor);
+}
+
+/** Guarda los elementos propios del gremio de un personaje y actualiza lo que consumen en el motor si la ficha está abierta. */
+export function guardarPropio(id: string, propio: Elegido[]) {
+  cambiar(id, (f) => ({ ...f, propio, actualizada: new Date().toISOString() }));
+  if (abierta.value === id) for (const [k, v] of Object.entries(entradasConsumo(propio))) void poner(k, v);
 }
 
 /** Guarda el estado de la partida (Modo juego). No toca `entradas` ni el motor: no cambia ningún cálculo. */

@@ -264,5 +264,9 @@ escribía sobre una fórmula (PDs!Z188).
   Medusa 8.5.0). Akemi y Scátchach: 13.4k celdas calculadas iguales a Excel, 0 errores. Corregido: `ROW(IF(...))` (desplegables de armas de
   Personalización vacíos), migración 8.4.1/8.4.2 del bloque derecho de Personalización y aviso al importar una ficha con otra disposición.
   Aglaea es de gremio (fila insertada en General): se avisa y no se compara.
-- **Contenido propio de gremio** (en curso): biblioteca JSON compartible de vías/subvías, disciplinas psíquicas y Ars Magnus (`src/gremio/`);
+- **Contenido propio de gremio** (hecho): biblioteca JSON compartible de vías/subvías, disciplinas psíquicas y Ars Magnus (`src/gremio/`);
   cada elemento elegido solo consume nivel de vía, CV, CM y PD sumándose a 4 totales de la plantilla, sin tocar las tablas.
+  Sección «Gremio» (`src/ui/Gremio.tsx`): editor de la biblioteca (vías, subvías y conjuros con sus 4 grados; disciplinas y poderes con las 10
+  dificultades; Ars Magnus), importar/exportar .json, y los elementos que tiene cada personaje (`ficha.propio`). La hoja interna `Gremio` del
+  motor suma a Místicos!E12 (nivel de magia usado), Psíquicos!E12 (CV usados), Ki!E29 (CM usado) y PDs!K194:S194 (PD por categoría); con ceros
+  no cambia nada (comprobado con las fichas reales). El compendio muestra lo propio marcado «GREMIO». No se escribe en el Excel al exportar.

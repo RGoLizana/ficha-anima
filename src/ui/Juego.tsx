@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import { Fragment, type ComponentChildren } from 'preact';
 import { buscar, guardado, guardarSesion } from '../store';
 import { abrir, abierta, errorMotor, motor, valores } from '../engine';
-import { nombreDe, type Ficha, type Recurso, type Sesion } from '../model/ficha';
+import { nombreDe, type Ficha, type Recurso, type Sesion, entradasMotor } from '../model/ficha';
 import { Icon } from './Icon';
 import { txt } from './campos';
 
@@ -60,7 +60,7 @@ const rango = (a: number, b: number, paso = 1) => Array.from({ length: Math.floo
 export function Juego({ id }: { id: string }) {
   const f = buscar(id);
   useEffect(() => {
-    if (f) void abrir(id, f.entradas);
+    if (f) void abrir(id, entradasMotor(f));
   }, [id]);
   if (!f) {
     return (
