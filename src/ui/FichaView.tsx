@@ -16,6 +16,7 @@ import { Magia } from './Magia';
 import { Metamagia } from './Metamagia';
 import { GrimorioMagia, GrimorioVia } from './Grimorios';
 import { Psiquica } from './Psiquica';
+import { GrimorioVias, GrimorioDisciplinas } from './GrimoriosInfo';
 import { Sheele } from './Sheele';
 import { Elan } from './Elan';
 import { Equipo } from './Equipo';
@@ -116,8 +117,8 @@ export function FichaView({ id, seccion }: { id: string; seccion: string }) {
           {listo && sec.id === 'tecnicas' && <Tecnicas f={f} />}
           {listo && sec.id === 'magia' && <Magia f={f} />}
           {listo && sec.id === 'metamagia' && <Metamagia f={f} />}
-          {listo && sec.id === 'grimorios' && <><GrimorioMagia f={f} /><GrimorioVia f={f} /></>}
-          {listo && sec.id === 'psiquica' && <><Psiquica f={f} /><GrimorioPsiquica f={f} /></>}
+          {listo && sec.id === 'grimorios' && <><GrimorioVias /><GrimorioMagia f={f} /><GrimorioVia f={f} /></>}
+          {listo && sec.id === 'psiquica' && <><Psiquica f={f} /><GrimorioDisciplinas /><GrimorioPsiquica f={f} /></>}
           {listo && sec.id === 'sheele' && <Sheele f={f} />}
           {listo && sec.id === 'elan' && <Elan f={f} />}
           {listo && sec.id === 'equipo' && <Equipo f={f} />}

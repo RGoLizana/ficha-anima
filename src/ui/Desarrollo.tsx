@@ -3,9 +3,9 @@ import type { Ficha } from '../model/ficha';
 import { Avisos, Campo, Panel, txt, v } from './campos';
 
 // Hoja PDs del Excel. Cada habilidad tiene, por categoría (hasta 5), una columna de coste y otra de PD invertidos.
-const PRIM = { pd: ['M', 'O', 'Q', 'S', 'U'], coste: ['L', 'N', 'P', 'R', 'T'] };   // primarias, Ki, místicas, psíquicas
-const SEC = { pd: ['K', 'M', 'O', 'Q', 'S'], coste: ['J', 'L', 'N', 'P', 'R'] };    // secundarias y PV
-const FILA_CAT = [7, 9, 11, 13, 15];
+export const PRIM = { pd: ['M', 'O', 'Q', 'S', 'U'], coste: ['L', 'N', 'P', 'R', 'T'] };   // primarias, Ki, místicas, psíquicas
+export const SEC = { pd: ['K', 'M', 'O', 'Q', 'S'], coste: ['J', 'L', 'N', 'P', 'R'] };    // secundarias y PV
+export const FILA_CAT = [7, 9, 11, 13, 15];
 const rango = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
 
 const num = (k: string) => Number(v(k)) || 0;
@@ -67,7 +67,7 @@ export function Desarrollo({ f }: { f: Ficha }) {
   );
 }
 
-function ResumenCategoria({ i, nombre }: { i: number; nombre: string }) {
+export function ResumenCategoria({ i, nombre }: { i: number; nombre: string }) {
   const disp = num(`PDs!${'JLNPR'[i]}194`);
   const usado = num(`PDs!${'KMOQS'[i]}194`);
   const limites = [['Combate', 86], ['Magia', 104], ['Psíquica', 120]] as const;
@@ -96,7 +96,7 @@ function Barra({ v: x, max }: { v: number; max: number }) {
 
 type Cols = { pd: string[]; coste: string[] };
 
-function Bloque({ f, n, cats, titulo, filas, cols, grupo, total = 'AA', esp = 'Z', extra = [], cabecera }: {
+export function Bloque({ f, n, cats, titulo, filas, cols, grupo, total = 'AA', esp = 'Z', extra = [], cabecera }: {
   f: Ficha; n: number; cats: string[]; titulo: string; filas: number[]; cols: Cols; grupo?: boolean;
   total?: string; esp?: string | null; extra?: string[][]; cabecera?: preact.ComponentChildren;
 }) {
@@ -142,7 +142,7 @@ function Bloque({ f, n, cats, titulo, filas, cols, grupo, total = 'AA', esp = 'Z
 }
 
 /** Filas de compra (tablas, artes marciales...): un desplegable por fila; se muestra una fila vacía más. */
-function Compras({ f, n, titulo, filas, extra, grado }: {
+export function Compras({ f, n, titulo, filas, extra, grado }: {
   f: Ficha; n: number; titulo: string; filas: number[]; extra?: string; grado?: string;
 }) {
   const llenas = filas.filter((r) => f.entradas[`PDs!E${r}`]);

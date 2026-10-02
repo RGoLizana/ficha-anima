@@ -80,6 +80,16 @@ export function importar(texto: string): Ficha {
   return f;
 }
 
+/** Importa una ficha Excel (.xlsm/.xlsx). El lector se carga aparte, solo cuando hace falta. Lanza Error si no es una ficha. */
+export async function importarExcel(datos: Uint8Array, nombreArchivo = ''): Promise<{ ficha: Ficha; avisos: string[] }> {
+  const { leerFicha } = await import('./import/xlsm');
+  const { entradas, avisos } = leerFicha(datos);
+  const f = nueva(nombreArchivo.replace(/\.xls[xm]$/i, '') || undefined);
+  f.entradas = { ...f.entradas, ...entradas };
+  fichas.value = [...fichas.value, f];
+  return { ficha: f, avisos };
+}
+
 export function exportar(f: Ficha) {
   const url = URL.createObjectURL(new Blob([JSON.stringify(f, null, 2)], { type: 'application/json' }));
   const a = Object.assign(document.createElement('a'), { href: url, download: `${nombreDe(f) || 'ficha'}.json` });

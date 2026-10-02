@@ -49,26 +49,7 @@ export function Principal({ f }: { f: Ficha }) {
         </div>
       </Panel>
 
-      <Panel title="Características" extra={<span class="muted small">{txt('Principal!D10')}</span>}>
-        <div class="caract">
-          {CARACT.map((r) => (
-            <div class="caract-card" key={r}>
-              <div class="row between">
-                <span class="caract-name">{txt(`Principal!D${r}`)}</span>
-                <span class="muted small">bono <strong class="txt">{signo(v(`Principal!H${r}`))}</strong></span>
-              </div>
-              <div class="row end">
-                <Campo f={f} clave={`Principal!E${r}`} label="Base" tipo="numero" class="mini" />
-                <Campo f={f} clave={`Principal!F${r}`} label="Temp" tipo="numero" class="mini" sinTab />
-                <div class="grow right">
-                  <div class="muted small">Total</div>
-                  <div class="big-num">{txt(`Principal!G${r}`)}</div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Panel>
+      <Caracteristicas f={f} />
 
       <Panel title="Resistencias">
         <div class="table-wrap">
@@ -101,6 +82,32 @@ export function Principal({ f }: { f: Ficha }) {
         <Campo f={f} clave="Principal!G68" label="Notas (salen en la página de notas del PDF)" tipo="area" />
       </Panel>
     </>
+  );
+}
+
+/** Las 8 características: base y temporal editables; total y bono los calcula el Excel. */
+export function Caracteristicas({ f }: { f: Ficha }) {
+  return (
+    <Panel title="Características" extra={<span class="muted small">{txt('Principal!D10')}</span>}>
+      <div class="caract">
+        {CARACT.map((r) => (
+          <div class="caract-card" key={r}>
+            <div class="row between">
+              <span class="caract-name">{txt(`Principal!D${r}`)}</span>
+              <span class="muted small">bono <strong class="txt">{signo(v(`Principal!H${r}`))}</strong></span>
+            </div>
+            <div class="row end">
+              <Campo f={f} clave={`Principal!E${r}`} label="Base" tipo="numero" class="mini" />
+              <Campo f={f} clave={`Principal!F${r}`} label="Temp" tipo="numero" class="mini" sinTab />
+              <div class="grow right">
+                <div class="muted small">Total</div>
+                <div class="big-num">{txt(`Principal!G${r}`)}</div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </Panel>
   );
 }
 

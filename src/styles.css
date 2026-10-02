@@ -236,3 +236,10 @@ details.tecnica > .stack { padding: 16px 20px 20px; }
   .pdf-hojas { padding: 0; }
   .pdf-hoja { margin: 0; }
 }
+
+.sin-aprender { opacity: .55; }
+details > summary { cursor: pointer; padding: 6px 0; }
+
+/* Asistente de nueva ficha */
+.pasos { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.btn.active { border-color: var(--gold); color: var(--gold); }

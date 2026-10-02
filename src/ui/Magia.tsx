@@ -113,6 +113,8 @@ export function Magia({ f }: { f: Ficha }) {
         ))}
       </Panel>
 
+      <Teoremas />
+
       <Habilidades />
 
       <Panel title="Notas de magia">
@@ -134,6 +136,35 @@ function Habilidades() {
   return (
     <Panel title="Habilidades metamágicas" extra={<span class="muted small">Se compran en Metamagia</span>}>
       {items.map(([n, d]) => <p class="small" key={n}><strong>{n}</strong>{d ? ` — ${d}` : ''}</p>)}
+    </Panel>
+  );
+}
+
+/** Tablas de referencia del teorema empleado (Místicos AR5:BI34). Solo lectura; cambian con el teorema elegido arriba. */
+const fila = (cols: string[], r: number) => cols.map((c) => txt(m(c, r)).replace(/\s+/g, ' '));
+function Rejilla({ titulo, cabecera, cols, filas }: { titulo: string; cabecera: number; cols: string[]; filas: number[] }) {
+  const cuerpo = filas.map((r) => [r, fila(cols, r)] as const).filter(([, c]) => c.some(Boolean));
+  if (!cuerpo.length) return null;
+  return (
+    <div>
+      <h3>{titulo}</h3>
+      <table class="tabla">
+        <thead><tr>{fila(cols, cabecera).map((t, i) => <th scope="col" key={i}>{t}</th>)}</tr></thead>
+        <tbody>{cuerpo.map(([r, c]) => <tr key={r}>{c.map((t, i) => <td key={i}>{t}</td>)}</tr>)}</tbody>
+      </table>
+    </div>
+  );
+}
+
+function Teoremas() {
+  const tramos = ['BA', 'BB', 'BC', 'BD', 'BE', 'BF', 'BG', 'BH', 'BI'];
+  return (
+    <Panel title="Teoremas de magia" extra={<span class="muted small">Referencia del teorema «{txt(m('AT', 10)) || 'General'}»; se cambia en Nivel de magia</span>}>
+      <div class="cols-2">
+        <Rejilla titulo="Efectos máximos" cabecera={15} cols={['AS', 'AT', 'AU', 'AV', 'AW']} filas={rango(16, 22)} />
+        <Rejilla titulo="Modificadores" cabecera={23} cols={['AR', 'AS', 'AU', 'AV', 'AW']} filas={rango(24, 36)} />
+      </div>
+      <Rejilla titulo={`Tramos · ${[txt(m('BA', 12)), txt(m('BD', 12)), txt(m('BG', 12))].filter(Boolean).join(' / ')}`} cabecera={12} cols={tramos} filas={rango(13, 23)} />
     </Panel>
   );
 }

@@ -115,3 +115,63 @@ describe('Equipo', () => {
     expect(store.buscar(f.id)!.entradas).toMatchObject({ 'General!Y59': 12, 'General!AF47': 'Maestro herrero', 'General!AI58': 3 });
   }, T);
 });
+
+describe('Grimorios informativos (todas las vías / disciplinas a la vez)', () => {
+  const nombres = () => [...document.querySelectorAll('.arma.info .arma-titulo')].map((t) => t.textContent);
+
+  it('Lock: muestra a la vez los conjuros de todas sus vías, con lo no alcanzado atenuado', async () => {
+    abrirFicha('lock', 'grimorios');
+    await esperarListo();
+    await waitFor(() => expect(nombres().length).toBeGreaterThan(30), { timeout: 20_000 });
+    const vias = [...document.querySelectorAll('details summary strong')].map((e) => e.textContent!);
+    expect(vias.length).toBeGreaterThanOrEqual(3);
+    expect(vias.join('|')).toContain('Fuego');
+    expect(nombres()).toContain('Crear fuego');
+    expect(document.querySelectorAll('.arma.info.sin-aprender').length).toBeGreaterThan(0);
+    expect(document.querySelectorAll('.arma.info:not(.sin-aprender)').length).toBeGreaterThan(0);
+  }, T);
+
+  it('Ayane: muestra los poderes de todas sus disciplinas afines, marcando los aprendidos', async () => {
+    abrirFicha('ayane', 'psiquica');
+    await esperarListo();
+    await waitFor(() => expect(nombres().length).toBeGreaterThan(20), { timeout: 20_000 });
+    expect(nombres()).toEqual(expect.arrayContaining(['Crear fuego', 'Impacto telequinético']));
+    const imp = [...document.querySelectorAll('.arma.info')].find((a) => a.querySelector('.arma-titulo')!.textContent === 'Impacto telequinético')!;
+    expect(imp.classList.contains('sin-aprender')).toBe(false);
+    expect(imp.textContent).toContain('Aprendido');
+  }, T);
+});
+
+describe('Teoremas de magia (referencia)', () => {
+  it('Lock: muestra las tablas de efectos máximos, modificadores y tramos; cambian con el teorema', async () => {
+    abrirFicha('lock', 'magia');
+    await esperarListo();
+    const panel = () => [...document.querySelectorAll('.panel')].find((p) => p.textContent!.startsWith('Teoremas de magia'))!.textContent!;
+    for (const t of ['Efectos máximos', 'Modificadores', 'Instantáneo', '250m', 'Primer tramo']) expect(panel()).toContain(t);
+    const antes = panel();
+    await waitFor(() => expect(opcionesDe('Místicos!AT10').length).toBeGreaterThan(1));
+    const otro = opcionesDe('Místicos!AT10').find((o) => o !== 'General')!;
+    fireEvent.change(celda('Místicos!AT10'), { target: { value: otro } });
+    await waitFor(() => expect(panel()).toContain(otro));
+    expect(panel()).not.toBe(antes);
+  }, T);
+});
+
+describe('Estilos y tablas en Combate', () => {
+  it('se compran desde Combate (mismas celdas que Desarrollo) y aparece su descripción', async () => {
+    const f = abrirFicha('lock', 'combate');
+    await esperarListo();
+    for (const c of ['PDs!E43', 'PDs!E49', 'PDs!E59', 'PDs!E81']) expect(celda(c), c).toBeTruthy();
+    await waitFor(() => expect(opcionesDe('PDs!E49').length).toBeGreaterThan(2));
+    const estilo = opcionesDe('PDs!E49').find((o) => !o.startsWith('>'))!;
+    const antes = [...document.querySelectorAll('.panel')].find((p) => p.textContent!.startsWith('Capacidades de combate'))?.textContent ?? '';
+    fireEvent.change(celda('PDs!E49'), { target: { value: estilo } });
+    expect(store.buscar(f.id)!.entradas['PDs!E49']).toBe(estilo);
+    await waitFor(() => expect(celda('PDs!E50')).toBeTruthy());
+    await waitFor(() => {
+      const t = [...document.querySelectorAll('.panel')].find((p) => p.textContent!.startsWith('Capacidades de combate'))!.textContent!;
+      expect(t).toContain(estilo.split(' (')[0]);
+      expect(t).not.toBe(antes);
+    });
+  }, T);
+});

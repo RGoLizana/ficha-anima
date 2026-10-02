@@ -21,7 +21,6 @@ describe('Paso 6 · Magia (hecho: ver ui.test.tsx > Magia / Metamagia / Grimorio
   it.todo('Exceso de Nivel de Magia inicial / de Vía inicial (Tablas!X21 activo con Personalización!F6)');
   it.todo('Grimorio de Vía de Lock con sus vías propias (Fuego, Creación, Esencia, Oscuridad-Umbra) frente al PDF de referencia');
   it.todo('exportar PDF de grimorio (A4 apaisado, dos páginas de conjuros por hoja): paso 9');
-  it.todo('Teoremas de magia (Místicos!AS5..BI24): tabla de referencia de Ofudas/teoremas; hoy no se muestra');
 });
 
 describe('Paso 8 · Sheele, Elan, Equipo, Personalización', () => {
@@ -36,18 +35,14 @@ describe('Paso 9 · Resumen y PDF', () => {
   it.todo('botón PDF de la cabecera activado (ahora deshabilitado)');
 });
 
-describe('Paso 2 pendiente · asistente de nueva ficha', () => {
-  it.todo('Nueva ficha abre un asistente: origen (nombre, raza, categoría, nivel) → características → PD → poderes → equipo');
-  it.todo('el asistente escribe en las mismas celdas que las secciones (General!F22/F23, PDs!O7/S7, Principal!E11:E18…)');
-  it.todo('se puede saltar pasos y terminar en cualquier momento (nunca bloquea)');
-});
+// Paso 2 · asistente de nueva ficha: hecho, ver asistente.test.tsx
+// Importar fichas .xlsm en el navegador: hecho, ver importar.test.ts
 
 describe('Paso 10 · (opcional) nube', () => {
   it.todo('login y sincronización; el formato JSON de la ficha no cambia (version 2)');
 });
 
 describe('General', () => {
-  it.todo('importar fichas .xlsm directamente (migrate.py en el navegador o conversión previa)');
   it.todo('rendimiento: el motor arranca en < 6 s en el navegador (medido con [motor] en consola) y edita en < 100 ms');
   it.todo('accesibilidad: todas las casillas con etiqueta; navegación con teclado por secciones');
 });

@@ -158,7 +158,11 @@ Diferencias restantes = maquetación de Resumen, textos de etiquetas y cambios d
 - **Grimorios de magia:** 20 conjuros elegibles con nivel, tipo, acción, grados (Int. R., zeón, mantenimiento, efecto) y
   descripción; **de vía:** vía/subvía/colores y todos los conjuros por niveles 2-100 de la vía elegida.
 - Avisos: Místicos!C29 ("Exceso de Nivel de Magia", "Vía cerrada a Shamanica"…) y los de PD de magia.
-- Pendiente: teoremas de magia (tabla de referencia) y el PDF de los grimorios (paso 9).
+- Grimorios informativos (`GrimoriosInfo.tsx`, datos en `src/data/grimorios.json` generado por `tools/export_grimorios.py`):
+  todas las vías del mago (y subvías) o todas las disciplinas afines del psíquico a la vez, sin elegir una; lo no alcanzado/aprendido va atenuado.
+  Los selectores de una sola vía del Excel se mantienen debajo (necesarios para el PDF del grimorio).
+- Teoremas de magia: tablas de referencia del teorema elegido en Magia (solo lectura).
+- Pendiente: el PDF de los grimorios (paso 9).
 
 ### 7. Psíquicos + Grimorio Psíquica ✅
 - `Psiquica.tsx`: CVs totales/usados, potencial, turno y proyección, reparto de CVs, disciplinas afines, patrones mentales,
@@ -196,6 +200,14 @@ Igual que la macro `ExportPDF` del Excel:
 ### 10. (Opcional, solo si se pide) Nube
 - Login + sync de fichas (p.ej. Supabase). Hasta entonces JSON local basta.
 
+### 11. (Futuro) Modo juego
+Pantalla única para jugar la sesión con todo a mano: lo que se usa en mesa (turno, habilidades, ataque/defensa, resistencias,
+técnicas, conjuros, poderes psíquicos, equipo) en una sola vista pensada para móvil/tablet.
+- Incluye **campos de estado actual** (PV, zeón, CVs, ki, fatiga, munición, efectos…) que son solo de sesión.
+- **No modifica la ficha**: esos valores no se guardan en `entradas` ni cambian ningún cálculo (se guardan aparte, p. ej.
+  `estadoSesion` con botón "Reiniciar sesión"); la ficha solo se lee.
+- Por definir: qué estadísticas actuales llevar, tiradas de dados opcionales y si se exporta/importa con la ficha.
+
 Pasos 3-8: el cálculo ya lo hace el motor; son solo interfaz (qué celdas editar y mostrar en cada sección).
 
 **Filosofía: los límites avisan, nunca bloquean.** Se puede escribir cualquier valor; si algo se pasa de las reglas
@@ -226,3 +238,8 @@ Fallos reales encontrados por estas pruebas (corregidos): `poner` con celda inv�
 `COUNTIF(rango,"")` no contaba vacías · `"<>5"` contaba el texto "5" · VLOOKUP aproximada con columna variable
 (5ª categoría) · listas con INDIRECT dentro de nombres, anidado o con rango dinámico · casilla "Especial" de PV
 escribía sobre una fórmula (PDs!Z188).
+
+## Añadidos posteriores (hechos)
+- **Asistente de nueva ficha** (`Asistente.tsx`, `#/nueva/<id>`): 5 pasos saltables que escriben en las mismas celdas que las secciones.
+- **Importar `.xlsm/.xlsx`** (`src/import/xlsm.ts`, `src/data/migracion.json`, `tools/export_migracion.py`): versiones 8.4.1 a 8.7.0, avisos sin bloquear.
+- **Estilos y tablas de combate** editables desde Combate (mismas celdas que Desarrollo) y **teoremas de magia** en Magia.

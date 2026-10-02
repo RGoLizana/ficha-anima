@@ -1,5 +1,6 @@
 import type { Ficha } from '../model/ficha';
 import { Avisos, Campo, Panel, txt } from './campos';
+import { Compras, FILA_CAT } from './Desarrollo';
 
 // Hoja Combate del Excel. Diez ranuras de arma en parejas (izquierda/derecha): 1-6 cuerpo a cuerpo, 7-10 proyectiles.
 const CABECERAS = [28, 35, 42, 49, 58]; // fila de la primera línea de cada pareja
@@ -85,6 +86,8 @@ export function Combate({ f }: { f: Ficha }) {
           ))}
         </Panel>
       </div>
+
+      <Estilos f={f} />
 
       <Descripciones />
 
@@ -216,4 +219,20 @@ function Descripciones() {
   ].filter(Boolean);
   if (!partes.length) return null;
   return <Panel title="Capacidades de combate (compradas en Desarrollo)"><div class="stack">{partes}</div></Panel>;
+}
+
+/** Tablas de armas, estilos, artes marciales y Ars Magnus: se compran aquí con PD (mismas celdas que en Desarrollo). */
+function Estilos({ f }: { f: Ficha }) {
+  const n = Math.max(1, FILA_CAT.filter((r) => txt(`PDs!O${r}`)).length);
+  const rango = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
+  return (
+    <>
+      <Avisos claves={['PDs!V86']} />
+      <Compras f={f} n={n} titulo="Tablas de armas" filas={rango(43, 48)} extra="Y" />
+      <Compras f={f} n={n} titulo="Tablas de estilos" filas={rango(49, 58)} />
+      <Compras f={f} n={n} titulo="Artes marciales" filas={rango(59, 77)} grado="J" />
+      <Compras f={f} n={n} titulo="Tablas de artes marciales con armas" filas={rango(78, 80)} />
+      <Compras f={f} n={n} titulo="Ars Magnus" filas={rango(81, 85)} />
+    </>
+  );
 }

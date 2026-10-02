@@ -1,18 +1,23 @@
 import { signal } from '@preact/signals';
-import { fichas, crear, duplicar, borrar, importar, exportar } from '../store';
+import { fichas, crear, duplicar, borrar, importar, importarExcel, exportar } from '../store';
 import { ir } from '../router';
 import { Icon } from './Icon';
 import { nombreDe } from '../model/ficha';
 
 const filtro = signal('');
 const error = signal('');
+const avisos = signal<string[]>([]);
 
 async function onImport(e: Event) {
   const input = e.currentTarget as HTMLInputElement;
   error.value = '';
+  avisos.value = [];
   for (const file of Array.from(input.files ?? [])) {
     try {
-      importar(await file.text());
+      if (/\.xls[xm]$/i.test(file.name)) {
+        const r = await importarExcel(new Uint8Array(await file.arrayBuffer()), file.name);
+        avisos.value = [...avisos.value, ...r.avisos.map((a) => `${file.name}: ${a}`)];
+      } else importar(await file.text());
     } catch (err) {
       error.value = `No se pudo importar ${file.name}: ${(err as Error).message}`;
     }
@@ -31,10 +36,10 @@ export function Lista() {
         <div class="brand">ANIMA <span>· Fichas</span></div>
         <div class="row">
           <label class="btn">
-            Importar .json
-            <input type="file" accept=".json,application/json" multiple hidden onChange={onImport} />
+            Importar .json / .xlsm
+            <input type="file" accept=".json,application/json,.xlsm,.xlsx" multiple hidden onChange={onImport} />
           </label>
-          <button class="btn primary" onClick={() => ir(`#/ficha/${crear().id}`)}>+ Nueva ficha</button>
+          <button class="btn primary" onClick={() => ir(`#/nueva/${crear().id}`)}>+ Nueva ficha</button>
         </div>
       </header>
 
@@ -51,6 +56,7 @@ export function Lista() {
         </div>
 
         {error.value && <p class="error" role="alert">{error.value}</p>}
+        {avisos.value.map((a) => <p class="aviso" role="status" key={a}>{a}</p>)}
 
         <div class="cards">
           {lista.map((f) => (
@@ -81,7 +87,7 @@ export function Lista() {
               </div>
             </article>
           ))}
-          <button class="card add" onClick={() => ir(`#/ficha/${crear().id}`)}>
+          <button class="card add" onClick={() => ir(`#/nueva/${crear().id}`)}>
             <span class="plus">+</span>Crear personaje
           </button>
         </div>

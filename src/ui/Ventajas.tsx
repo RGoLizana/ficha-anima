@@ -5,7 +5,7 @@ import { Avisos, Campo, Panel, txt } from './campos';
 const rango = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
 
 /** Muestra las filas ocupadas y una vacía más, para no enseñar 10 desplegables vacíos. */
-function Lista({ f, celdas, label }: { f: Ficha; celdas: string[]; label: string }) {
+export function Lista({ f, celdas, label }: { f: Ficha; celdas: string[]; label: string }) {
   const ultima = celdas.reduce((m, c, i) => (f.entradas[c] ? i : m), -1);
   return (
     <div class="stack-sm">

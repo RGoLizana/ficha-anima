@@ -57,7 +57,7 @@ describe('lista de fichas', () => {
     expect(screen.getByText('Lock')).toBeTruthy();
     fireEvent.click(screen.getByText('+ Nueva ficha'));
     expect(store.fichas.value).toHaveLength(4);
-    expect(location.hash).toMatch(/^#\/ficha\//);
+    expect(location.hash).toMatch(/^#\/nueva\//); // abre el asistente
   }, T);
 
   it('las tarjetas enseñan categoría y valores clave una vez abierta la ficha', async () => {
@@ -601,5 +601,23 @@ describe('Notas', () => {
     const { f } = abrirFicha('lock', 'notas');
     fireEvent.input(screen.getByLabelText('Notas'), { target: { value: 'Vía de tierra' } });
     expect(store.buscar(f.id)!.notas).toBe('Vía de tierra');
+  }, T);
+});
+
+describe('importar desde la lista', () => {
+  const subir = (archivo: File) => {
+    const input = document.querySelector('input[type=file]') as HTMLInputElement;
+    Object.defineProperty(input, 'files', { value: [archivo], configurable: true });
+    fireEvent.change(input);
+  };
+
+  it('el botón acepta una ficha .xlsm y rechaza lo que no es un Excel', async () => {
+    const { readFileSync } = await import('node:fs');
+    render(<Lista />);
+    subir(new File([readFileSync('ref/pdf/lock 8.7.0.xlsm')], 'lock 8.7.0.xlsm'));
+    await waitFor(() => expect(screen.getByText('Lock')).toBeTruthy());
+    subir(new File(['basura'], 'otra.xlsm'));
+    await waitFor(() => expect(screen.getByRole('alert').textContent).toMatch(/otra\.xlsm: no es un archivo Excel/));
+    expect(store.fichas.value).toHaveLength(1);
   }, T);
 });

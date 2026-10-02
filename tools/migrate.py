@@ -33,11 +33,16 @@ _PRE_86 = {
             (range(5, 14), range(19, 20), 2, 0)],   # niveles:        S5.. -> S7..
     "Sheele": [(range(5, 6), range(4, 7), 0, 9)],   # tipo de Sheele, vinculada: D5,F5 -> M5,O5
 }
+_PRE_85 = {**_PRE_86, "Personalización": [(range(23, 60), range(3, 18), 5, 0)]}  # bloque izquierdo (C:Q) +5 filas
 MOVES = {
+    # Sheele se movió en 8.6.3; PDs en 8.6.0; Personalización en 8.5.0 (comprobado con las plantillas de cada versión)
+    "8.6.2": {"Sheele": _PRE_86["Sheele"]},
     "8.6.1": {"Sheele": _PRE_86["Sheele"]},
+    "8.6.0": {"Sheele": _PRE_86["Sheele"]},
     "8.5.0": _PRE_86,
-    "8.4.3": {**_PRE_86,
-              "Personalización": [(range(23, 60), range(3, 18), 5, 0)]},  # bloque izquierdo (C:Q) +5 filas
+    "8.4.3": _PRE_85,
+    "8.4.2": _PRE_85,
+    "8.4.1": _PRE_85,
 }
 
 # Opciones de desplegable renombradas en 8.7.0
