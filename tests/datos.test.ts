@@ -155,11 +155,28 @@ describe('compendio.json (magia y mentalismo)', () => {
     expect(por('Caos')).toHaveLength(10);
   });
 
+  it('datos limpios: tipos canónicos, diario Sí/No, mantenimiento numérico o No, sin espacios sobrantes', () => {
+    const TIPOS = new Set(['Efecto', 'Ataque', 'Defensa', 'Anímico', 'Detección', 'Automático']);
+    for (const c of C.magia.conjuros as unknown as { n: string; t: string; a: string | null; d: string; g: [unknown, unknown, unknown, string][] }[]) {
+      for (const t of c.t.split(', ').filter(Boolean)) expect(TIPOS.has(t), `${c.n}: ${c.t}`).toBe(true);
+      expect(['Sí', 'No'], c.n).toContain(c.d);
+      expect(c.n, c.n).toBe(c.n.trim());
+      for (const g of c.g) expect(g[2] === null || g[2] === 'No' || typeof g[2] === 'number', `${c.n}: ${String(g[2])}`).toBe(true);
+    }
+    // Defensa no cuenta también como Efecto (la 'efe' de 'defensa')
+    expect((C.magia.conjuros as unknown as { t: string }[]).filter((c) => c.t === 'Defensa')).toHaveLength(21);
+  });
+
+  it('las disciplinas de los poderes coinciden con la lista de disciplinas', () => {
+    const nombres = new Set(C.psiquica.disciplinas.map((d) => d.n));
+    for (const p of C.psiquica.poderes) expect(nombres.has(p.d), `${p.n}: ${p.d}`).toBe(true);
+  });
+
   it('14 disciplinas y 125 poderes con las 10 dificultades', () => {
     expect(C.psiquica.disciplinas).toHaveLength(14);
     expect(C.psiquica.poderes).toHaveLength(125);
     const discs = new Set(C.psiquica.disciplinas.map((d) => d.n));
-    for (const p of C.psiquica.poderes.filter((x) => x.d !== 'Poderes Matriciales')) { expect(discs.has(p.d), p.n).toBe(true); expect(p.f, p.n).toHaveLength(10); }
+    for (const p of C.psiquica.poderes.filter((x) => x.d !== 'Poderes matriciales')) { expect(discs.has(p.d), p.n).toBe(true); expect(p.f, p.n).toHaveLength(10); }
     expect(C.psiquica.dificultades).toHaveLength(10);
     expect(C.psiquica.valores).toEqual([20, 40, 80, 120, 140, 180, 240, 280, 320, 440]);
   });

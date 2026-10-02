@@ -4,6 +4,7 @@ import { abrir, abierta, valores } from '../engine';
 import { nombreDe } from '../model/ficha';
 import { PaginaPdf, type ValorPdf } from '../pdf/Pagina';
 import { tramosNotas } from '../pdf/notas';
+import { txt } from './campos';
 
 // Vista de impresión: las mismas páginas A4 que exporta el Excel. "Imprimir / guardar PDF" usa el diálogo del
 // navegador (destino "Guardar como PDF"); el texto queda seleccionable.
@@ -14,7 +15,8 @@ export function Imprimir({ id }: { id: string }) {
   if (!f) return <main class="container stack"><h1 class="title">Ficha no encontrada</h1><a href="#/">Volver a la lista</a></main>;
 
   const listo = abierta.value === id && Object.keys(valores.value).length > 0;
-  const nombre = nombreDe(f) || 'ficha';
+  // el navegador propone como nombre del PDF el título de la página: «Nombre nivel»
+  const nombre = [nombreDe(f) || 'ficha', txt('Principal!O6')].filter(Boolean).join(' ');
   const logo = `${import.meta.env.BASE_URL}logo-anima.jpg`;
   const datos: Record<string, ValorPdf> = { ...valores.value };
   if (listo) datos['Resumen!D112'] = tramosNotas(valores.value, op);

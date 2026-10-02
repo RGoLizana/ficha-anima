@@ -16,6 +16,7 @@ Uso: python tools/export_compendio.py
 import json
 import os
 import re
+import unicodedata
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 GRADOS = [("J", "N", "R", "V"), ("K", "O", "S", "W"), ("L", "P", "T", "X"), ("M", "Q", "U", "Y")]
@@ -32,6 +33,29 @@ def val(hoja, celda):
             return None
         return v[1:] if v.startswith("'") else v
     return v
+
+
+def limpia(v):
+    return v.strip() if isinstance(v, str) else v
+
+
+def tipos(t):
+    """El Excel escribe el tipo de 25 formas ('Auto', 'Animico', 'Efec. / Ataq.'…): se reduce a los 6 canónicos."""
+    s = unicodedata.normalize("NFD", str(t or "")).encode("ascii", "ignore").decode().lower()
+    reglas = [("Efecto", r"\befe|\befc"), ("Ataque", r"ataq"), ("Defensa", r"defen"), ("Anímico", r"anim"), ("Detección", r"det"), ("Automático", r"auto")]
+    return ", ".join(n for n, rx in reglas if re.search(rx, s))
+
+
+def si_no(v):
+    return "Sí" if re.match(r"^s", str(v or "").strip(), re.I) else "No"
+
+
+def mant(v):
+    """Mantenimiento de un grado: número, o 'No' ('No', 'NO', '.', vacío) ; None si falta el dato."""
+    v = limpia(v)
+    if v is None:
+        return None
+    return v if isinstance(v, (int, float)) else "No"
 
 
 def nivel_de(hoja, r):
@@ -52,8 +76,12 @@ def main():
         nombre, via, nivel = val(tm, f"D{r}"), val(tm, f"E{r}"), nivel_de(tm, r)
         if not nombre or str(nombre).startswith(">") or not via or nivel is None:
             continue
-        conjuros.append({"n": nombre, "v": via, "l": nivel, "d": val(tm, f"G{r}"), "t": val(tm, f"H{r}"), "a": val(tm, f"I{r}"),
-                         "c": val(tm, f"AA{r}"), "g": [[val(tm, f"{c}{r}") for c in g] for g in GRADOS], "e": val(tm, f"Z{r}")})
+        tipo, accion = val(tm, f"H{r}"), val(tm, f"I{r}")
+        if tipo == "Activa" and not accion:  # fila con las columnas Tipo y Acción desplazadas en el Excel ('Producir daño')
+            tipo, accion = "", "Activa"
+        conjuros.append({"n": limpia(nombre), "v": limpia(via), "l": nivel, "d": si_no(val(tm, f"G{r}")), "t": tipos(tipo), "a": limpia(accion),
+                         "c": limpia(val(tm, f"AA{r}")), "g": [[val(tm, f"{c[0]}{r}"), val(tm, f"{c[1]}{r}"), mant(val(tm, f"{c[2]}{r}")), limpia(val(tm, f"{c[3]}{r}"))] for c in GRADOS],
+                         "e": limpia(val(tm, f"Z{r}"))})
 
     # vías mayores y menores (Tablas E1089:F1099) y sus opuestas
     vias = []
@@ -85,9 +113,13 @@ def main():
         nombre, disc = val(tp, f"D{r}"), val(tp, f"E{r}")
         if not nombre or str(nombre).startswith(">") or not disc:
             continue
-        poderes.append({"n": nombre, "d": disc, "l": val(tp, f"F{r}"), "m": val(tp, f"G{r}"), "a": val(tp, f"H{r}"),
-                        "f": [val(tp, f"{c}{r}") for c in "IJKLMNOPQR"]})
+        poderes.append({"n": limpia(nombre), "d": limpia(disc), "l": val(tp, f"F{r}"), "m": si_no(val(tp, f"G{r}")), "a": limpia(val(tp, f"H{r}")),
+                        "f": [limpia(val(tp, f"{c}{r}")) for c in "IJKLMNOPQR"]})
     disciplinas = [{"n": val(t, f"D{r}"), "mod": val(t, f"E{r}") or "Sin modificador"} for r in range(1190, 1204) if val(t, f"D{r}")]
+    # mismo nombre de disciplina en la lista y en los poderes ('Poderes matriciales' / 'Poderes Matriciales')
+    canon = {d["n"].lower(): d["n"] for d in disciplinas}
+    for p_ in poderes:
+        p_["d"] = canon.get(p_["d"].lower(), p_["d"])
     cvs = [{"cvs": val(t, f"L{r}"), "bono": val(t, f"M{r}")} for r in range(1104, 1114) if val(t, f"L{r}") is not None]
 
     out = {"magia": {"vias": vias, "subvias": subvias, "conjuros": conjuros},

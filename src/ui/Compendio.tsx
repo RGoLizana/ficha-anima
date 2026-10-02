@@ -31,7 +31,7 @@ const mantTxt = (v: unknown) => (esNo(v) ? '—' : String(v));
 /** El Excel escribe los tipos de muchas formas ("Auto", "Animico", "Efec. / Ataq."…): se reducen a 6. */
 function tiposDe(t: string): string[] {
   const s = norm(t), r: string[] = [];
-  if (/efe|efc/.test(s)) r.push('Efecto');
+  if (/\befe|\befc/.test(s)) r.push('Efecto');
   if (/ataq/.test(s)) r.push('Ataque');
   if (/defen/.test(s)) r.push('Defensa');
   if (/anim/.test(s)) r.push('Anímico');
@@ -67,6 +67,7 @@ export function Compendio({ id }: { id?: string }) {
   const [fav, setFav] = useState<Set<string>>(() => new Set(almacen.get<string[]>('anima.compendio.fav', [])));
   const [cmp, setCmp] = useState<{ magia: string[]; psi: string[] }>({ magia: [], psi: [] });
   const [aviso, setAviso] = useState('');
+  const [mostrar, setMostrar] = useState(60);   // tarjetas visibles: 640 fichas completas a la vez tardan ~230 ms en pintarse
   const [abierto, setAbierto] = useState<string | null>(null);
   const [verCmp, setVerCmp] = useState(false);
   const [pj, setPj] = useState(false);
@@ -404,7 +405,10 @@ export function Compendio({ id }: { id?: string }) {
             {resultados.length === 0
               ? <div class="vacio"><span>Ningún {tab === 'magia' ? 'conjuro' : 'poder'} cumple estos filtros{grupoSel ? ` en ${grupoSel}` : ''}.</span><button class="btn" onClick={() => setF(VACIOS)}>Quitar filtros y búsqueda</button></div>
               : vista === 'tarjetas'
-                ? <ul class="cartas">{resultados.map((x) => <li class={`carta ${x.k} m-${marca(x)?.[0]}`} key={x.id}>{Ficha({ x, nivel: 3 })}</li>)}</ul>
+                ? <>
+                  <ul class="cartas">{resultados.slice(0, mostrar).map((x) => <li class={`carta ${x.k} m-${marca(x)?.[0]}`} key={x.id}>{Ficha({ x, nivel: 3 })}</li>)}</ul>
+                  {resultados.length > mostrar && <button class="btn" onClick={() => setMostrar(mostrar + 60)}>Mostrar {Math.min(60, resultados.length - mostrar)} más ({resultados.length - mostrar} sin mostrar)</button>}
+                </>
                 : <ul class={`lista ${tab}`}>{resultados.map((x) => Fila({ x }))}</ul>}
           </>}
 

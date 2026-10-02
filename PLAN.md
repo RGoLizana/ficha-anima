@@ -252,3 +252,6 @@ escribía sobre una fórmula (PDs!Z188).
   `tools/export_compendio.py`): rutas `#/compendio` y `#/compendio/<id>` (con ficha, modo «Mi personaje» solo de lectura). Vías con
   opuestas y subvías, 640 conjuros, 14 disciplinas, 125 poderes con las 10 dificultades; filtros, búsqueda, lista/tarjetas,
   detalle, comparar hasta 3, favoritos (pestaña propia, guardados en el navegador) y leyenda de iconos sobre la lista.
+- **Limpieza de datos del compendio** (tipos canónicos, diario Sí/No, mantenimiento, disciplinas unificadas) y **nombre del PDF**
+  `<Nombre> <nivel>`. **Rendimiento** medido: motor construye en ~3,6 s, carga una ficha en ~0,4 s, edita en ~8 ms de media (p95 50 ms)
+  y el compendio pinta 640 filas en ~30-60 ms (`tests/rendimiento.test.ts`); las tarjetas se pintan de 60 en 60.

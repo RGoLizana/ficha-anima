@@ -144,6 +144,14 @@ describe('Compendio', () => {
     expect(JSON.stringify(store.buscar(f.id)!.entradas)).toBe(antes);
   }, T);
 
+  it('la vista de tarjetas pinta 60 y deja ampliar de 60 en 60', async () => {
+    await abrirCompendio();
+    fireEvent.click(boton('Tarjetas'));
+    expect(document.querySelectorAll('.carta')).toHaveLength(60);
+    fireEvent.click(boton(/^Mostrar 60 más/));
+    expect(document.querySelectorAll('.carta')).toHaveLength(120);
+  }, T);
+
   it('la leyenda de iconos va encima de la lista y explica cada icono', async () => {
     await abrirCompendio();
     const ley = () => document.querySelector('.leyenda-iconos')!.textContent!;

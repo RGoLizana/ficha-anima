@@ -30,7 +30,6 @@ describe('Paso 8 · Sheele, Elan, Equipo, Personalización', () => {
 
 describe('Paso 9 · Resumen y PDF', () => {
   it.todo('páginas opcionales Sheele / Equipo según Resumen!AU15/AU17; grimorios en A4 apaisado');
-  it.todo('nombre de fichero <Nombre>.pdf y <Nombre> - <Grimorio>.pdf');
   it.todo('comparación con el PDF del Excel: python tools/pdf_check.py → ≤1 palabra por ficha desviada >1,5 pt');
   it.todo('botón PDF de la cabecera activado (ahora deshabilitado)');
 });
@@ -43,6 +42,5 @@ describe('Paso 10 · (opcional) nube', () => {
 });
 
 describe('General', () => {
-  it.todo('rendimiento: el motor arranca en < 6 s en el navegador (medido con [motor] en consola) y edita en < 100 ms');
   it.todo('accesibilidad: todas las casillas con etiqueta; navegación con teclado por secciones');
 });
