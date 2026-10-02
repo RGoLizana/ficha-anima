@@ -203,10 +203,15 @@ Igual que la macro `ExportPDF` del Excel:
 ### 11. (Futuro) Modo juego
 Pantalla única para jugar la sesión con todo a mano: lo que se usa en mesa (turno, habilidades, ataque/defensa, resistencias,
 técnicas, conjuros, poderes psíquicos, equipo) en una sola vista pensada para móvil/tablet.
-- Incluye **campos de estado actual** (PV, zeón, CVs, ki, fatiga, munición, efectos…) que son solo de sesión.
-- **No modifica la ficha**: esos valores no se guardan en `entradas` ni cambian ningún cálculo (se guardan aparte, p. ej.
-  `estadoSesion` con botón "Reiniciar sesión"); la ficha solo se lee.
-- Por definir: qué estadísticas actuales llevar, tiradas de dados opcionales y si se exporta/importa con la ficha.
+Maqueta en revisión con el usuario (artefacto "Modo juego", fuente en el scratchpad de la sesión).
+- Incluye **campos de estado actual** (PV, zeón, CVs, ki, cansancio, acciones, munición, efectos…) que son solo de sesión.
+- **No modifica la ficha**: esos valores no se guardan en `entradas` ni cambian ningún cálculo.
+- **La sesión se guarda sola** junto a la ficha (campo aparte `sesion`, que se exporta/importa con el JSON pero no entra en
+  el motor), con botón "Reiniciar sesión".
+- **Botón "Descansar un día"**: recupera PV (regeneración), zeón (regeneración zeónica), CVs, ki y cansancio, y quita efectos
+  temporales y mantenidos; se puede deshacer. Las cifras exactas se tomarán de los libros (PDF que aportará el usuario).
+- **Sin dados** en la ficha ni en el modo juego (decidido por el usuario).
+- Por definir con los libros: acumulación de zeón y ki por asalto, coste de zeón de los conjuros de libre acceso, reglas de descanso.
 
 Pasos 3-8: el cálculo ya lo hace el motor; son solo interfaz (qué celdas editar y mostrar en cada sección).
 

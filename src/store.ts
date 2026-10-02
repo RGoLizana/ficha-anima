@@ -1,5 +1,5 @@
 import { signal, effect } from '@preact/signals';
-import { nueva, parse, nombreDe, NOMBRE, type Ficha, type Resumen } from './model/ficha';
+import { nueva, parse, nombreDe, NOMBRE, type Ficha, type Resumen, type Sesion } from './model/ficha';
 import { abierta, poner, type Entrada } from './engine';
 
 const KEY = 'anima.fichas';
@@ -52,6 +52,11 @@ export function editar(id: string, clave: string, valor: Entrada | null) {
     return { ...f, entradas, actualizada: new Date().toISOString() };
   });
   if (abierta.value === id) void poner(clave, valor);
+}
+
+/** Guarda el estado de la partida (Modo juego). No toca `entradas` ni el motor: no cambia ningún cálculo. */
+export function guardarSesion(id: string, sesion: Sesion) {
+  cambiar(id, (f) => ({ ...f, sesion }));
 }
 
 /** Guarda la copia de valores calculados que usa la lista (no cuenta como edición). */

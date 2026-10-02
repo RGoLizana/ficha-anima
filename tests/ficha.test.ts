@@ -13,6 +13,14 @@ describe('parse (importar ficha)', () => {
     expect(f.entradas).toEqual({ [NOMBRE]: 'Ayane' });
     expect(f.notas).toBe('x');
   });
+  it('conserva la sesión del Modo juego y la valida sin romper la ficha', () => {
+    const f = { ...nueva('Lock'), sesion: { r: { pv: 10, zeon: -5 }, asalto: 3, efectos: [{ n: 'Dolor', a: null, m: -10, nota: '' }], conts: [{ n: 'Flechas', v: 12 }], mant: [], favH: ['Sigilo'], favC: [], notas: 'x' } };
+    expect(parse(JSON.parse(JSON.stringify(f)))).toEqual(f);
+    expect(parse(JSON.parse(JSON.stringify(nueva('Lock')))).sesion).toBeUndefined(); // fichas viejas: sin sesión
+    expect(parse({ version: 2, entradas: {}, sesion: 'basura' }).sesion).toBeUndefined();
+    const s = parse({ version: 2, entradas: {}, sesion: { r: { pv: 'x', ki: 3 }, efectos: [null, { n: 'A', a: '2' }], favH: [1, 'Advertir'] } }).sesion!;
+    expect(s).toEqual({ r: { ki: 3 }, asalto: 1, efectos: [{ n: 'A', a: null, m: 0, nota: '' }], conts: [], mant: [], favH: ['Advertir'], favC: [], notas: '' });
+  });
   it('rechaza lo que no es una ficha', () => {
     expect(() => parse(null)).toThrow();
     expect(() => parse({ nombre: 'x' })).toThrow('Versión');

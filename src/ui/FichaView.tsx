@@ -88,6 +88,7 @@ export function FichaView({ id, seccion }: { id: string; seccion: string }) {
           {guardado.value ? '● Guardado' : '● No se pudo guardar'}
         </span>
         <button class="btn" onClick={() => exportar(f)}>Exportar .json</button>
+        <a class="btn" href={`#/juego/${id}`}>Modo juego</a>
         <a class="btn primary" href={`#/imprimir/${id}`}>PDF</a>
       </header>
 
