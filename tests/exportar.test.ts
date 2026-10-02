@@ -61,11 +61,11 @@ describe('escribirFicha', () => {
 // los .xlsm originales no se suben al repositorio (.gitignore): sin ellos estas pruebas se omiten (en CI)
 const HAY_BASE = FICHAS.every((n) => existsSync(BASE(n)));
 describe.skipIf(!HAY_BASE)('escribirFicha sobre una plantilla real 8.7.0', () => {
-  const base = readFileSync(BASE('sesshomaru'));
+  const base = () => readFileSync(BASE('sesshomaru'));   // se lee dentro de cada prueba: el cuerpo del describe también se ejecuta al omitirlo
 
   it.each(['lock', 'ayane'])('la ficha %s se lee igual tras exportarla (sobre la base de otra ficha)', (n) => {
     const entradas = read(`ref/fichas/${n}.json`).entradas as Record<string, unknown>;
-    const libro = escribirFicha(new Uint8Array(base), entradas as never);
+    const libro = escribirFicha(new Uint8Array(base()), entradas as never);
     const r = leerFicha(libro);
     expect(r.version).toBe('8.7.0');
     for (const [k, v] of Object.entries(entradas)) expect(r.entradas[k], k).toEqual(v);
@@ -74,8 +74,8 @@ describe.skipIf(!HAY_BASE)('escribirFicha sobre una plantilla real 8.7.0', () =>
   }, 60_000);
 
   it('conserva las macros y todo lo demás, recalcula al abrir y no deja calcChain', () => {
-    const libro = unzipSync(escribirFicha(new Uint8Array(base), read('ref/fichas/lock.json').entradas));
-    const original = unzipSync(new Uint8Array(base));
+    const libro = unzipSync(escribirFicha(new Uint8Array(base()), read('ref/fichas/lock.json').entradas));
+    const original = unzipSync(new Uint8Array(base()));
     expect(Object.keys(libro).filter((k) => k !== 'xl/calcChain.xml').sort()).toEqual(Object.keys(original).filter((k) => k !== 'xl/calcChain.xml').sort());
     expect(libro['xl/vbaProject.bin']).toEqual(original['xl/vbaProject.bin']);
     expect(strFromU8(libro['xl/workbook.xml'])).toMatch(/<calcPr\b[^>]*fullCalcOnLoad="1"/);
