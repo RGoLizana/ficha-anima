@@ -18,7 +18,9 @@ const referencia = (n: string) => read(`ref/fichas/${n}.json`).entradas;
 
 beforeEach(() => { store.fichas.value = []; });
 
-describe('importar .xlsm 8.7.0', () => {
+// los .xlsm originales no se suben al repositorio (.gitignore): sin ellos estas pruebas se omiten (en CI)
+const HAY_XLSM = FICHAS.every((n) => existsSync(join(RAIZ, 'ref/pdf', `${n} 8.7.0.xlsm`)));
+describe.skipIf(!HAY_XLSM)('importar .xlsm 8.7.0', () => {
   it.each(FICHAS)('%s: mismas entradas que ref/fichas', (n) => {
     const r = leerFicha(xlsm(join(RAIZ, 'ref/pdf', `${n} 8.7.0.xlsm`)));
     expect(r.version).toBe('8.7.0');

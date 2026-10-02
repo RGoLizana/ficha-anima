@@ -1,5 +1,6 @@
 // @vitest-environment happy-dom
 // Interfaz con el motor real (sin worker): lo que el usuario ve y toca en cada sección.
+import { existsSync } from 'node:fs';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { signal } from '@preact/signals';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/preact';
@@ -611,7 +612,7 @@ describe('importar desde la lista', () => {
     fireEvent.change(input);
   };
 
-  it('el botón acepta una ficha .xlsm y rechaza lo que no es un Excel', async () => {
+  it.skipIf(!existsSync('ref/pdf/lock 8.7.0.xlsm'))('el botón acepta una ficha .xlsm y rechaza lo que no es un Excel', async () => {
     const { readFileSync } = await import('node:fs');
     render(<Lista />);
     subir(new File([readFileSync('ref/pdf/lock 8.7.0.xlsm')], 'lock 8.7.0.xlsm'));
