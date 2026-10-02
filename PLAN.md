@@ -248,3 +248,7 @@ escribía sobre una fórmula (PDs!Z188).
 - **Asistente de nueva ficha** (`Asistente.tsx`, `#/nueva/<id>`): 5 pasos saltables que escriben en las mismas celdas que las secciones.
 - **Importar `.xlsm/.xlsx`** (`src/import/xlsm.ts`, `src/data/migracion.json`, `tools/export_migracion.py`): versiones 8.4.1 a 8.7.0, avisos sin bloquear.
 - **Estilos y tablas de combate** editables desde Combate (mismas celdas que Desarrollo) y **teoremas de magia** en Magia.
+- **Compendio de magia y mentalismo** (`src/ui/Compendio.tsx`, `src/compendio.css`, datos `src/data/compendio.json` generados por
+  `tools/export_compendio.py`): rutas `#/compendio` y `#/compendio/<id>` (con ficha, modo «Mi personaje» solo de lectura). Vías con
+  opuestas y subvías, 640 conjuros, 14 disciplinas, 125 poderes con las 10 dificultades; filtros, búsqueda, lista/tarjetas,
+  detalle, comparar hasta 3, favoritos (pestaña propia, guardados en el navegador) y leyenda de iconos sobre la lista.

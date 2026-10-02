@@ -3,6 +3,7 @@ import { ruta } from './router';
 import { Lista } from './ui/Lista';
 import { FichaView } from './ui/FichaView';
 import { Imprimir } from './ui/Imprimir';
+import { Compendio } from './ui/Compendio';
 import { Asistente } from './ui/Asistente';
 import { Juego } from './ui/Juego';
 import './styles.css';
@@ -10,6 +11,7 @@ import './styles.css';
 function App() {
   const [, pagina, id, seccion] = ruta.value.replace(/^#/, '').split('/');
   if (pagina === 'ficha' && id) return <FichaView id={id} seccion={seccion || 'principal'} />;
+  if (pagina === 'compendio') return <Compendio id={id} />;
   if (pagina === 'imprimir' && id) return <Imprimir id={id} />;
   if (pagina === 'juego' && id) return <Juego id={id} />;
   if (pagina === 'nueva' && id) return <Asistente id={id} />;

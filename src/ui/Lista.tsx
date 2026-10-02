@@ -35,6 +35,7 @@ export function Lista() {
       <header class="topbar">
         <div class="brand">ANIMA <span>· Fichas</span></div>
         <div class="row">
+          <a class="btn" href="#/compendio">Compendio</a>
           <label class="btn">
             Importar .json / .xlsm
             <input type="file" accept=".json,application/json,.xlsm,.xlsx" multiple hidden onChange={onImport} />

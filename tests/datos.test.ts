@@ -122,3 +122,45 @@ describe('tablas.json (reglamento, referencia)', () => {
     for (const n of ['Tabla_Categorías', 'Tabla_Razas', 'Tabla_ArmasyEscudos', 'Tabla_Conjuros']) expect(t[n]).toBeTruthy();
   });
 });
+
+describe('compendio.json (magia y mentalismo)', () => {
+  type Conj = { n: string; v: string; l: number; g: unknown[][]; e: string };
+  type C = { magia: { vias: { n: string; tipo: string; opuestas: string[]; subvias: string[] }[]; subvias: { n: string; prohibidas: string[] }[]; conjuros: Conj[] };
+    psiquica: { disciplinas: { n: string }[]; poderes: { n: string; d: string; l: number; f: string[] }[]; dificultades: string[]; valores: number[] } };
+  const C = read('src/data/compendio.json') as C;
+
+  it('11 vías (5 mayores y 6 menores), 14 subvías y 640 conjuros con sus 4 grados', () => {
+    expect(C.magia.vias).toHaveLength(11);
+    expect(C.magia.vias.filter((v) => v.tipo === 'Mayor').map((v) => v.n).sort()).toEqual(['Creación', 'Destrucción', 'Luz', 'Nigromancia', 'Oscuridad']);
+    expect(C.magia.subvias).toHaveLength(14);
+    expect(C.magia.conjuros).toHaveLength(640);
+    for (const c of C.magia.conjuros) {
+      expect(c.g, c.n).toHaveLength(4);
+      expect(Number.isFinite(c.l), c.n).toBe(true);
+    }
+  });
+
+  it('cada vía o subvía existe y las opuestas son simétricas', () => {
+    const nombres = new Set([...C.magia.vias.map((v) => v.n), ...C.magia.subvias.map((s) => s.n), 'Libre acceso']);
+    for (const c of C.magia.conjuros) expect(nombres.has(c.v), `${c.n}: ${c.v}`).toBe(true);
+    for (const v of C.magia.vias.filter((x) => x.n !== 'Nigromancia'))
+      for (const o of v.opuestas) expect(C.magia.vias.find((x) => x.n === o)!.opuestas, `${v.n}-${o}`).toContain(v.n);
+  });
+
+  it('niveles de libre acceso resueltos (2 a 92) y vías con 40/30/10 conjuros', () => {
+    const por = (v: string) => C.magia.conjuros.filter((c) => c.v === v);
+    expect(Math.max(...por('Libre acceso').map((c) => c.l))).toBe(92);
+    expect(por('Luz')).toHaveLength(40);
+    expect(por('Fuego')).toHaveLength(30);
+    expect(por('Caos')).toHaveLength(10);
+  });
+
+  it('14 disciplinas y 125 poderes con las 10 dificultades', () => {
+    expect(C.psiquica.disciplinas).toHaveLength(14);
+    expect(C.psiquica.poderes).toHaveLength(125);
+    const discs = new Set(C.psiquica.disciplinas.map((d) => d.n));
+    for (const p of C.psiquica.poderes.filter((x) => x.d !== 'Poderes Matriciales')) { expect(discs.has(p.d), p.n).toBe(true); expect(p.f, p.n).toHaveLength(10); }
+    expect(C.psiquica.dificultades).toHaveLength(10);
+    expect(C.psiquica.valores).toEqual([20, 40, 80, 120, 140, 180, 240, 280, 320, 440]);
+  });
+});
