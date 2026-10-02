@@ -16,39 +16,20 @@ describe('Paso 5 · Ki y técnicas (hecho: ver ui.test.tsx > Ki / Técnicas de K
   it.todo('Técnicas para resumen (Ki!AM24) y habilidades del Ki en el Resumen (H39) tras cambiar compras');
 });
 
-describe('Paso 6 · Magia (Místicos, Metamagia, Grimorios)', () => {
-  it.todo('Lock: zeón 1110, ACT 60, proyección 175, reg. zeónica 60, convocar 20, dominar 5 (Resumen!V48, F50, J48, AD48, S50, X50)');
-  it.todo('vías (Místicos!C15:G25): vía, subvía y nivel usado; nivel de magia total vs usado (C12/E12)');
-  it.todo('conjuros de libre acceso y seleccionados (Místicos W12:AK27) con nivel según vía (lista NivelesLA_*)');
-  it.todo('aviso Místicos!C29 "Exceso de Nivel de Magia" (Lock con G15=500)');
-  it.todo('Metamagia: árbol de esferas con coste; total en Resumen');
-  it.todo('Grimorio Magia / Grimorio de Vía: listado de conjuros con grados Base/Intermedio/Avanzado/Arcano como el PDF de Lock');
-  it.todo('Grimorio de Vía: selector de vía (Grimorio de Vía!J6) y "Nivel de vía aprendido"');
-});
-
-describe('Paso 7 · Psíquica', () => {
-  it.todo('Ayane: CV libres 3, potencial 100, proyección 150, innatos 2, patrón "Psicopatía" (Resumen!H60, J62, K64, O60)');
-  it.todo('disciplinas afines (Psíquicos C25+) y poderes (V11:V27 lista Poderes_Psi_Disponibles según disciplinas)');
-  it.todo('potenciar poderes con CV (columnas AA/AD) y ver el efecto por dificultad');
-  it.todo('innatos (AD17+ lista Pod_Psi_Innatos_Disponibles)');
-  it.todo('avisos Psíquicos!C22: "Exceso de CVs" (M10=50) y "Exceso de innatos activos" (M13=-1)');
-  it.todo('Grimorio Psíquica: listado de poderes con efectos');
+describe('Paso 6 · Magia (hecho: ver ui.test.tsx > Magia / Metamagia / Grimorios y cobertura.test.tsx)', () => {
+  it.todo('Vía cerrada a Shamanica (Místicos!C29) con Teorema Shamanica + Nigromancia: aviso del Excel');
+  it.todo('Exceso de Nivel de Magia inicial / de Vía inicial (Tablas!X21 activo con Personalización!F6)');
+  it.todo('Grimorio de Vía de Lock con sus vías propias (Fuego, Creación, Esencia, Oscuridad-Umbra) frente al PDF de referencia');
+  it.todo('exportar PDF de grimorio (A4 apaisado, dos páginas de conjuros por hoja): paso 9');
+  it.todo('Teoremas de magia (Místicos!AS5..BI24): tabla de referencia de Ofudas/teoremas; hoy no se muestra');
 });
 
 describe('Paso 8 · Sheele, Elan, Equipo, Personalización', () => {
-  it.todo('Sheele: tipo (Sheele!M5), vinculada (O5), características y mejoras (lista Mejoras_<tipo>)');
-  it.todo('Elan: entidades (Elan!C11, C13:C25) con dones y coste; G11 disponible; aviso Elan!C26 "Exceso de Elán utilizado"');
-  it.todo('Equipo (hoja General X12:AL30): objetos, localización y peso; equipo de combate');
-  it.todo('Personalización aparte ("Fuera de las reglas"): ventajas, poderes, armas (AA93+, críticos AD102/AD103), armaduras propias');
-  it.todo('lo personalizado aparece marcado como personalizado allí donde se use (p.ej. arma en Combate)');
   it.todo('avisos Personalización!I16 (habilidades de ventajas) e I51 (bonos de transformación)');
   it.todo('Ayane: crítico de arma personalizada "FIL" sin arma elegida se conserva (excepción conocida)');
 });
 
 describe('Paso 9 · Resumen y PDF', () => {
-  it.todo('vista de impresión que pinta src/data/pdf-layout.json con los valores de Resumen (portar render() de tools/pdf_layout.py)');
-  it.todo('página 1: fondo de 537 rectángulos, logo de Anima del Excel, retrato del personaje');
-  it.todo('página 2 (Notas): "Lenguas: …" en negrita 12 pt + notas por sección como FillPDFNotes (MostrarIdiomas, MostrarNotas)');
   it.todo('páginas opcionales Sheele / Equipo según Resumen!AU15/AU17; grimorios en A4 apaisado');
   it.todo('nombre de fichero <Nombre>.pdf y <Nombre> - <Grimorio>.pdf');
   it.todo('comparación con el PDF del Excel: python tools/pdf_check.py → ≤1 palabra por ficha desviada >1,5 pt');

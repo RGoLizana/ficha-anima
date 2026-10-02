@@ -12,6 +12,15 @@ import { Ventajas } from './Ventajas';
 import { Combate } from './Combate';
 import { Ki } from './Ki';
 import { Tecnicas } from './Tecnicas';
+import { Magia } from './Magia';
+import { Metamagia } from './Metamagia';
+import { GrimorioMagia, GrimorioVia } from './Grimorios';
+import { Psiquica } from './Psiquica';
+import { Sheele } from './Sheele';
+import { Elan } from './Elan';
+import { Equipo } from './Equipo';
+import { GrimorioPsiquica } from './GrimorioPsiquica';
+import { Personalizacion } from './Personalizacion';
 
 // Secciones de la ficha y el paso del plan en que se implementan
 const SECCIONES = [
@@ -23,7 +32,10 @@ const SECCIONES = [
   { id: 'ki', t: 'Ki', paso: 5 },
   { id: 'tecnicas', t: 'Técnicas de Ki', paso: 5 },
   { id: 'magia', t: 'Magia', paso: 6 },
+  { id: 'metamagia', t: 'Metamagia', paso: 6 },
+  { id: 'grimorios', t: 'Grimorios de magia', paso: 6 },
   { id: 'psiquica', t: 'Psíquica', paso: 7 },
+  { id: 'sheele', t: 'Sheele', paso: 8 },
   { id: 'elan', t: 'Elan', paso: 8 },
   { id: 'equipo', t: 'Equipo', paso: 8 },
   { id: 'notas', t: 'Notas', paso: 1 },
@@ -75,7 +87,7 @@ export function FichaView({ id, seccion }: { id: string; seccion: string }) {
           {guardado.value ? '● Guardado' : '● No se pudo guardar'}
         </span>
         <button class="btn" onClick={() => exportar(f)}>Exportar .json</button>
-        <button class="btn primary" disabled title="Disponible en el paso 9">PDF</button>
+        <a class="btn primary" href={`#/imprimir/${id}`}>PDF</a>
       </header>
 
       {motor.value === 'error' && <p class="banner error" role="alert">No se pudo cargar el motor de cálculo: {errorMotor.value}</p>}
@@ -102,13 +114,21 @@ export function FichaView({ id, seccion }: { id: string; seccion: string }) {
           {listo && sec.id === 'combate' && <Combate f={f} />}
           {listo && sec.id === 'ki' && <Ki f={f} />}
           {listo && sec.id === 'tecnicas' && <Tecnicas f={f} />}
+          {listo && sec.id === 'magia' && <Magia f={f} />}
+          {listo && sec.id === 'metamagia' && <Metamagia f={f} />}
+          {listo && sec.id === 'grimorios' && <><GrimorioMagia f={f} /><GrimorioVia f={f} /></>}
+          {listo && sec.id === 'psiquica' && <><Psiquica f={f} /><GrimorioPsiquica f={f} /></>}
+          {listo && sec.id === 'sheele' && <Sheele f={f} />}
+          {listo && sec.id === 'elan' && <Elan f={f} />}
+          {listo && sec.id === 'equipo' && <Equipo f={f} />}
+          {listo && sec.id === 'personalizacion' && <Personalizacion f={f} />}
           {sec.id === 'notas' && (
             <Panel title="Notas">
               <textarea rows={16} value={f.notas} aria-label="Notas"
                 onInput={(e) => actualizar(id, { notas: e.currentTarget.value })} />
             </Panel>
           )}
-          {listo && !['principal', 'trasfondo', 'desarrollo', 'ventajas', 'combate', 'ki', 'tecnicas', 'notas'].includes(sec.id) && (
+          {listo && !['principal', 'trasfondo', 'desarrollo', 'ventajas', 'combate', 'ki', 'tecnicas', 'magia', 'metamagia', 'grimorios', 'psiquica', 'sheele', 'elan', 'equipo', 'notas', 'personalizacion'].includes(sec.id) && (
             <Panel title={sec.t}>
               {sec.extra && <p class="extra-note">Añade aquí ventajas, poderes, armas, armaduras… que no están en las reglas de Anima.</p>}
               <p class="muted">Esta sección se implementa en el paso {sec.paso}.</p>

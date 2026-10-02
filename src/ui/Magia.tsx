@@ -1,0 +1,139 @@
+import type { Ficha } from '../model/ficha';
+import { Avisos, Campo, Panel, txt } from './campos';
+
+// Hoja Místicos del Excel
+const m = (col: string, fila: number) => `Místicos!${col}${fila}`;
+const rango = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
+
+/** Filas ocupadas más una libre: nunca se bloquea añadir otra. */
+function visibles(f: Ficha, filas: number[], cols: string[]) {
+  const llena = (r: number) => cols.some((c) => f.entradas[m(c, r)]);
+  const ultima = filas.reduce((x, r, i) => (llena(r) ? i : x), -1);
+  return filas.slice(0, Math.min(filas.length, ultima + 2));
+}
+
+export function Magia({ f }: { f: Ficha }) {
+  return (
+    <>
+      <Avisos claves={['Místicos!C29', 'PDs!V104']} />
+
+      <Panel title="Nivel de magia" extra={<Barra usado={Number(txt(m('E', 12))) || 0} total={Number(txt(m('C', 12))) || 0} />}>
+        <div class="salidas">
+          {[['C', 'Nivel máximo'], ['E', 'Nivel usado'], ['G', 'Metamagia'], ['I', 'Acumulación'], ['J', 'Reg. zeónica'], ['L', 'ACT'],
+            ['O', 'Turno'], ['P', 'Ataque'], ['Q', 'Defensa']].map(([c, t]) => (
+            <div class="stat" key={c}><div class="stat-v">{txt(m(c, 12)) || '—'}</div><div class="muted small">{t}</div></div>
+          ))}
+        </div>
+        <div class="grid-fields">
+          <Campo f={f} clave={m('AT', 10)} label="Teorema empleado" />
+          <Campo f={f} clave={m('Q', 14)} label="Desequilibrio ofensivo" />
+          <Campo f={f} clave={m('AS', 32)} label="Especialidad de proyección" />
+        </div>
+        <p class="muted small">Potencial innato <strong>{txt(m('L', 14))}</strong> · Vías opuestas: {txt(m('E', 27)) || '—'} · Conjuros seleccionados: {txt(m('H', 26)) || 0}</p>
+      </Panel>
+
+      <Panel title="Vías de magia" extra={<span class="muted small">Nivel usado en cada vía</span>}>
+        {visibles(f, rango(15, 25), ['C', 'E', 'G']).map((r) => (
+          <div class="compra" key={r}>
+            <Campo f={f} clave={m('C', r)} label="Vía" />
+            <Campo f={f} clave={m('E', r)} label="Subvía" />
+            <Campo f={f} clave={m('G', r)} label="Nivel usado" tipo="numero" class="mini" />
+            <p class="muted small">Nivel {txt(m('H', r)) || '—'}{txt(m('I', r)) ? ` · acumulación ${txt(m('I', r))}` : ''}</p>
+          </div>
+        ))}
+      </Panel>
+
+      <div class="cols-2">
+        <Panel title="Zeón" extra={<span class="muted small">Total <strong>{txt(m('K', 18)) || 0}</strong></span>}>
+          <div class="grid-fields">
+            <Campo f={f} clave={m('M', 18)} label="Zeón actual" tipo="numero" />
+            <Campo f={f} clave={m('L', 20)} label="Contenedor" tipo="numero" />
+            <Campo f={f} clave={m('L', 21)} label="Amplificador" tipo="numero" />
+          </div>
+        </Panel>
+        <Panel title="Convocatoria">
+          <table class="tabla">
+            <thead><tr><th scope="col" class="left">Habilidad</th><th scope="col">Especial</th><th scope="col">Total</th></tr></thead>
+            <tbody>
+              {[26, 27, 28, 29].map((r) => (
+                <tr key={r}>
+                  <th scope="row" class="left">{txt(m('J', r))}</th>
+                  <td><Campo f={f} clave={m('L', r)} label={<span class="sr-only">Especial {txt(m('J', r))}</span>} tipo="numero" class="mini" /></td>
+                  <td class="total">{txt(m('M', r))}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div class="grid-fields">
+            <Campo f={f} clave={m('P', 26)} label="Especialidad" />
+          </div>
+          <p class="muted small">Convocación en masa: {txt(m('Q', 25)) || '—'}</p>
+        </Panel>
+      </div>
+
+      <Panel title="Conjuros seleccionados" extra={<span class="muted small">{txt(m('H', 26)) || 0} elegidos</span>}>
+        {visibles(f, rango(12, 50), ['W', 'Y']).map((r) => (
+          <div class="compra" key={r}>
+            <Campo f={f} clave={m('W', r)} label="Vía" />
+            <Campo f={f} clave={m('Y', r)} label="Conjuro" class="grow" />
+            <span class="muted small nivel-op">{txt(m('AC', r)) && `Nv ${txt(m('AC', r))}`}</span>
+          </div>
+        ))}
+      </Panel>
+
+      <Panel title="Conjuros de libre acceso" extra={<span class="muted small">Restantes: <strong>{txt(m('AK', 10))}</strong></span>}>
+        {visibles(f, rango(12, 50), ['AE', 'AG', 'AK']).map((r) => (
+          <div class="compra" key={r}>
+            <Campo f={f} clave={m('AE', r)} label="Vía asociada" />
+            <Campo f={f} clave={m('AG', r)} label="Conjuro" class="grow" />
+            <Campo f={f} clave={m('AK', r)} label="Nivel" class="mini" />
+          </div>
+        ))}
+      </Panel>
+
+      <Panel title="Conjuros activos, criaturas atadas e invocaciones" extra={<span class="muted small">Coste zeónico al día: <strong>{txt(m('H', 61)) || txt(m('G', 61)) || 0}</strong></span>}>
+        {visibles(f, rango(33, 60), ['C', 'H', 'J']).map((r) => (
+          <div class="compra" key={r}>
+            <Campo f={f} clave={m('C', r)} label="Conjuro activo / criatura atada" class="grow" />
+            <Campo f={f} clave={m('H', r)} label="Zeón diario" tipo="numero" class="mini" />
+            <Campo f={f} clave={m('J', r)} label="Invocación o encarnación" class="grow" />
+            {f.entradas[m('J', r)] && <span class="muted small">Dif. {txt(m('P', r))} · Zeón {txt(m('Q', r))}</span>}
+          </div>
+        ))}
+      </Panel>
+
+      <Panel title="Ofudas preparados">
+        {visibles(f, rango(62, 72), ['AP', 'AR', 'AV']).map((r) => (
+          <div class="compra" key={r}>
+            <Campo f={f} clave={m('AP', r)} label="Vía" />
+            <Campo f={f} clave={m('AR', r)} label="Conjuro" class="grow" />
+            <Campo f={f} clave={m('AV', r)} label="Cantidad" tipo="numero" class="mini" />
+            {f.entradas[m('AR', r)] && <span class="muted small">Zeón {txt(m('AW', r))}</span>}
+          </div>
+        ))}
+      </Panel>
+
+      <Habilidades />
+
+      <Panel title="Notas de magia">
+        <Campo f={f} clave={m('C', 64)} label="Notas (salen en la página de notas del PDF)" tipo="area" />
+      </Panel>
+    </>
+  );
+}
+
+function Barra({ usado, total }: { usado: number; total: number }) {
+  const p = total > 0 ? Math.min(100, (100 * usado) / total) : 0;
+  return <div class="barra" style={{ width: '160px' }}><div class={usado > total ? 'over' : ''} style={{ width: `${p}%` }} /></div>;
+}
+
+/** Habilidades metamágicas conseguidas (solo lectura; se compran en la sección Metamagia). */
+function Habilidades() {
+  const items = rango(53, 73).map((r) => [txt(m('W', r)), txt(m('AB', r))]).filter(([n]) => n);
+  if (!items.length) return null;
+  return (
+    <Panel title="Habilidades metamágicas" extra={<span class="muted small">Se compran en Metamagia</span>}>
+      {items.map(([n, d]) => <p class="small" key={n}><strong>{n}</strong>{d ? ` — ${d}` : ''}</p>)}
+    </Panel>
+  );
+}

@@ -31,18 +31,28 @@ function llenarTodo(hoja: string): Record<string, Entrada> {
 }
 
 // Huecos conocidos: celdas de entrada que aún no tienen casilla (se vacía al completar los pasos 8 y 9).
-const EQUIPO_GENERAL = /^General!(AD10|A[FJL]1[1-9]|A[FJL]2[0-9]|A[FJL]30|X(1[2-9]|2[0-9]|3[0-2]|35|37|39|41|43|5[2-5])|A[BD](1[6-9]|2[0-9]|3[0-2])|AA(35|37|39|41|43)|AF(5[2-5]|64)|AI(58|59|60)|AL(58|59)|AB59|AK63)$/;
 const HUECOS: Record<string, (c: string) => boolean> = {
-  General: (c) => c === 'General!M5' || EQUIPO_GENERAL.test(c), // retrato (paso 9) y equipo/artefactos/contactos (paso 8)
+  General: (c) => c === 'General!M5', // retrato (paso 9)
+  // celdas desbloqueadas sin uso: ninguna fórmula del libro las lee (fila 77 tras el 5.º efecto de Ki, filas 129 y 132 bajo el Elan)
+  'Personalización': (c) => /^Personalización![A-Q](77|129|132)$/.test(c),
 };
 
 const SECCIONES: [string, string[]][] = [
   ['Principal', ['principal', 'trasfondo', 'desarrollo', 'ventajas', 'combate']],
-  ['General', ['principal', 'trasfondo']],
+  ['General', ['principal', 'trasfondo', 'equipo']],
   ['PDs', ['principal', 'desarrollo', 'ventajas']],
   ['Combate', ['combate']],
   ['Ki', ['ki']],
   ['Creación de Técnicas', ['tecnicas']],
+  ['Místicos', ['magia']],
+  ['Metamagia', ['metamagia']],
+  ['Grimorio Magia', ['grimorios']],
+  ['Grimorio de Vía', ['grimorios']],
+  ['Psíquicos', ['psiquica']],
+  ['Grimorio Psíquica', ['psiquica']],
+  ['Sheele', ['sheele']],
+  ['Elan', ['elan']],
+  ['Personalización', ['personalizacion']],
 ];
 
 describe('cobertura de casillas', () => {

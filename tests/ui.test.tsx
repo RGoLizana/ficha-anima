@@ -87,7 +87,7 @@ describe('ficha: navegación y estructura', () => {
     expect(screen.getByText('Personaje')).toBeTruthy();
   }, T);
 
-  it.each(['principal', 'trasfondo', 'desarrollo', 'ventajas', 'combate', 'ki', 'tecnicas', 'notas'])(
+  it.each(['principal', 'trasfondo', 'desarrollo', 'ventajas', 'combate', 'ki', 'tecnicas', 'magia', 'metamagia', 'grimorios', 'psiquica', 'notas'])(
     'sección %s: todas las casillas escriben en celdas de entrada reales del Excel', async (sec) => {
       const entrada = celdasEntrada();
       for (const n of ['sesshomaru', 'lock', 'ayane'] as const) {
@@ -421,6 +421,178 @@ describe('Técnicas de Ki', () => {
     fireEvent.change(celda('Creación de Técnicas!D37'), { target: { value: 'Danza sobrenatural' } });
     fireEvent.change(celda('Creación de Técnicas!W6'), { target: { value: 'Árbol' } });
     expect(store.buscar(f.id)!.entradas).toMatchObject({ 'Creación de Técnicas!D37': 'Danza sobrenatural', 'Creación de Técnicas!W6': 'Árbol' });
+  }, T);
+});
+
+describe('Magia', () => {
+  const texto = () => document.querySelector('.content')!.textContent!;
+
+  it('Lock: nivel de magia, zeón y convocatoria como en el Excel', async () => {
+    abrirFicha('lock', 'magia');
+    await esperarListo();
+    const nivel = [...document.querySelectorAll('.panel')].find((p) => p.textContent!.startsWith('Nivel de magia'))!.textContent!;
+    for (const t of ['185', '60', '90', '175']) expect(nivel).toContain(t);   // nivel, reg. zeón/ACT, turno, proyección
+    expect(texto()).toContain('Total 1110');                                  // zeón total
+    expect(celda('Místicos!M18').value).toBe('970');                          // zeón actual (entrada)
+    const conv = [...document.querySelectorAll('.panel')].find((p) => p.textContent!.startsWith('Convocatoria'))!;
+    expect([...conv.querySelectorAll('td.total')].map((e) => e.textContent)).toEqual(['20', '5', '20', '20']);
+  }, T);
+
+  it('vías con su nivel usado; pasarse de nivel de magia avisa sin bloquear', async () => {
+    const { f } = abrirFicha('lock', 'magia');
+    await esperarListo();
+    expect(celda('Místicos!C15').value).toBe('Fuego');
+    expect(celda('Místicos!G15').value).toBe('36');
+    expect(celda('Místicos!E16').value).toBe('Paz');
+    expect(document.querySelector('.aviso')).toBeNull();
+    fireEvent.change(celda('Místicos!G15'), { target: { value: '500' } });
+    await waitFor(() => expect(document.querySelector('.aviso')?.textContent).toBe('Exceso de Nivel de Magia'));
+    expect(store.buscar(f.id)!.entradas['Místicos!G15']).toBe(500);
+    fireEvent.change(celda('Místicos!G15'), { target: { value: '36' } });
+    await waitFor(() => expect(document.querySelector('.aviso')).toBeNull());
+  }, T);
+
+  it('conjuros seleccionados y de libre acceso salen con su nivel, y siempre hay una fila libre', async () => {
+    abrirFicha('lock', 'magia');
+    await esperarListo();
+    expect(celda('Místicos!W12').value).toBe('Esencia');
+    expect(celda('Místicos!Y12').value).toBe('Comunicación por esencia');
+    expect(celda('Místicos!W13')).toBeTruthy();                   // fila libre tras el último seleccionado
+    expect(celda('Místicos!W14')).toBeFalsy();
+    expect(celda('Místicos!AG12').value).toBe('Aseamiento');
+    expect(celda('Místicos!AK12').value).toBe('4');
+    expect(texto()).toContain('Nv 10');                           // nivel del conjuro seleccionado
+    await waitFor(() => expect(opcionesDe('Místicos!Y13').length).toBeGreaterThan(500));   // sin vía: todos los conjuros
+    fireEvent.change(celda('Místicos!W13'), { target: { value: 'Esencia' } });
+    await waitFor(() => expect(opcionesDe('Místicos!Y13').length).toBeLessThan(100));      // con vía: los de esa vía (INDIRECT)
+    await waitFor(() => expect(celda('Místicos!W14')).toBeTruthy());
+  }, T);
+
+  it('conjuros activos suman su zeón diario; ofudas calculan su zeón', async () => {
+    abrirFicha('lock', 'magia');
+    await esperarListo();
+    fireEvent.change(celda('Místicos!C33'), { target: { value: 'Escudo de luz' } });
+    fireEvent.change(celda('Místicos!H33'), { target: { value: '120' } });
+    await waitFor(() => expect(texto()).toContain('Coste zeónico al día: 120'));
+    fireEvent.change(celda('Místicos!AP62'), { target: { value: 'Esencia' } });
+    await waitFor(() => expect(opcionesDe('Místicos!AR62').length).toBeGreaterThan(5));
+    fireEvent.change(celda('Místicos!AR62'), { target: { value: 'Comunicación por esencia' } });
+    fireEvent.change(celda('Místicos!AV62'), { target: { value: '3' } });
+    await waitFor(() => expect(texto()).toContain('Zeón 45'));
+  }, T);
+
+  it('contenedor, amplificador, especialidad, teorema y notas se guardan', async () => {
+    const { f } = abrirFicha('lock', 'magia');
+    await esperarListo();
+    fireEvent.change(celda('Místicos!L20'), { target: { value: '100' } });
+    fireEvent.change(celda('Místicos!L26'), { target: { value: '5' } });
+    fireEvent.change(celda('Místicos!C64'), { target: { value: 'Nota de magia' } });
+    expect(store.buscar(f.id)!.entradas).toMatchObject({ 'Místicos!L20': 100, 'Místicos!L26': 5, 'Místicos!C64': 'Nota de magia' });
+    await waitFor(() => expect(texto()).toContain('Total 1210'));   // el contenedor suma al zeón total
+  }, T);
+});
+
+describe('Metamagia', () => {
+  it('Lock: sus 5 habilidades compradas salen marcadas con nombre y coste', async () => {
+    abrirFicha('lock', 'metamagia');
+    await esperarListo();
+    const marcadas = [...document.querySelectorAll('.arma input[type=checkbox]:checked')].map((c) => c.closest('label')!.getAttribute('data-clave'));
+    expect(marcadas.sort()).toEqual(['Metamagia!AB48', 'Metamagia!AB53', 'Metamagia!AE53', 'Metamagia!AE62', 'Metamagia!AH53']);
+    const titulos = [...document.querySelectorAll('.arma-titulo')].map((t) => t.textContent);
+    expect(titulos).toEqual(expect.arrayContaining(['Escudos potenciados', 'Erudición ofensiva', 'Doble conjuro']));
+    expect(document.querySelectorAll('.arma')).toHaveLength(titulos.length);
+  }, T);
+
+  it('comprar una habilidad sube el nivel usado de metamagia y se puede deshacer', async () => {
+    const { f } = abrirFicha('lock', 'metamagia');
+    await esperarListo();
+    const usado = () => document.querySelector('.panel .muted.small')!.textContent!;
+    expect(usado()).toContain('metamagia 25');
+    await waitFor(() => expect(celda('Metamagia!J13')).toBeTruthy());
+    fireEvent.click(celda('Metamagia!J13'));
+    await waitFor(() => expect(store.buscar(f.id)!.entradas['Metamagia!J13']).toBe(10));
+    await waitFor(() => expect(usado()).toContain('metamagia 35'));
+    fireEvent.click(celda('Metamagia!J13'));
+    await waitFor(() => expect(usado()).toContain('metamagia 25'));
+  }, T);
+
+  it('las habilidades metamágicas conseguidas aparecen en Magia', async () => {
+    abrirFicha('lock', 'magia');
+    await esperarListo();
+    expect(document.querySelector('.content')!.textContent).toContain('Efectos persistentes');
+  }, T);
+});
+
+describe('Grimorios de magia y de vía', () => {
+  it('Grimorio de magia: conjuros elegidos con nivel, grados y descripción del Excel', async () => {
+    abrirFicha('lock', 'grimorios');
+    await esperarListo();
+    expect(celda('Grimorio Magia!C11').value).toBe('Bolsa infinita');
+    const cards = [...document.querySelectorAll('.conjuro')].map((c) => c.textContent!);
+    expect(cards[0]).toContain('Bolsa infinita');
+    expect(cards[0]).toContain('Nivel 12');
+    for (const t of ['Base', 'Intermedio', 'Avanzado', 'Arcano', '40', '120']) expect(cards[0]).toContain(t);
+    expect(celda('Grimorio Magia!V11')).toBeTruthy();    // Lock tiene 4 en la columna izquierda; la siguiente casilla está libre
+  }, T);
+
+  it('Grimorio de vía: al elegir vía y subvía aparecen sus conjuros por niveles', async () => {
+    abrirFicha('lock', 'grimorios');
+    await esperarListo();
+    expect(document.querySelectorAll('.conjuro').length).toBeLessThan(10);   // sin vía solo los 4 del grimorio de magia
+    fireEvent.change(celda('Grimorio de Vía!J6'), { target: { value: 'Oscuridad' } });
+    await waitFor(() => expect(opcionesDe('Grimorio de Vía!J7').length).toBeGreaterThan(0));
+    fireEvent.change(celda('Grimorio de Vía!J7'), { target: { value: 'Umbral' } });
+    await waitFor(() => expect(document.querySelector('.content')!.textContent).toContain('Crear oscuridad'));
+    const titulos = [...document.querySelectorAll('.conjuro .arma-titulo')].map((t) => t.textContent);
+    expect(titulos).toEqual(expect.arrayContaining(['Crear oscuridad', 'Ojos del otro lado', 'Sombra', 'Noche', 'Holocausto de oscuridad']));
+    expect(document.querySelector('.content')!.textContent).toContain('Conjuros de nivel 2-10');
+  }, T);
+});
+
+describe('Psíquica', () => {
+  const texto = () => document.querySelector('.content')!.textContent!;
+
+  it('Ayane: CVs, potencial y proyección como en el Excel', async () => {
+    abrirFicha('ayane', 'psiquica');
+    await esperarListo();
+    const stats = [...document.querySelectorAll('.salidas .stat')].map((e) => e.textContent!);
+    expect(stats.join('|')).toContain('100');   // potencial
+    expect(stats.join('|')).toContain('150');   // proyección
+    expect(celda('Psíquicos!M13').value).toBe('2');
+    expect(texto()).toContain('Psicopatía');
+    expect(celda('Psíquicos!V11').value).toBe('Impacto telequinético');
+  }, T);
+
+  it('disciplinas afines y poderes: siempre hay una fila libre y la lista depende de las disciplinas', async () => {
+    abrirFicha('ayane', 'psiquica');
+    await esperarListo();
+    expect(celda('Psíquicos!C25').value).toBe('Piroquinesis');
+    expect(celda('Psíquicos!C33')).toBeTruthy();   // fila libre tras la última
+    expect(celda('Psíquicos!C35')).toBeFalsy();
+    await waitFor(() => expect(opcionesDe('Psíquicos!V25').length).toBeGreaterThan(3));
+  }, T);
+
+  it('pasarse de CVs o de innatos avisa sin bloquear', async () => {
+    const { f } = abrirFicha('ayane', 'psiquica');
+    await esperarListo();
+    expect(document.querySelector('.aviso')).toBeNull();
+    fireEvent.change(celda('Psíquicos!AA11'), { target: { value: '50' } });
+    await waitFor(() => expect(document.querySelector('.aviso')?.textContent).toContain('Exceso de CVs'));
+    expect(store.buscar(f.id)!.entradas['Psíquicos!AA11']).toBe(50);
+    fireEvent.change(celda('Psíquicos!AA11'), { target: { value: '' } });
+    await waitFor(() => expect(document.querySelector('.aviso')).toBeNull());
+    fireEvent.change(celda('Psíquicos!M13'), { target: { value: '-1' } });
+    await waitFor(() => expect(document.querySelector('.aviso')?.textContent).toContain('Exceso de innatos activos'));
+  }, T);
+
+  it('Grimorio Psíquica: disciplinas elegidas con sus poderes y dificultades', async () => {
+    abrirFicha('ayane', 'psiquica');
+    await esperarListo();
+    expect(celda('Grimorio Psíquica!S6').value).toBe('Piroquinesis');
+    const titulos = [...document.querySelectorAll('.conjuro .arma-titulo')].map((t) => t.textContent);
+    expect(titulos).toEqual(expect.arrayContaining(['Crear fuego', 'Telequinesis menor', 'Impacto telequinético']));
+    expect(titulos).not.toContain('0');
+    expect(document.querySelector('.conjuro')!.textContent).toContain('Rutinario');
   }, T);
 });
 

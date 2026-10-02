@@ -223,3 +223,16 @@ details.tecnica > .stack { padding: 16px 20px 20px; }
 .opcion-grupo { background: var(--bg); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 6px; }
 .nivel-op { min-width: 36px; text-align: right; }
 @media (max-width: 900px) { .span2 { grid-column: auto; } }
+
+/* Vista de impresión (PDF idéntico al del Excel) */
+.imprimir { background: #888; min-height: 100vh; }
+.imprimir .topbar { position: sticky; top: 0; z-index: 5; }
+.pdf-hojas { padding: 12px 0; }
+.pdf-hoja { width: 595.32pt; height: 841.92pt; margin: 0 auto 12px; background: #fff; break-after: page; }
+@page { size: A4; margin: 0; }
+@media print {
+  .no-print { display: none !important; }
+  .imprimir { background: #fff; }
+  .pdf-hojas { padding: 0; }
+  .pdf-hoja { margin: 0; }
+}
