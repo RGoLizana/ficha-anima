@@ -42,6 +42,7 @@ function comprobar(t: Tecnica, nombre: string) {
   });
   r.desv.forEach((x, k) => expect(v(l, 'N', b + 9 + k), `${nombre}: CM de la desventaja`).toBe(x.cm));
   expect(v(l, 'AM', 41), `${nombre}: ajuste bien repartido`).toBe(false);
+  expect(v(l, 'AM', 39), `${nombre}: ninguna característica baja de la mitad`).toBe(false);
   expect(v(l, 'AM', 42), `${nombre}: ki cuadra`).toBe(r.kiNec !== r.kiPuesto || r.mantNec !== r.mantPuesto);
 }
 
@@ -102,6 +103,7 @@ describe('la réplica coincide con el Excel', () => {
       ['desventajas', (t) => { t.nivel = 2; t.efectos = [nuevoEfecto('Habilidad de Ataque')]; t.efectos[0].g = 6; t.desv = [{ n: 'Sin Defensa', o: 0, el: ['', ''] }, { n: 'Usos Limitados', o: 1, el: ['', ''] }]; }],
       ['atadura', (t) => { t.efectos = [nuevoEfecto('Habilidad de Ataque')]; t.desv = [{ n: 'Atadura Elemental', o: 1, el: ['Aire', 'Fuego'] }]; }],
       ['reducción de ki', (t) => { t.nivel = 2; t.efectos = [nuevoEfecto('Habilidad de Ataque'), nuevoEfecto('Ataque a Distancia')]; t.redKi = 2; }],
+      ['reducción de ki con ajuste que no cabe en la principal', (t) => { t.nivel = 1; t.efectos = [nuevoEfecto('Habilidad de Ataque'), nuevoEfecto('Ataque Indirecto')]; t.efectos[0].g = 5; t.efectos[1].g = 1; t.redKi = 4; }],
       ['reducción de cm', (t) => { t.nivel = 2; t.efectos = [nuevoEfecto('Habilidad de Ataque')]; t.redCM = 10; }],
       ['combinable', (t) => { t.efectos = [nuevoEfecto('Habilidad de Ataque')]; t.comb = true; t.nivel = 2; }],
     ];

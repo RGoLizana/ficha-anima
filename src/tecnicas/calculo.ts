@@ -228,16 +228,38 @@ export function normalizar(antes: Tecnica | null, t: Tecnica, ctx: Contexto, def
     if (sumaReparto(e.kiM) !== mant) e.kiM = mant ? { [d.p]: mant } : {};
     CAR.forEach((c) => { carga[c] = (carga[c] ?? 0) + (e.ki[c] ?? 0); });
   });
-  const dondeEstaba = CAR.filter((c) => t.mods[c]);
-  if (dondeEstaba.length <= 1) {
-    const ajuste = ajusteKi(t), donde = dondeEstaba[0] ?? (t.efectos[0] ? efecto(t.efectos[0].n)!.p : undefined);
-    t.mods = ajuste && donde ? { [donde]: ajuste } : {};
-  }
+  // ajuste de ki de las desventajas: automático salvo que alguien lo haya repartido a mano de forma válida o lo haya puesto en otra característica
+  const ajuste = ajusteKi(t), puestas = CAR.filter((c) => t.mods[c]), principal = t.efectos[0] ? efecto(t.efectos[0].n)!.p : undefined;
+  const manual = puestas.length > 0 && sumaReparto(t.mods) === ajuste && (puestas.length > 1 ? ajusteValido(t) : puestas[0] !== principal);
+  if (!manual) t.mods = ajusteAuto(t);
   return t;
 }
 
+const kiActivar = (t: Tecnica, c: Car) => t.efectos.reduce((n, e) => n + (e.ki[c] ?? 0), 0);
+/** El Excel (AM39) no deja bajar una característica por debajo de la mitad de su ki con el ajuste. */
+const ajusteValido = (t: Tecnica) => CAR.every((c) => -(t.mods[c] ?? 0) <= Math.trunc(kiActivar(t, c) / 2));
+
+/** Reparte el ajuste: un ajuste que suma va a la característica principal; uno que resta, también, y lo que no quepa
+ *  (hasta la mitad del ki de cada una) pasa a las que más ki tienen. Si aun así no cabe queda en la principal y el Excel avisa. */
+function ajusteAuto(t: Tecnica): Reparto {
+  const a = ajusteKi(t);
+  if (!a || !t.efectos.length) return {};
+  const principal = efecto(t.efectos[0].n)!.p;
+  if (a > 0) return { [principal]: a };
+  const orden = [principal, ...CAR.filter((c) => c !== principal).sort((x, y) => kiActivar(t, y) - kiActivar(t, x))];
+  const out: Reparto = {};
+  let resto = -a;
+  for (const c of orden) {
+    const x = Math.min(resto, Math.trunc(kiActivar(t, c) / 2));
+    if (x > 0) { out[c] = -x; resto -= x; }
+  }
+  if (resto > 0) out[principal] = (out[principal] ?? 0) - resto;
+  return out;
+}
+
 /** Característica sobre la que cae el ajuste de ki (por defecto la principal del primer efecto). */
-export const carAjuste = (t: Tecnica): Car | undefined => CAR.find((c) => t.mods[c]) ?? (t.efectos[0] ? efecto(t.efectos[0].n)!.p : undefined);
+/** «auto» si el ajuste está repartido por el programa en varias características; si no, la característica donde está. */
+export const carAjuste = (t: Tecnica): Car | 'auto' => { const p = CAR.filter((c) => t.mods[c]); return p.length === 1 ? p[0] : 'auto'; };
 
 /** Lee «Ki!D12…» de la ficha: lo que acumula cada característica por asalto. */
 export function acumulacion(texto: string): Record<Car, number> {

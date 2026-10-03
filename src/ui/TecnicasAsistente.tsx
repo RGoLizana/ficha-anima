@@ -503,11 +503,12 @@ function PasoKi({ t, r, aplicar, repartirTodo, ctx }: { t: Tecnica; r: Calculo; 
           </div>
         );
       })}
-      {extra !== 0 && donde && (
+      {extra !== 0 && (
         <div class="tk-aviso tk-suave">
           <b>Ajuste de {sig(extra)} Ki</b>
-          <span>Viene de la reducción de CM/Ki o de ser combinable. Se aplica a la característica:</span>
-          <select aria-label="Característica del ajuste" value={donde} onChange={(ev) => aplicar((x) => { x.mods = { [ev.currentTarget.value as Car]: ajusteKi(x) }; })}>
+          <span>Viene de la reducción de CM/Ki o de ser combinable. Por defecto cae en la característica principal y, si ahí no cabe (el Excel no deja bajar una característica de la mitad de su ki), pasa a las que más tienen. Puedes elegir otra:</span>
+          <select aria-label="Característica del ajuste" value={donde} onChange={(ev) => { const c = ev.currentTarget.value; aplicar((x) => { x.mods = c === 'auto' ? {} : { [c as Car]: ajusteKi(x) }; }); }}>
+            <option value="auto">Automático</option>
             {CAR.map((c) => <option key={c} value={c}>{NOM_CAR[c]}</option>)}
           </select>
         </div>
