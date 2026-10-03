@@ -131,7 +131,7 @@ function Editor({ f, slot, paso, setPaso, volver }: { f: Ficha; slot: number; pa
   const modo = modoReparto.value;
 
   /** Aplica un cambio a la técnica: se recalcula el ki automático y se escriben solo las celdas que cambian. */
-  const aplicar = (cambio: (t: Tecnica) => void, defecto: ModoReparto = modo) => {
+  const aplicar = (cambio: (t: Tecnica) => void, defecto: ModoReparto = modoReparto.value) => {   // se lee al llamar: el selector cambia el valor justo antes
     const nuevo = copia(t);
     cambio(nuevo);
     normalizar(t, nuevo, ctx, defecto);
@@ -471,7 +471,8 @@ function PasoKi({ t, r, aplicar, repartirTodo, ctx }: { t: Tecnica; r: Calculo; 
             {m === 'barato' ? 'Lo más barato' : 'Lo más rápido'}
           </button>
         ))}
-        <span class="small muted">Se aplica a lo que no hayas puesto a mano. Al cambiarlo se repartirá de nuevo todo.</span>
+        <button type="button" class="btn tk-peligro" title="Borra el ki que hayas puesto a mano y lo reparte todo con el modo elegido" onClick={repartirTodo}>Restablecer reparto</button>
+        <span class="small muted">Lo que pongas a mano se conserva al cambiar grados. «Restablecer reparto» lo borra y lo reparte todo con el modo elegido.</span>
       </fieldset>
       {r.efectos.map((x) => {
         const e = x.e, d = efecto(e.n)!, i = x.i, cars = [d.p, ...(Object.keys(d.o) as Car[])];
@@ -482,8 +483,8 @@ function PasoKi({ t, r, aplicar, repartirTodo, ctx }: { t: Tecnica; r: Calculo; 
             <div class="row wrap"><h4 class="tk-efecto-tit grow">{d.n}</h4>
               <span class={'tk-cuadra ' + (cuadra ? 'tk-ok' : 'tk-no')} aria-live="polite">{x.puesto} de {x.ki} Ki {cuadra ? '· cuadra' : x.puesto < x.ki ? `· faltan ${x.ki - x.puesto}` : `· sobran ${x.puesto - x.ki}`}</span></div>
             <div class="row wrap">
-              <button type="button" class="btn" onClick={() => modo(i, 'barato')}>Lo más barato · {baratoR.kiNec} Ki, {asaltosTxt(baratoR.asaltos)}</button>
-              <button type="button" class="btn" onClick={() => modo(i, 'rapido')}>Lo más rápido · {rapidoR.kiNec} Ki, {asaltosTxt(rapidoR.asaltos)}</button>
+              <button type="button" class="btn" onClick={() => modo(i, 'barato')}>Lo más barato · técnica entera {baratoR.kiNec} Ki, {asaltosTxt(baratoR.asaltos)}</button>
+              <button type="button" class="btn" onClick={() => modo(i, 'rapido')}>Lo más rápido · técnica entera {rapidoR.kiNec} Ki, {asaltosTxt(rapidoR.asaltos)}</button>
             </div>
             <div class="tk-reparto">
               {cars.map((c) => (

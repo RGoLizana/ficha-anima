@@ -97,13 +97,42 @@ describe('asistente de técnicas', () => {
     await waitFor(() => expect(quedan()).toBe(true));
     const barato = Number(v('AL63'));
     fireEvent.click(paso('Reparto de Ki'));
-    fireEvent.click(screen.getAllByRole('button', { name: /Lo más rápido · / })[0]);
+    fireEvent.click(screen.getAllByRole('button', { name: /Lo más rápido · técnica/ })[0]);
     await waitFor(() => expect(quedan()).toBe(true));
     expect(Number(v('AL63'))).toBeGreaterThanOrEqual(barato);
     expect(modoReparto.value).toBe('barato');                                   // el botón de cada efecto no cambia el valor por defecto
     fireEvent.click(within(screen.getByText('Reparto por defecto').closest('fieldset')!).getByRole('button', { name: 'Lo más rápido' }));
     expect(modoReparto.value).toBe('rapido');
     expect(entrada(f.id, 'F50')).toBe('Habilidad de Ataque');
+  }, T);
+
+  it('el selector «Reparto por defecto» reparte como dice: rápido tarda menos asaltos, barato cuesta menos ki', async () => {
+    abrir();
+    await waitFor(() => expect(screen.getAllByText('Crear aquí').length).toBe(9));
+    fireEvent.click(screen.getAllByText('Crear aquí')[0]);
+    fireEvent.click(boton(/Ofensiva a distancia · Bola de fuego/));
+    await waitFor(() => expect(quedan()).toBe(true));
+    fireEvent.click(paso('Reparto de Ki'));
+    const modo = (t: string) => within(screen.getByText('Reparto por defecto').closest('fieldset')!).getByRole('button', { name: t });
+    const tarjeta = () => document.querySelector('.tk-tile .tk-big')!.textContent!;            // ki total de la técnica
+    const asaltos = () => Number(document.querySelectorAll('.tk-tile .tk-big')[2].textContent!.trim().split(' ')[0]);
+    fireEvent.click(modo('Lo más rápido'));
+    await waitFor(() => expect(modoReparto.value).toBe('rapido'));
+    await waitFor(() => expect(quedan()).toBe(true));
+    const [kiR, asR] = [Number(v('AL63')), asaltos()];
+    fireEvent.click(modo('Lo más barato'));
+    await waitFor(() => expect(modoReparto.value).toBe('barato'));
+    await waitFor(() => expect(Number(v('AL63'))).toBeLessThanOrEqual(kiR));
+    await waitFor(() => expect(asaltos()).toBeGreaterThanOrEqual(asR));
+    void tarjeta;
+    expect(Number(v('AL63'))).toBeLessThan(kiR);
+    // a mano + «Restablecer reparto» deja el reparto del modo elegido
+    const barato = Number(v('AL63'));
+    fireEvent.click(screen.getAllByRole('button', { name: /^Añadir 1 a / })[1]);
+    await waitFor(() => expect(quedan()).toBe(false));
+    fireEvent.click(screen.getByRole('button', { name: 'Restablecer reparto' }));
+    await waitFor(() => expect(quedan()).toBe(true));
+    expect(Number(v('AL63'))).toBe(barato);
   }, T);
 
   it('pasarse de CM avisa pero deja elegir; una técnica con efectos personalizados se manda al modo experto', async () => {
