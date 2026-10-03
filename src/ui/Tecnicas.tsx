@@ -101,9 +101,19 @@ function Modificadores({ f, fila }: { f: Ficha; fila: number }) {
 function Desventajas({ f, b }: { f: Ficha; b: number }) {
   const filas = [9, 10, 11].map((o) => b + o);
   const visibles = filas.filter((r, i) => i === 0 || f.entradas[col('F', r - 1)]);
+  // Core, tabla 54: una técnica de nivel 1 admite 1 desventaja, una de nivel 2 admite 2 y una arcana (nivel 3) hasta 3. Solo avisa.
+  const nivel = Number(txt(col('P', b))) || 1;
+  const puestas = filas.filter((r) => f.entradas[col('F', r)]);
+  const altas = puestas.filter((r) => Number(/(\d+)/.exec(txt(col('S', r)))?.[1]) > nivel);
   return (
     <section class="stack-sm">
       <h3 class="sub">Desventajas</h3>
+      {puestas.length > nivel && (
+        <p class="aviso" role="status">Una técnica de nivel {nivel} admite como máximo {nivel} {nivel === 1 ? 'desventaja' : 'desventajas'} (Core, tabla 54) y esta tiene {puestas.length}.</p>
+      )}
+      {altas.map((r) => (
+        <p class="aviso" role="status" key={r}>«{String(f.entradas[col('F', r)])}» es una desventaja de {txt(col('S', r)).toLowerCase()} y la técnica es de nivel {nivel}.</p>
+      ))}
       {visibles.map((r) => (
         <div class="efecto" key={r}>
           <div class="grid-fields">

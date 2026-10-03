@@ -217,3 +217,30 @@ describe('Conjuros de libre acceso', () => {
     fireEvent.change(celda('Místicos!AE14') ?? celda('Místicos!AE13'), { target: { value: 'Fuego' } });
   }, T);
 });
+
+describe('Técnicas: desventajas por nivel (Core, tabla 54)', () => {
+  const avisos = () => [...document.querySelectorAll('details.tecnica')[0].querySelectorAll('.aviso')].map((a) => a.textContent!);
+
+  it('una técnica de nivel 1 con más de una desventaja avisa sin bloquear, y quitarla lo deshace', async () => {
+    const f = abrirFicha('lock', 'tecnicas');
+    await esperarListo();
+    expect(avisos().filter((a) => /admite como máximo/.test(a))).toEqual([]);      // Lock tiene una (Atadura Elemental)
+    await waitFor(() => expect(celda('Creación de Técnicas!F22')).toBeTruthy());
+    await waitFor(() => expect(opcionesDe('Creación de Técnicas!F22').length).toBeGreaterThan(3));
+    fireEvent.change(celda('Creación de Técnicas!F22'), { target: { value: 'Sin Defensa' } });
+    await waitFor(() => expect(avisos().join(' ')).toContain('Una técnica de nivel 1 admite como máximo 1 desventaja (Core, tabla 54) y esta tiene 2'));
+    expect(store.buscar(f.id)!.entradas['Creación de Técnicas!F22']).toBe('Sin Defensa');          // se guarda igualmente
+    fireEvent.change(celda('Creación de Técnicas!F22'), { target: { value: '' } });
+    await waitFor(() => expect(avisos().filter((a) => /admite como máximo/.test(a))).toEqual([]));
+  }, T);
+
+  it('con nivel 2 admite dos; una desventaja de nivel mayor que el de la técnica avisa', async () => {
+    abrirFicha('lock', 'tecnicas');
+    await esperarListo();
+    await waitFor(() => expect(opcionesDe('Creación de Técnicas!F22').length).toBeGreaterThan(3));
+    fireEvent.change(celda('Creación de Técnicas!F22'), { target: { value: 'Compleja' } });      // desventaja de nivel 2 en una técnica de nivel 1
+    await waitFor(() => expect(avisos().join(' ')).toContain('es una desventaja de nivel: 2 y la técnica es de nivel 1'));
+    fireEvent.change(celda('Creación de Técnicas!P12'), { target: { value: '2' } });
+    await waitFor(() => expect(avisos().filter((a) => /admite como máximo|desventaja de nivel/.test(a))).toEqual([]));
+  }, T);
+});
