@@ -1,0 +1,1086 @@
+{
+ "ki": {
+  "raiz": "Ki!Q10",
+  "nodos": [
+   {
+    "c": "Ki!Q10",
+    "n": "Uso del Ki",
+    "p": 40,
+    "cp": "Ki!P10",
+    "padre": null,
+    "nivel": 0,
+    "fila": 10
+   },
+   {
+    "c": "Ki!Q12",
+    "n": "Control del Ki",
+    "p": 30,
+    "cp": "Ki!P12",
+    "padre": "Ki!Q10",
+    "nivel": 1,
+    "fila": 12
+   },
+   {
+    "c": "Ki!Q13",
+    "n": "Detección del Ki",
+    "p": 20,
+    "cp": "Ki!P13",
+    "padre": "Ki!Q12",
+    "nivel": 2,
+    "fila": 13
+   },
+   {
+    "c": "Ki!Q14",
+    "n": "Erudición",
+    "p": 10,
+    "cp": "Ki!P14",
+    "padre": "Ki!Q13",
+    "nivel": 3,
+    "fila": 14
+   },
+   {
+    "c": "Ki!Q15",
+    "n": "Aura de combate",
+    "p": 40,
+    "cp": "Ki!P15",
+    "padre": "Ki!Q12",
+    "nivel": 2,
+    "fila": 15
+   },
+   {
+    "c": "Ki!Q16",
+    "n": "Dominio físico",
+    "p": 10,
+    "cp": "Ki!P16",
+    "padre": "Ki!Q12",
+    "nivel": 2,
+    "fila": 16
+   },
+   {
+    "c": "Ki!Q17",
+    "n": "Cambio físico",
+    "p": 30,
+    "cp": "Ki!P17",
+    "padre": "Ki!Q16",
+    "nivel": 3,
+    "fila": 17
+   },
+   {
+    "c": "Ki!Q18",
+    "n": "Cambio superior",
+    "p": 20,
+    "cp": "Ki!P18",
+    "padre": "Ki!Q17",
+    "nivel": 4,
+    "fila": 18
+   },
+   {
+    "c": "Ki!Q19",
+    "n": "Mult. de cuerpos",
+    "p": 30,
+    "cp": "Ki!P19",
+    "padre": "Ki!Q16",
+    "nivel": 3,
+    "fila": 19
+   },
+   {
+    "c": "Ki!Q20",
+    "n": "Mult. mayor",
+    "p": 30,
+    "cp": "Ki!P20",
+    "padre": "Ki!Q19",
+    "nivel": 4,
+    "fila": 20
+   },
+   {
+    "c": "Ki!Q21",
+    "n": "Mult. arcana",
+    "p": 40,
+    "cp": "Ki!P21",
+    "padre": "Ki!Q20",
+    "nivel": 5,
+    "fila": 21
+   },
+   {
+    "c": "Ki!Q22",
+    "n": "Magnitud",
+    "p": 30,
+    "cp": "Ki!P22",
+    "padre": "Ki!Q19",
+    "nivel": 4,
+    "fila": 22
+   },
+   {
+    "c": "Ki!Q23",
+    "n": "Mag. arcana",
+    "p": 40,
+    "cp": "Ki!P23",
+    "padre": "Ki!Q22",
+    "nivel": 5,
+    "fila": 23
+   },
+   {
+    "c": "Ki!Q24",
+    "n": "Control de la edad",
+    "p": 20,
+    "cp": "Ki!P24",
+    "padre": "Ki!Q16",
+    "nivel": 3,
+    "fila": 24
+   },
+   {
+    "c": "Ki!Q25",
+    "n": "Imitación de técnicas",
+    "p": 50,
+    "cp": "Ki!P25",
+    "padre": "Ki!Q12",
+    "nivel": 2,
+    "fila": 25
+   },
+   {
+    "c": "Ki!Q26",
+    "n": "Forzar técnicas",
+    "p": 20,
+    "cp": "Ki!P26",
+    "padre": "Ki!Q12",
+    "nivel": 2,
+    "fila": 26
+   },
+   {
+    "c": "Ki!Q27",
+    "n": "Eliminación de peso",
+    "p": 10,
+    "cp": "Ki!P27",
+    "padre": "Ki!Q10",
+    "nivel": 1,
+    "fila": 27
+   },
+   {
+    "c": "Ki!Q28",
+    "n": "Levitación",
+    "p": 20,
+    "cp": "Ki!P28",
+    "padre": "Ki!Q27",
+    "nivel": 2,
+    "fila": 28
+   },
+   {
+    "c": "Ki!Q29",
+    "n": "Movimiento de objetos",
+    "p": 10,
+    "cp": "Ki!P29",
+    "padre": "Ki!Q28",
+    "nivel": 3,
+    "fila": 29
+   },
+   {
+    "c": "Ki!Q30",
+    "n": "Mov. de masas",
+    "p": 20,
+    "cp": "Ki!P30",
+    "padre": "Ki!Q29",
+    "nivel": 4,
+    "fila": 30
+   },
+   {
+    "c": "Ki!Q31",
+    "n": "Vuelo",
+    "p": 20,
+    "cp": "Ki!P31",
+    "padre": "Ki!Q28",
+    "nivel": 3,
+    "fila": 31
+   },
+   {
+    "c": "Ki!Q32",
+    "n": "Extrusión de presencia",
+    "p": 10,
+    "cp": "Ki!P32",
+    "padre": "Ki!Q10",
+    "nivel": 1,
+    "fila": 32
+   },
+   {
+    "c": "Ki!Q33",
+    "n": "Armadura de energía",
+    "p": 10,
+    "cp": "Ki!P33",
+    "padre": "Ki!Q32",
+    "nivel": 2,
+    "fila": 33
+   },
+   {
+    "c": "Ki!Q34",
+    "n": "Armadura mayor",
+    "p": 10,
+    "cp": "Ki!P34",
+    "padre": "Ki!Q33",
+    "nivel": 3,
+    "fila": 34
+   },
+   {
+    "c": "Ki!Q35",
+    "n": "Arm. arcana",
+    "p": 10,
+    "cp": "Ki!P35",
+    "padre": "Ki!Q34",
+    "nivel": 4,
+    "fila": 35
+   },
+   {
+    "c": "Ki!Q36",
+    "n": "Extensión del aura al arma",
+    "p": 10,
+    "cp": "Ki!P36",
+    "padre": "Ki!Q32",
+    "nivel": 2,
+    "fila": 36
+   },
+   {
+    "c": "Ki!Q37",
+    "n": "Ataque elemental",
+    "p": 10,
+    "cp": "Ki!P37",
+    "padre": "Ki!Q36",
+    "nivel": 3,
+    "fila": 37
+   },
+   {
+    "c": "Ki!Q38",
+    "n": "Daño incrementado",
+    "p": 10,
+    "cp": "Ki!P38",
+    "padre": "Ki!Q36",
+    "nivel": 3,
+    "fila": 38
+   },
+   {
+    "c": "Ki!Q39",
+    "n": "Alcance incrementado",
+    "p": 10,
+    "cp": "Ki!P39",
+    "padre": "Ki!Q36",
+    "nivel": 3,
+    "fila": 39
+   },
+   {
+    "c": "Ki!Q40",
+    "n": "Velocidad incrementada",
+    "p": 10,
+    "cp": "Ki!P40",
+    "padre": "Ki!Q36",
+    "nivel": 3,
+    "fila": 40
+   },
+   {
+    "c": "Ki!Q41",
+    "n": "Destrucción por Ki",
+    "p": 20,
+    "cp": "Ki!P41",
+    "padre": "Ki!Q32",
+    "nivel": 2,
+    "fila": 41
+   },
+   {
+    "c": "Ki!Q42",
+    "n": "Absorción de energía",
+    "p": 30,
+    "cp": "Ki!P42",
+    "padre": "Ki!Q32",
+    "nivel": 2,
+    "fila": 42
+   },
+   {
+    "c": "Ki!Q43",
+    "n": "Escudo físico",
+    "p": 10,
+    "cp": "Ki!P43",
+    "padre": "Ki!Q32",
+    "nivel": 2,
+    "fila": 43
+   },
+   {
+    "c": "Ki!Q44",
+    "n": "Transmisión del Ki",
+    "p": 10,
+    "cp": "Ki!P44",
+    "padre": "Ki!Q10",
+    "nivel": 1,
+    "fila": 44
+   },
+   {
+    "c": "Ki!Q45",
+    "n": "Curación por Ki",
+    "p": 10,
+    "cp": "Ki!P45",
+    "padre": "Ki!Q44",
+    "nivel": 2,
+    "fila": 45
+   },
+   {
+    "c": "Ki!Q46",
+    "n": "Curación superior",
+    "p": 10,
+    "cp": "Ki!P46",
+    "padre": "Ki!Q45",
+    "nivel": 3,
+    "fila": 46
+   },
+   {
+    "c": "Ki!Q47",
+    "n": "Estabilizar",
+    "p": 10,
+    "cp": "Ki!P47",
+    "padre": "Ki!Q45",
+    "nivel": 3,
+    "fila": 47
+   },
+   {
+    "c": "Ki!Q48",
+    "n": "Sacrificio vital",
+    "p": 10,
+    "cp": "Ki!P48",
+    "padre": "Ki!Q44",
+    "nivel": 2,
+    "fila": 48
+   },
+   {
+    "c": "Ki!Q49",
+    "n": "Uso de la energía necesaria",
+    "p": 10,
+    "cp": "Ki!P49",
+    "padre": "Ki!Q10",
+    "nivel": 1,
+    "fila": 49
+   },
+   {
+    "c": "Ki!Q50",
+    "n": "Ocultación del Ki",
+    "p": 10,
+    "cp": "Ki!P50",
+    "padre": "Ki!Q49",
+    "nivel": 2,
+    "fila": 50
+   },
+   {
+    "c": "Ki!Q51",
+    "n": "Aura de ocultación",
+    "p": 10,
+    "cp": "Ki!P51",
+    "padre": "Ki!Q50",
+    "nivel": 3,
+    "fila": 51
+   },
+   {
+    "c": "Ki!Q52",
+    "n": "Falsa muerte",
+    "p": 10,
+    "cp": "Ki!P52",
+    "padre": "Ki!Q50",
+    "nivel": 3,
+    "fila": 52
+   },
+   {
+    "c": "Ki!Q53",
+    "n": "Eliminación de necesidades",
+    "p": 10,
+    "cp": "Ki!P53",
+    "padre": "Ki!Q49",
+    "nivel": 2,
+    "fila": 53
+   },
+   {
+    "c": "Ki!Q54",
+    "n": "Inmunidad elem. FUE",
+    "p": 20,
+    "cp": "Ki!P54",
+    "padre": "Ki!Q53",
+    "nivel": 3,
+    "fila": 54
+   },
+   {
+    "c": "Ki!Q55",
+    "n": "Inmunidad elem. FRI",
+    "p": 20,
+    "cp": "Ki!P55",
+    "padre": "Ki!Q53",
+    "nivel": 3,
+    "fila": 55
+   },
+   {
+    "c": "Ki!Q56",
+    "n": "Inmunidad elem. ELE",
+    "p": 20,
+    "cp": "Ki!P56",
+    "padre": "Ki!Q53",
+    "nivel": 3,
+    "fila": 56
+   },
+   {
+    "c": "Ki!Q57",
+    "n": "Eliminación de penalizadores",
+    "p": 20,
+    "cp": "Ki!P57",
+    "padre": "Ki!Q49",
+    "nivel": 2,
+    "fila": 57
+   },
+   {
+    "c": "Ki!Q58",
+    "n": "Recuperación",
+    "p": 20,
+    "cp": "Ki!P58",
+    "padre": "Ki!Q57",
+    "nivel": 3,
+    "fila": 58
+   },
+   {
+    "c": "Ki!Q59",
+    "n": "Restituir a otros",
+    "p": 10,
+    "cp": "Ki!P59",
+    "padre": "Ki!Q58",
+    "nivel": 4,
+    "fila": 59
+   },
+   {
+    "c": "Ki!Q60",
+    "n": "Aumento de características",
+    "p": 20,
+    "cp": "Ki!P60",
+    "padre": "Ki!Q49",
+    "nivel": 2,
+    "fila": 60
+   },
+   {
+    "c": "Ki!Q61",
+    "n": "Incremento superior",
+    "p": 20,
+    "cp": "Ki!P61",
+    "padre": "Ki!Q60",
+    "nivel": 3,
+    "fila": 61
+   },
+   {
+    "c": "Ki!Q62",
+    "n": "Técnicas de combate improvisadas",
+    "p": 50,
+    "cp": "Ki!P62",
+    "padre": "Ki!Q10",
+    "nivel": 1,
+    "fila": 62
+   },
+   {
+    "c": "Ki!Q63",
+    "n": "Inhumanidad",
+    "p": 30,
+    "cp": "Ki!P63",
+    "padre": "Ki!Q10",
+    "nivel": 1,
+    "fila": 63,
+    "innato": "Ki!B63"
+   },
+   {
+    "c": "Ki!Q64",
+    "n": "Zen",
+    "p": 50,
+    "cp": "Ki!P64",
+    "padre": "Ki!Q63",
+    "nivel": 2,
+    "fila": 64,
+    "innato": "Ki!B64"
+   }
+  ],
+  "aristas": [
+   {
+    "de": "Ki!Q10",
+    "a": "Ki!Q12",
+    "fuente": "Core p.103",
+    "core": "Core p.103"
+   },
+   {
+    "de": "Ki!Q12",
+    "a": "Ki!Q13",
+    "fuente": "hoja",
+    "core": "Core p.103"
+   },
+   {
+    "de": "Ki!Q13",
+    "a": "Ki!Q14",
+    "fuente": "hoja",
+    "core": "Core p.103"
+   },
+   {
+    "de": "Ki!Q12",
+    "a": "Ki!Q15",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!Q12",
+    "a": "Ki!Q16",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!Q16",
+    "a": "Ki!Q17",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!Q17",
+    "a": "Ki!Q18",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!Q16",
+    "a": "Ki!Q19",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!Q19",
+    "a": "Ki!Q20",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!Q20",
+    "a": "Ki!Q21",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!Q19",
+    "a": "Ki!Q22",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!Q22",
+    "a": "Ki!Q23",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!Q16",
+    "a": "Ki!Q24",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!Q12",
+    "a": "Ki!Q25",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!Q12",
+    "a": "Ki!Q26",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!Q10",
+    "a": "Ki!Q27",
+    "fuente": "Core p.103",
+    "core": "Core p.103"
+   },
+   {
+    "de": "Ki!Q27",
+    "a": "Ki!Q28",
+    "fuente": "hoja",
+    "core": "Core p.103"
+   },
+   {
+    "de": "Ki!Q28",
+    "a": "Ki!Q29",
+    "fuente": "hoja",
+    "core": "Core p.103"
+   },
+   {
+    "de": "Ki!Q29",
+    "a": "Ki!Q30",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!Q28",
+    "a": "Ki!Q31",
+    "fuente": "hoja",
+    "core": "Core p.104"
+   },
+   {
+    "de": "Ki!Q10",
+    "a": "Ki!Q32",
+    "fuente": "Core p.104",
+    "core": "Core p.104"
+   },
+   {
+    "de": "Ki!Q32",
+    "a": "Ki!Q33",
+    "fuente": "hoja",
+    "core": "Core p.104"
+   },
+   {
+    "de": "Ki!Q33",
+    "a": "Ki!Q34",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!Q34",
+    "a": "Ki!Q35",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!Q32",
+    "a": "Ki!Q36",
+    "fuente": "hoja",
+    "core": "Core p.104"
+   },
+   {
+    "de": "Ki!Q36",
+    "a": "Ki!Q37",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!Q36",
+    "a": "Ki!Q38",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!Q36",
+    "a": "Ki!Q39",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!Q36",
+    "a": "Ki!Q40",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!Q32",
+    "a": "Ki!Q41",
+    "fuente": "hoja",
+    "core": "Core p.104"
+   },
+   {
+    "de": "Ki!Q32",
+    "a": "Ki!Q42",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!Q32",
+    "a": "Ki!Q43",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!Q10",
+    "a": "Ki!Q44",
+    "fuente": "Core p.104",
+    "core": "Core p.104"
+   },
+   {
+    "de": "Ki!Q44",
+    "a": "Ki!Q45",
+    "fuente": "hoja",
+    "core": "Core p.104"
+   },
+   {
+    "de": "Ki!Q45",
+    "a": "Ki!Q46",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!Q45",
+    "a": "Ki!Q47",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!Q44",
+    "a": "Ki!Q48",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!Q10",
+    "a": "Ki!Q49",
+    "fuente": "Core p.104",
+    "core": "Core p.104"
+   },
+   {
+    "de": "Ki!Q49",
+    "a": "Ki!Q50",
+    "fuente": "hoja",
+    "core": "Core p.105"
+   },
+   {
+    "de": "Ki!Q50",
+    "a": "Ki!Q51",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!Q50",
+    "a": "Ki!Q52",
+    "fuente": "hoja",
+    "core": "Core p.105"
+   },
+   {
+    "de": "Ki!Q49",
+    "a": "Ki!Q53",
+    "fuente": "hoja",
+    "core": "Core p.105"
+   },
+   {
+    "de": "Ki!Q53",
+    "a": "Ki!Q54",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!Q53",
+    "a": "Ki!Q55",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!Q53",
+    "a": "Ki!Q56",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!Q49",
+    "a": "Ki!Q57",
+    "fuente": "hoja",
+    "core": "Core p.105"
+   },
+   {
+    "de": "Ki!Q57",
+    "a": "Ki!Q58",
+    "fuente": "hoja",
+    "core": "Core p.105"
+   },
+   {
+    "de": "Ki!Q58",
+    "a": "Ki!Q59",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!Q49",
+    "a": "Ki!Q60",
+    "fuente": "hoja",
+    "core": "Core p.105"
+   },
+   {
+    "de": "Ki!Q60",
+    "a": "Ki!Q61",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!Q10",
+    "a": "Ki!Q62",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!Q10",
+    "a": "Ki!Q63",
+    "fuente": "Core p.105",
+    "core": "Core p.105"
+   },
+   {
+    "de": "Ki!Q63",
+    "a": "Ki!Q64",
+    "fuente": "hoja",
+    "core": "Core p.105"
+   }
+  ]
+ },
+ "nemesis": {
+  "raiz": "Ki!I43",
+  "nodos": [
+   {
+    "c": "Ki!I43",
+    "n": "Uso del Némesis",
+    "p": 70,
+    "cp": "Ki!H43",
+    "padre": null,
+    "nivel": 0,
+    "fila": 43
+   },
+   {
+    "c": "Ki!I45",
+    "n": "Armadura de vacío",
+    "p": 20,
+    "cp": "Ki!H45",
+    "padre": "Ki!I43",
+    "nivel": 1,
+    "fila": 45
+   },
+   {
+    "c": "Ki!I46",
+    "n": "Noht",
+    "p": 30,
+    "cp": "Ki!H46",
+    "padre": "Ki!I45",
+    "nivel": 2,
+    "fila": 46
+   },
+   {
+    "c": "Ki!I47",
+    "n": "Anulación de Ki",
+    "p": 30,
+    "cp": "Ki!H47",
+    "padre": "Ki!I43",
+    "nivel": 1,
+    "fila": 47
+   },
+   {
+    "c": "Ki!I48",
+    "n": "Anulación de Ki mayor",
+    "p": 20,
+    "cp": "Ki!H48",
+    "padre": "Ki!I47",
+    "nivel": 2,
+    "fila": 48
+   },
+   {
+    "c": "Ki!I49",
+    "n": "Anulación de Magia",
+    "p": 30,
+    "cp": "Ki!H49",
+    "padre": "Ki!I43",
+    "nivel": 1,
+    "fila": 49
+   },
+   {
+    "c": "Ki!I50",
+    "n": "Anulación de Magia mayor",
+    "p": 20,
+    "cp": "Ki!H50",
+    "padre": "Ki!I49",
+    "nivel": 2,
+    "fila": 50
+   },
+   {
+    "c": "Ki!I51",
+    "n": "Anulación de Matrices",
+    "p": 30,
+    "cp": "Ki!H51",
+    "padre": "Ki!I43",
+    "nivel": 1,
+    "fila": 51
+   },
+   {
+    "c": "Ki!I52",
+    "n": "Anulación de Matrices mayor",
+    "p": 20,
+    "cp": "Ki!H52",
+    "padre": "Ki!I51",
+    "nivel": 2,
+    "fila": 52
+   },
+   {
+    "c": "Ki!I53",
+    "n": "Anulación de Lazos",
+    "p": 30,
+    "cp": "Ki!H53",
+    "padre": "Ki!I43",
+    "nivel": 1,
+    "fila": 53
+   },
+   {
+    "c": "Ki!I54",
+    "n": "Extrusión de Vacío",
+    "p": 30,
+    "cp": "Ki!H54",
+    "padre": "Ki!I43",
+    "nivel": 1,
+    "fila": 54
+   },
+   {
+    "c": "Ki!I55",
+    "n": "Forma de Vacío",
+    "p": 30,
+    "cp": "Ki!H55",
+    "padre": "Ki!I54",
+    "nivel": 2,
+    "fila": 55
+   },
+   {
+    "c": "Ki!I56",
+    "n": "Cuerpo de Vacío",
+    "p": 10,
+    "cp": "Ki!H56",
+    "padre": "Ki!I43",
+    "nivel": 1,
+    "fila": 56
+   },
+   {
+    "c": "Ki!I57",
+    "n": "Sin necesidades",
+    "p": 10,
+    "cp": "Ki!H57",
+    "padre": "Ki!I56",
+    "nivel": 2,
+    "fila": 57
+   },
+   {
+    "c": "Ki!I58",
+    "n": "Movimiento de Vacío",
+    "p": 20,
+    "cp": "Ki!H58",
+    "padre": "Ki!I56",
+    "nivel": 2,
+    "fila": 58
+   },
+   {
+    "c": "Ki!I59",
+    "n": "Esencia de Vacío",
+    "p": 20,
+    "cp": "Ki!H59",
+    "padre": "Ki!I56",
+    "nivel": 2,
+    "fila": 59
+   },
+   {
+    "c": "Ki!I60",
+    "n": "Uno con la nada",
+    "p": 40,
+    "cp": "Ki!H60",
+    "padre": "Ki!I59",
+    "nivel": 3,
+    "fila": 60
+   },
+   {
+    "c": "Ki!I61",
+    "n": "Aura de Vacío",
+    "p": 30,
+    "cp": "Ki!H61",
+    "padre": "Ki!I43",
+    "nivel": 1,
+    "fila": 61
+   },
+   {
+    "c": "Ki!I62",
+    "n": "Indetección",
+    "p": 10,
+    "cp": "Ki!H62",
+    "padre": "Ki!I43",
+    "nivel": 1,
+    "fila": 62
+   },
+   {
+    "c": "Ki!I63",
+    "n": "Inhumanidad",
+    "p": 20,
+    "cp": "Ki!H63",
+    "padre": "Ki!I43",
+    "nivel": 1,
+    "fila": 63,
+    "innato": "Ki!B63"
+   },
+   {
+    "c": "Ki!I64",
+    "n": "Zen",
+    "p": 40,
+    "cp": "Ki!H64",
+    "padre": "Ki!I63",
+    "nivel": 2,
+    "fila": 64,
+    "innato": "Ki!B64"
+   }
+  ],
+  "aristas": [
+   {
+    "de": "Ki!I43",
+    "a": "Ki!I45",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!I45",
+    "a": "Ki!I46",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!I43",
+    "a": "Ki!I47",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!I47",
+    "a": "Ki!I48",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!I43",
+    "a": "Ki!I49",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!I49",
+    "a": "Ki!I50",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!I43",
+    "a": "Ki!I51",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!I51",
+    "a": "Ki!I52",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!I43",
+    "a": "Ki!I53",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!I43",
+    "a": "Ki!I54",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!I54",
+    "a": "Ki!I55",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!I43",
+    "a": "Ki!I56",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!I56",
+    "a": "Ki!I57",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!I56",
+    "a": "Ki!I58",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!I56",
+    "a": "Ki!I59",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!I59",
+    "a": "Ki!I60",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!I43",
+    "a": "Ki!I61",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!I43",
+    "a": "Ki!I62",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!I43",
+    "a": "Ki!I63",
+    "fuente": "hoja"
+   },
+   {
+    "de": "Ki!I63",
+    "a": "Ki!I64",
+    "fuente": "hoja"
+   }
+  ]
+ },
+ "notas": [
+  "No están en el Core (solo la hoja): Aura de combate, Dominio físico, Cambio físico, Cambio superior, Mult. de cuerpos, Mult. mayor, Mult. arcana, Magnitud, Mag. arcana, Control de la edad, Imitación de técnicas, Forzar técnicas, Mov. de masas, Armadura mayor, Arm. arcana, Ataque elemental, Daño incrementado, Alcance incrementado, Velocidad incrementada, Absorción de energía, Escudo físico, Curación superior, Estabilizar, Sacrificio vital, Aura de ocultación, Inmunidad elem. FUE, Inmunidad elem. FRI, Inmunidad elem. ELE, Restituir a otros, Incremento superior, Técnicas de combate improvisadas.",
+  "El árbol del Némesis no está en el Core: todas sus aristas son de la hoja."
+ ]
+}

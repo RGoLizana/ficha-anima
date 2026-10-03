@@ -1,22 +1,81 @@
 import type { Ficha } from '../model/ficha';
 import { Avisos, Campo, Compra, Panel, txt } from './campos';
-import { formulaLista } from '../engine';
+import arboles from '../data/ki-arbol.json';
 
 // Hoja Ki del Excel
 const k = (col: string, fila: number) => `Ki!${col}${fila}`;
 const rango = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
-const GLIFO = /^[\s│├└─]*$/; // trazos del árbol de habilidades
 
 const CARACT = [12, 14, 16, 18, 20, 22]; // AGI, CON, DES, FUE, POD, VOL
 const ELEMENTOS = [11, 13, 15, 17, 19];  // Madera, Metal, Aire, Agua, Fuego
 
-/** Primer texto de la fila (entre las columnas dadas) que no sea un trazo del árbol, con su profundidad. */
-function nombreDe(fila: number, cols: string[]): { nombre: string; nivel: number } | null {
-  for (let i = 0; i < cols.length; i++) {
-    const t = txt(k(cols[i], fila));
-    if (t && !GLIFO.test(t)) return { nombre: t, nivel: i };
+// Árboles de habilidades (del Ki y del Némesis) tal como los dibuja la hoja con '├ └ │' (tools/export_ki.py).
+// Cada habilidad pide su padre; los límites solo avisan: todo se puede marcar.
+export type NodoKi = { c: string; n: string; p: number; cp: string; padre: string | null; nivel: number; fila: number; innato?: string };
+export type ArbolKi = { raiz: string; nodos: NodoKi[] };
+export const ARBOL_KI: ArbolKi = arboles.ki;
+export const ARBOL_NEMESIS: ArbolKi = arboles.nemesis;
+export type EstadoKi = 'comprada' | 'innata' | 'disponible' | 'bloqueada';
+
+/** Estado de cada habilidad y avisos de orden. «innatas»: las que se tienen sin comprarlas (la hoja pone "-" en su coste). */
+export function estadoKi(a: ArbolKi, compradas: Set<string>, innatas = new Set<string>()) {
+  const por = new Map(a.nodos.map((n) => [n.c, n]));
+  const tiene = (c: string) => compradas.has(c) || innatas.has(c);
+  const estado = new Map<string, EstadoKi>();
+  const motivo = new Map<string, string>();
+  const avisos: string[] = [];
+  const fuera = new Set<string>();
+  for (const n of a.nodos) {
+    const padre = n.padre ? por.get(n.padre)! : null;
+    const libre = !padre || tiene(padre.c);
+    if (compradas.has(n.c)) {
+      estado.set(n.c, 'comprada');
+      if (!libre) { fuera.add(n.c); avisos.push(`Te estás saltando el orden del árbol: para tomar ${n.n} antes necesitas ${padre!.n}.`); }
+    } else if (innatas.has(n.c)) estado.set(n.c, 'innata');
+    else {
+      estado.set(n.c, libre ? 'disponible' : 'bloqueada');
+      if (!libre) motivo.set(n.c, `Requiere ${padre!.n}`);
+    }
   }
-  return null;
+  return { estado, motivo, avisos, fuera, tiene };
+}
+
+const marcada = (f: Ficha, c: string) => f.entradas[c] !== undefined && f.entradas[c] !== '';
+
+function Arbol({ f, a, nombre }: { f: Ficha; a: ArbolKi; nombre: string }) {
+  const compradas = new Set(a.nodos.filter((n) => marcada(f, n.c)).map((n) => n.c));
+  const innatas = new Set(a.nodos.filter((n) => !compradas.has(n.c) && (txt(n.cp) === '-' || (n.innato && Number(txt(n.innato)) > 0))).map((n) => n.c));
+  const { estado, motivo, avisos, fuera, tiene } = estadoKi(a, compradas, innatas);
+  const hijos = new Map<string, NodoKi[]>();
+  for (const n of a.nodos) if (n.padre) hijos.set(n.padre, [...(hijos.get(n.padre) ?? []), n]);
+  const rama = (n: NodoKi) => {
+    const est = estado.get(n.c)!;
+    const hs = hijos.get(n.c);
+    return (
+      <li key={n.c} class={n.padre && tiene(n.c) && tiene(n.padre) ? 'ki-on' : undefined}>
+        <div class={`ki-nodo ki-${est}${n.padre ? '' : ' ki-raiz'}${fuera.has(n.c) ? ' ki-fuera' : ''}`}>
+          <Compra f={f} clave={n.c} label={<>
+            <span class="ki-nombre">{n.n}</span>
+            <span class="ki-pie">
+              <span>{compradas.has(n.c) ? Number(f.entradas[n.c]) || n.p : n.p} CM</span>
+              {est === 'innata' && <span>Innata</span>}
+              {motivo.has(n.c) && <span class="ki-estado">{motivo.get(n.c)}</span>}
+              {fuera.has(n.c) && <span class="ki-estado">Fuera de orden</span>}
+            </span>
+          </>} />
+        </div>
+        {hs && <ul class="ki-hijos">{hs.map(rama)}</ul>}
+      </li>
+    );
+  };
+  return (
+    <>
+      {avisos.length > 0 && <div class="stack-sm">{avisos.map((t) => <p key={t} class="aviso" role="status">{t}</p>)}</div>}
+      <div class="ki-scroll" role="region" aria-label={`Árbol de ${nombre}`} tabIndex={0}>
+        <ul class="ki-arbol">{rama(a.nodos[0])}</ul>
+      </div>
+    </>
+  );
 }
 
 export function Ki({ f }: { f: Ficha }) {
@@ -56,18 +115,9 @@ export function Ki({ f }: { f: Ficha }) {
       </Panel>
 
       <Panel title="Habilidades del Ki" extra={<span class="muted small">Marca las que has comprado (coste en CM)</span>}>
-        <div class="habs">
-          {rango(10, 64).map((r) => {
-            const n = nombreDe(r, ['K', 'L', 'M', 'N']);
-            if (!n || !formulaLista(k('Q', r))) return null;
-            return (
-              <div class="hab" key={r} style={{ paddingLeft: `${n.nivel * 18}px` }}>
-                <Compra f={f} clave={k('Q', r)} label={n.nombre} />
-                <span class="muted small">{txt(k('P', r)) && txt(k('P', r)) !== '-' ? `${txt(k('P', r))} CM` : ''}</span>
-              </div>
-            );
-          })}
-        </div>
+        <p class="muted small">Empieza por Uso del Ki y sigue las líneas: cada habilidad pide la de su izquierda. Las bloqueadas
+          se pueden marcar igualmente, con aviso.</p>
+        <Arbol f={f} a={ARBOL_KI} nombre="habilidades del Ki" />
         <div class="grid-fields">
           <Campo f={f} clave={k('E', 35)} label={`${txt(k('C', 35)) || 'Detección del Ki'}: especial`} tipo="numero" />
           <Campo f={f} clave={k('E', 36)} label={`${txt(k('C', 36)) || 'Ocultación del Ki'}: especial`} tipo="numero" />
@@ -76,18 +126,7 @@ export function Ki({ f }: { f: Ficha }) {
       </Panel>
 
       <Panel title="Némesis, Vacío y Anulación">
-        <div class="habs">
-          {rango(43, 64).map((r) => {
-            const n = nombreDe(r, ['C', 'D', 'E', 'F', 'G']);
-            if (!n || !formulaLista(k('I', r))) return null;
-            return (
-              <div class="hab" key={r} style={{ paddingLeft: `${n.nivel * 18}px` }}>
-                <Compra f={f} clave={k('I', r)} label={n.nombre} />
-                <span class="muted small">{txt(k('H', r)) ? `${txt(k('H', r))} CM` : ''}</span>
-              </div>
-            );
-          })}
-        </div>
+        <Arbol f={f} a={ARBOL_NEMESIS} nombre="habilidades del Némesis" />
       </Panel>
 
       <div class="cols-2">

@@ -393,3 +393,32 @@ details.juego-panel[open] > summary { border-bottom: 1px solid var(--line); }
 .mm-fuera .check { border-color: var(--danger); }
 .mm-estado { color: var(--danger); }
 .mm-alto { opacity: .35; }
+
+/* Árboles de habilidades del Ki y del Némesis: de izquierda a derecha, cada hijo colgando de su padre (líneas con CSS) */
+.ki-scroll { contain: inline-size; overflow-x: auto; margin: 12px 0; padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); }
+.ki-arbol, .ki-hijos { list-style: none; margin: 0; padding: 0; }
+.ki-arbol { width: max-content; }
+.ki-arbol li { display: flex; align-items: flex-start; position: relative; }
+.ki-hijos { position: relative; padding-left: 16px; }
+.ki-hijos::before { content: ''; position: absolute; left: 0; top: 22px; width: 16px; border-top: 2px solid var(--line-2); }
+.ki-hijos > li { padding: 0 0 6px 16px; }
+.ki-hijos > li::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; border-left: 2px solid var(--line-2); }
+.ki-hijos > li:first-child::before { top: 22px; }
+.ki-hijos > li:last-child::before { bottom: auto; height: 22px; }
+.ki-hijos > li:only-child::before { display: none; }
+.ki-hijos > li::after { content: ''; position: absolute; left: 0; top: 22px; width: 16px; border-top: 2px solid var(--line-2); }
+.ki-hijos > li.ki-on::after { border-color: var(--gold); }
+.ki-nodo { width: 168px; flex-shrink: 0; }
+.ki-nodo > .check, .ki-nodo > .field { box-sizing: border-box; width: 100%; min-height: 44px; padding: 5px 8px; border: 1px solid var(--line-2); border-radius: 8px;
+  background: var(--surface-2); font-size: 13px; line-height: 1.2; }
+.ki-nodo > .check { display: flex; gap: 8px; }
+.ki-nodo > .check > span { display: flex; flex-direction: column; min-width: 0; }
+.ki-nodo > .field select { min-height: 32px; font-size: 13px; }
+.ki-nombre { font-weight: 600; color: var(--text); overflow-wrap: anywhere; }
+.ki-pie { display: flex; flex-wrap: wrap; gap: 0 6px; color: var(--muted); font-size: 11px; font-weight: 400; }
+.ki-nodo.ki-raiz > * { border-style: dashed; border-color: var(--gold); }
+.ki-nodo.ki-disponible > * { border-color: var(--gold); }
+.ki-nodo.ki-comprada > *, .ki-nodo.ki-innata > * { border: 2px solid var(--gold); background: #3a3020; }
+.ki-nodo.ki-bloqueada > * { opacity: .65; }
+.ki-nodo.ki-fuera > * { border-color: var(--danger); }
+.ki-estado { color: var(--danger); }
