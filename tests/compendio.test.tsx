@@ -46,8 +46,88 @@ describe('Compendio', () => {
   it('muestra los 640 conjuros y 125 poderes en sus pestañas', async () => {
     await abrirCompendio();
     const tabs = [...document.querySelectorAll('[role=tab]')].map((t) => t.textContent!.replace(/\s+/g, ' ').trim());
-    expect(tabs).toEqual(['Magia 640', 'Mentalismo 125', '★ Favoritos 0']);
+    expect(tabs).toEqual(['Magia 640', 'Mentalismo 125', 'Convocatoria 164', '★ Favoritos 0']);
     expect(contador()).toBe('640');
+  }, T);
+
+  it('las flechas recorren las 4 pestañas en círculo', async () => {
+    await abrirCompendio();
+    const lista = document.querySelector('[role=tablist]')!;
+    const sel = () => document.querySelector('[role=tab][aria-selected=true]')!.id;
+    fireEvent.keyDown(lista, { key: 'ArrowRight' }); fireEvent.keyDown(lista, { key: 'ArrowRight' });
+    expect(sel()).toBe('tab-conv');
+    fireEvent.keyDown(lista, { key: 'ArrowRight' });
+    expect(sel()).toBe('tab-fav');
+    fireEvent.keyDown(lista, { key: 'ArrowRight' });
+    expect(sel()).toBe('tab-magia');
+    fireEvent.keyDown(lista, { key: 'ArrowLeft' });
+    expect(sel()).toBe('tab-fav');
+  }, T);
+
+  it('convocatoria: Arcanos mayores e invertidos, detalle con dificultad y zeón del Excel', async () => {
+    await abrirCompendio();
+    fireEvent.click(document.getElementById('tab-conv')!);
+    expect(contador()).toBe('164');
+    fireEvent.click(boton(/^Arcanos mayores/, document.querySelector('.explorador')!));
+    expect(contador()).toBe('22');
+    expect(document.querySelector('.ctx h2')!.textContent).toBe('Arcanos mayores');
+    fireEvent.click(boton(/^Arcanos invertidos/, document.querySelector('.explorador')!));
+    expect(contador()).toBe('22');
+    fireEvent.input(document.getElementById('q')!, { target: { value: 'torre' } });
+    fireEvent.click(document.querySelector('.fila-main')!);
+    const d = document.getElementById('detalle')!;
+    expect(d.querySelector('h2')!.textContent).toBe('La Torre invertida');
+    expect([...d.querySelectorAll('.meta .nivel dd')].map((x) => x.textContent)).toEqual(['340', '750']);
+    expect(d.querySelector('.conv-dl')!.textContent).toContain('Pacto');
+  }, T);
+
+  it('convocatoria: filtros de acción y dificultad; las Grandes Bestias sin resumir lo dicen', async () => {
+    await abrirCompendio();
+    fireEvent.click(document.getElementById('tab-conv')!);
+    fireEvent.click(boton(/^Arcanos mayores/, document.querySelector('.explorador')!));
+    fireEvent.click(document.querySelector('input[name=accion][value=Pasiva]')!);
+    expect(filas().every((f) => /Pasiva/.test(f.textContent!))).toBe(true);
+    expect(Number(contador())).toBeLessThan(22);
+    fireEvent.click(document.querySelector('input[name=accion][value=""]')!);
+    fireEvent.input(document.querySelector('[aria-label="Dificultad hasta"]')!, { target: { value: '200' } });
+    expect(filas().every((f) => Number(f.querySelector('.nv b')!.textContent) <= 200)).toBe(true);
+    fireEvent.click(boton(/^Grandes bestias/, document.querySelector('.explorador')!));
+    fireEvent.input(document.querySelector('[aria-label="Dificultad hasta"]')!, { target: { value: '' } });
+    fireEvent.input(document.getElementById('q')!, { target: { value: 'Hermod' } });
+    fireEvent.click(document.querySelector('.fila-main')!);
+    expect(document.querySelector('#detalle .nota')!.textContent).toContain('sin resumir');
+  }, T);
+
+  it('convocatoria: reglas, Encarnación/Manifestación y costes en PD como tablas', async () => {
+    await abrirCompendio();
+    fireEvent.click(document.getElementById('tab-conv')!);
+    fireEvent.click(boton('Habilidades de convocatoria', document.querySelector('.explorador')!));
+    const r = () => document.querySelector('.ctx.reglas')!;
+    for (const t of ['Convocar', 'Dominar', 'Atar', 'Desconvocar', 'Gnosis', 'Elementalismo', 'Invocador', 'Fracaso']) expect(r().textContent).toContain(t);
+    expect(document.querySelector('.lista')).toBeNull();                         // las reglas sustituyen a la lista
+    expect(r().querySelectorAll('table')[0].querySelectorAll('tbody tr')).toHaveLength(16);
+    fireEvent.click(boton('Encarnación y manifestación', document.querySelector('.explorador')!));
+    expect([...r().querySelectorAll('tbody th')].map((x) => x.textContent)).toEqual(['Interacción con el mundo', 'Manifestación', 'Encarnación']);
+    fireEvent.click(boton('Costes en PD', document.querySelector('.explorador')!));
+    expect(r().querySelectorAll('tbody tr')).toHaveLength(22);
+    expect(r().textContent).toContain('Fuente: Excel');
+  }, T);
+
+  it('convocatoria: favoritos y comparar funcionan con invocaciones', async () => {
+    await abrirCompendio();
+    fireEvent.click(document.getElementById('tab-conv')!);
+    fireEvent.click(boton(/^Arcanos mayores/, document.querySelector('.explorador')!));
+    fireEvent.click(document.querySelectorAll('.fila .ico.fav')[0]);
+    fireEvent.click(document.querySelectorAll('.fila .ico.cmp')[0]);
+    fireEvent.click(document.querySelectorAll('.fila .ico.cmp')[1]);
+    fireEvent.click(boton('Comparar', document.querySelector('.bandeja')!));
+    const dlg = document.querySelector('[role=dialog]')!;
+    expect(dlg.querySelectorAll('thead th')).toHaveLength(2);
+    expect(dlg.textContent).toContain('Pacto');
+    expect(dlg.querySelector('.mejor')).toBeTruthy();
+    fireEvent.keyDown(window, { key: 'Escape' });
+    fireEvent.click(document.getElementById('tab-fav')!);
+    expect(document.querySelector('.fav-sec.conv')!.querySelectorAll('.fila')).toHaveLength(1);
   }, T);
 
   it('elegir una vía muestra su contexto (mayor, opuesta, subvías) y sus 40 conjuros', async () => {

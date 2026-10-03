@@ -52,11 +52,12 @@ describe('Próximamente', () => {
     expect(document.querySelector('.juego')!.textContent).toContain('Próximamente');
   }, T);
 
-  it('el compendio marca convocatoria e invocaciones sin añadir una pestaña falsa', async () => {
+  it('el compendio ya tiene convocatoria como pestaña real (sin marca de Próximamente)', async () => {
     render(<Compendio />);
     await waitFor(() => expect(document.querySelector('.tabs')).toBeTruthy(), { timeout: 20_000 });
-    expect(document.querySelector('.tab-pronto')!.textContent).toContain('Convocatoria');
-    expect(document.querySelector('.tab-pronto .proximamente')).toBeTruthy();
-    expect(document.querySelectorAll('[role=tab]')).toHaveLength(3);
+    expect(document.querySelector('.tab-pronto')).toBeNull();
+    expect(document.querySelector('.tabs .proximamente')).toBeNull();
+    expect(document.querySelectorAll('[role=tab]')).toHaveLength(4);
+    expect(document.getElementById('tab-conv')!.textContent).toContain('Convocatoria');
   }, T);
 });

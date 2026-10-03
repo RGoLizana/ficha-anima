@@ -1,0 +1,3150 @@
+{
+ "arcanos": {
+  "fuente": "Excel Tablas!AB1066:AD1109 (nombre, dificultad, zeón); Core Exxet, cap. 12 «La Convocatoria», p. 200-209 (PDF 202-211) (resto)",
+  "lista": [
+   {
+    "n": "El Loco",
+    "g": "Arcanos mayores",
+    "num": "0",
+    "dif": 120,
+    "zeon": 100,
+    "a": "Activa",
+    "ha": "NA",
+    "hd": "NA",
+    "dur": "1 hora por cada 10 que supere la dificultad",
+    "e": "Anula todo bonificador o penalizador (rituales, efectos sobrenaturales) a las invocaciones posteriores del invocador: solo cuenta su habilidad.",
+    "pacto": "Iniciar y cumplir un pacto con otro Arcano.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 200-205"
+   },
+   {
+    "n": "El Hierofante",
+    "g": "Arcanos mayores",
+    "num": "I",
+    "dif": 130,
+    "zeon": 100,
+    "a": "Pasiva (variable)",
+    "ha": "120",
+    "hd": "120",
+    "dur": "Instantáneo; el conjuro, si es mantenido, dura 1 asalto por cada 10 que supere la dificultad",
+    "e": "Lanza cualquier conjuro de libre acceso de nivel 50 o menos, en su grado base y sin añadidos. Si el conjuro es activo, espera a la acción del invocador.",
+    "pacto": "Alcanzar la maestría en una habilidad.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 200-205"
+   },
+   {
+    "n": "La Suma Sacerdotisa",
+    "g": "Arcanos mayores",
+    "num": "II",
+    "dif": 140,
+    "zeon": 150,
+    "a": "Pasiva",
+    "ha": "NA",
+    "hd": "160",
+    "dur": "1 asalto por cada 10 que supere la dificultad",
+    "e": "Escudo de luz que defiende con la habilidad de la Sacerdotisa y resiste 800 puntos de daño, +100 por cada 10 sobre la dificultad.",
+    "pacto": "Resolver sin ayuda un acertijo que ella plantea.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 200-205"
+   },
+   {
+    "n": "La Emperatriz",
+    "g": "Arcanos mayores",
+    "num": "III",
+    "dif": 150,
+    "zeon": 200,
+    "a": "Pasiva",
+    "ha": "NA",
+    "hd": "NA",
+    "dur": "1 asalto por cada 10 que supere la dificultad",
+    "e": "+20 a todas las Resistencias del invocador o de quien designe, +10 más por cada 10 sobre la dificultad.",
+    "pacto": "Proteger de por vida a una persona débil y cercana que ella elige.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 200-205"
+   },
+   {
+    "n": "El Emperador",
+    "g": "Arcanos mayores",
+    "num": "IV",
+    "dif": 160,
+    "zeon": 200,
+    "a": "Activa",
+    "ha": "120",
+    "hd": "NA",
+    "dur": "Instantáneo",
+    "e": "Un guerrero ataca con daño base 60 en Filo, Contundente o Penetrante; aparece uno más por cada 10 sobre la dificultad.",
+    "pacto": "Convertirse en un líder al que siga por voluntad propia un grupo numeroso.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 200-205"
+   },
+   {
+    "n": "El Sumo Sacerdote",
+    "g": "Arcanos mayores",
+    "num": "V",
+    "dif": 170,
+    "zeon": 250,
+    "a": "Activa",
+    "ha": "160",
+    "hd": "NA",
+    "dur": "1 minuto por cada 10 que supere la dificultad",
+    "e": "Descarga de energía (como conjuro de Ataque) con daño base 100, doble contra seres de oscuridad o malignos; puede esperar junto al invocador antes de atacar.",
+    "pacto": "Expiar o recibir el perdón por todos sus pecados.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 200-205"
+   },
+   {
+    "n": "Los Enamorados",
+    "g": "Arcanos mayores",
+    "num": "VI",
+    "dif": 180,
+    "zeon": 250,
+    "a": "Pasiva",
+    "ha": "NA",
+    "hd": "NA",
+    "dur": "1 asalto por cada 10 que supere la dificultad",
+    "e": "Quien declare un ataque contra el invocador debe superar una RM o RP contra 140 o no puede atacarle (efecto automático).",
+    "pacto": "Encontrar a alguien con quien compartir la vida y amarle por encima de todo.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 200-205"
+   },
+   {
+    "n": "El Carro",
+    "g": "Arcanos mayores",
+    "num": "VII",
+    "dif": 190,
+    "zeon": 300,
+    "a": "Pasiva",
+    "ha": "NA",
+    "hd": "200",
+    "dur": "1 asalto por cada 10 que supere la dificultad",
+    "e": "Usa su defensa como esquiva del invocador y nunca sufre penalizadores por el área de los ataques.",
+    "pacto": "Viajar a un lugar muy lejano que nunca haya visitado.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 200-205"
+   },
+   {
+    "n": "La Fuerza",
+    "g": "Arcanos mayores",
+    "num": "VIII",
+    "dif": 200,
+    "zeon": 350,
+    "a": "Activa",
+    "ha": "200",
+    "hd": "NA",
+    "dur": "Instantáneo",
+    "e": "Ataque físico en Energía con daño base 100, +10 por cada 10 sobre la dificultad.",
+    "pacto": "Vencer con sus propios medios a la entidad que trae (normalmente de nivel 6 o menos).",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 200-205"
+   },
+   {
+    "n": "El Ermitaño",
+    "g": "Arcanos mayores",
+    "num": "IX",
+    "dif": 220,
+    "zeon": 400,
+    "a": "Pasiva",
+    "ha": "NA",
+    "hd": "NA",
+    "dur": "1 asalto por cada 10 que supere la dificultad",
+    "e": "El invocador se defiende como un ser con acumulación: 1.000 PV adicionales con TA 6, +100 por cada 10 sobre la dificultad; renuncia a sus otras defensas.",
+    "pacto": "Resolver de forma pacífica un conflicto concreto.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 200-205"
+   },
+   {
+    "n": "La Rueda",
+    "g": "Arcanos mayores",
+    "num": "X",
+    "dif": 240,
+    "zeon": 450,
+    "a": "Pasiva (variable)",
+    "ha": "Variable",
+    "hd": "Variable",
+    "dur": "Variable",
+    "e": "Invoca otro Arcano al azar (Tabla 67 del Core) y le aplica el margen obtenido sobre la dificultad de La Rueda.",
+    "pacto": "La Rueda acepta o rechaza el pacto al azar.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 200-205"
+   },
+   {
+    "n": "La Justicia",
+    "g": "Arcanos mayores",
+    "num": "XI",
+    "dif": 260,
+    "zeon": 500,
+    "a": "Pasiva",
+    "ha": "Variable",
+    "hd": "240",
+    "dur": "Instantáneo",
+    "e": "Contraataca con su defensa (escudo mágico) y devuelve un ataque del asalto con su habilidad y daño originales; uno más por cada 10 sobre la dificultad. Si no lo para, el invocador no suma defensa.",
+    "pacto": "Juzgar una situación difícil e impedir una injusticia.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 200-205"
+   },
+   {
+    "n": "El Colgado",
+    "g": "Arcanos mayores",
+    "num": "XII",
+    "dif": 280,
+    "zeon": 550,
+    "a": "Activa",
+    "ha": "240+",
+    "hd": "NA",
+    "dur": "Instantáneo",
+    "e": "Descarga de energía (como conjuro de Ataque) con daño base igual a 4 veces los PV que sacrifica el invocador; +5 a la HA por cada 10 sobre la dificultad.",
+    "pacto": "Arriesgar de verdad la vida de forma heroica.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 200-205"
+   },
+   {
+    "n": "La Muerte",
+    "g": "Arcanos mayores",
+    "num": "XIII",
+    "dif": 300,
+    "zeon": 600,
+    "a": "Activa",
+    "ha": "NA",
+    "hd": "NA",
+    "dur": "Instantáneo",
+    "e": "Cura por completo al invocador o a quien designe: regenera todo daño (incluso miembros) y anula penalizadores y efectos sobrenaturales perjudiciales.",
+    "pacto": "Superar por sí mismo el estado entre la vida y la muerte.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 200-205"
+   },
+   {
+    "n": "La Templanza",
+    "g": "Arcanos mayores",
+    "num": "XIV",
+    "dif": 320,
+    "zeon": 650,
+    "a": "Activa",
+    "ha": "NA",
+    "hd": "NA",
+    "dur": "1 día por cada 10 que supere la dificultad",
+    "e": "Suma 100 al margen sobre la dificultad de cualquier otra invocación, incluidos los Arcanos invertidos.",
+    "pacto": "Llegar a nivel 6-8 (subiendo al menos uno desde que se propone el pacto).",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 200-205"
+   },
+   {
+    "n": "El Diablo",
+    "g": "Arcanos mayores",
+    "num": "XV",
+    "dif": 340,
+    "zeon": 700,
+    "a": "Activa",
+    "ha": "300",
+    "hd": "300",
+    "dur": "5 asaltos por cada 10 que supere la dificultad",
+    "e": "El invocador ataca y defiende con 300 (parada sobrenatural o esquiva); el ataque tiene daño base 80 en Filo, Contundente o Penetrante. Los contraataques le alcanzan a él.",
+    "pacto": "Impedir que cierto invocador selle un pacto con un Arcano invertido.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 200-205"
+   },
+   {
+    "n": "La Torre",
+    "g": "Arcanos mayores",
+    "num": "XVI",
+    "dif": 360,
+    "zeon": 750,
+    "a": "Activa",
+    "ha": "320",
+    "hd": "NA",
+    "dur": "1 día por cada 10 que supere la dificultad",
+    "e": "Ataque como conjuro Anímico; si daña, RM contra 160 o se pierden temporalmente todas las capacidades sobrenaturales, mágicas, psíquicas y de Ki.",
+    "pacto": "Matar al actual poseedor de la invocación (solo hay uno a la vez).",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 200-205"
+   },
+   {
+    "n": "La Estrella",
+    "g": "Arcanos mayores",
+    "num": "XVII",
+    "dif": 380,
+    "zeon": 800,
+    "a": "Pasiva",
+    "ha": "NA",
+    "hd": "350+",
+    "dur": "5 asaltos por cada 10 que supere la dificultad",
+    "e": "Barrera indestructible (escudo mágico) con defensa 350, +10 por cada 10 sobre la dificultad.",
+    "pacto": "Erigir un símbolo de esperanza para un pueblo o etnia.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 200-205"
+   },
+   {
+    "n": "La Luna",
+    "g": "Arcanos mayores",
+    "num": "XVIII",
+    "dif": 400,
+    "zeon": 850,
+    "a": "Activa",
+    "ha": "350",
+    "hd": "NA",
+    "dur": "1 asalto por cada 10 que supere la dificultad",
+    "e": "Quien esté a 100 m y falle una RM contra 160 (Anímico) queda a merced del invocador, que puede cambiar su estado o transformarlo, sin matarlo.",
+    "pacto": "Proponerle un enigma que no resuelva o vencerla en ingenio.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 200-205"
+   },
+   {
+    "n": "El Sol",
+    "g": "Arcanos mayores",
+    "num": "XIX",
+    "dif": 420,
+    "zeon": 900,
+    "a": "Activa",
+    "ha": "300",
+    "hd": "NA",
+    "dur": "Instantáneo",
+    "e": "Descarga de calor contra uno o varios blancos en 100 m, daño base 300 +10 por cada 10 sobre la dificultad; permite elegir blancos.",
+    "pacto": "Sobrevivir a su ataque.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 200-205"
+   },
+   {
+    "n": "El Juicio",
+    "g": "Arcanos mayores",
+    "num": "XX",
+    "dif": 440,
+    "zeon": 950,
+    "a": "Activa",
+    "ha": "NA",
+    "hd": "NA",
+    "dur": "Instantáneo",
+    "e": "Devuelve todo lo que hay a 1 km a como estaba hasta 1 minuto antes (+1 minuto por cada 10 sobre la dificultad); no deshace actos de seres con Gnosis superior a 40.",
+    "pacto": "Superar su juicio sobre su vida; si falla, RM contra 160 o desaparece.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 200-205"
+   },
+   {
+    "n": "El Mundo",
+    "g": "Arcanos mayores",
+    "num": "XXI",
+    "dif": 460,
+    "zeon": 1000,
+    "a": "Activa",
+    "ha": "NA",
+    "hd": "NA",
+    "dur": "1 minuto por cada 10 que supere la dificultad",
+    "e": "Inmunidad total a daño y efectos perjudiciales y éxito automático en controles enfrentados que no sean de conocimiento; no afecta a seres con Gnosis superior a 40.",
+    "pacto": "Haber logrado todos los objetivos que se marcó en la vida.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 200-205"
+   },
+   {
+    "n": "El Loco invertido",
+    "g": "Arcanos invertidos",
+    "num": "0",
+    "dif": 120,
+    "zeon": 100,
+    "a": "Activa",
+    "ha": "NA",
+    "hd": "NA",
+    "dur": "1 minuto por cada 10 que supere la dificultad",
+    "e": "Las invocaciones realizadas en su presencia sufren −50 a la habilidad final.",
+    "pacto": "Pedir un pacto a un Arcano y fracasar al sellarlo.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 205-209"
+   },
+   {
+    "n": "El Hierofante invertido",
+    "g": "Arcanos invertidos",
+    "num": "I",
+    "dif": 130,
+    "zeon": 100,
+    "a": "Activa",
+    "ha": "140",
+    "hd": "NA",
+    "dur": "1 asalto por cada 10 que supere la dificultad",
+    "e": "Descarga de energía oscura (como conjuro de Ataque) con daño base 100; puede esperar junto al invocador mientras dure.",
+    "pacto": "Convocar una criatura y dejarla libre sin controlarla.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 205-209"
+   },
+   {
+    "n": "La Suma Sacerdotisa invertida",
+    "g": "Arcanos invertidos",
+    "num": "II",
+    "dif": 140,
+    "zeon": 150,
+    "a": "Activa",
+    "ha": "160",
+    "hd": "NA",
+    "dur": "Instantáneo",
+    "e": "Ataque de energía oscura en 20 m de radio (como conjuro de Ataque), daño base 80; +10 m por cada 10 sobre la dificultad. No permite elegir blancos.",
+    "pacto": "Destruir un objeto o criatura sobrenatural.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 205-209"
+   },
+   {
+    "n": "La Emperatriz invertida",
+    "g": "Arcanos invertidos",
+    "num": "III",
+    "dif": 150,
+    "zeon": 200,
+    "a": "Activa",
+    "ha": "160",
+    "hd": "NA",
+    "dur": "1 asalto por cada 10 que supere la dificultad",
+    "e": "Ataque Anímico en Energía; si afecta, RM contra 120 (+5 por cada 10 sobre la dificultad) o repite cada asalto la misma acción activa.",
+    "pacto": "Destruir sus obras y matar a su descendencia.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 205-209"
+   },
+   {
+    "n": "El Emperador invertido",
+    "g": "Arcanos invertidos",
+    "num": "IV",
+    "dif": 160,
+    "zeon": 200,
+    "a": "Activa",
+    "ha": "180",
+    "hd": "NA",
+    "dur": "5 asaltos de dominio por cada 10 que supere la dificultad",
+    "e": "Ataque Anímico en Energía; si afecta, RM o RP contra 140 o obedece ciegamente al invocador (nueva tirada ante órdenes contrarias a su naturaleza).",
+    "pacto": "Reducir a la esclavitud a varias personas libres.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 205-209"
+   },
+   {
+    "n": "El Sumo Sacerdote invertido",
+    "g": "Arcanos invertidos",
+    "num": "V",
+    "dif": 170,
+    "zeon": 250,
+    "a": "Pasiva",
+    "ha": "NA",
+    "hd": "180",
+    "dur": "Instantáneo",
+    "e": "Escudo mágico de Oscuridad que defiende con su habilidad y resiste 1.000 puntos de daño, +100 por cada 10 sobre la dificultad.",
+    "pacto": "Fundar y liderar una secta engañosa.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 205-209"
+   },
+   {
+    "n": "Los Enamorados invertidos",
+    "g": "Arcanos invertidos",
+    "num": "VI",
+    "dif": 180,
+    "zeon": 250,
+    "a": "Activa",
+    "ha": "200",
+    "hd": "NA",
+    "dur": "Instantáneo",
+    "e": "Ataque Anímico; si afecta, RM contra 120 (+5 por cada 10) o pierde tantos PV y Zeon como el fallo, que absorbe el invocador.",
+    "pacto": "Sacrificar aquello que más quiere.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 205-209"
+   },
+   {
+    "n": "El Carro invertido",
+    "g": "Arcanos invertidos",
+    "num": "VII",
+    "dif": 190,
+    "zeon": 300,
+    "a": "Activa",
+    "ha": "220",
+    "hd": "NA",
+    "dur": "Instantáneo",
+    "e": "Ataque Anímico; si afecta, RM contra 160 o es enviado a un lugar al azar a 100 km (+100 km por cada 10). Se puede usar sobre uno mismo.",
+    "pacto": "Regresar del lugar lejano al que le envía y volver a invocarlo.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 205-209"
+   },
+   {
+    "n": "La Fuerza invertida",
+    "g": "Arcanos invertidos",
+    "num": "VIII",
+    "dif": 200,
+    "zeon": 350,
+    "a": "Activa",
+    "ha": "220",
+    "hd": "NA",
+    "dur": "1 asalto por cada 10 que supere la dificultad",
+    "e": "Ataque Contundente cada asalto con daño base 100, +20 acumulativo cada vez que no causa daño; si no tiene a quién atacar, ataca al invocador.",
+    "pacto": "Iniciar las peleas que le susurra hasta que quede satisfecha.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 205-209"
+   },
+   {
+    "n": "El Ermitaño invertido",
+    "g": "Arcanos invertidos",
+    "num": "IX",
+    "dif": 240,
+    "zeon": 400,
+    "a": "Activa",
+    "ha": "NA",
+    "hd": "NA",
+    "dur": "Instantáneo",
+    "e": "Ataque Anímico en Energía; RM contra 140 (+5 por cada 10) o queda aislado en la Vigilia 1 minuto por cada punto de fallo.",
+    "pacto": "Vivir solo al menos un año sin ver a ningún ser vivo.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 205-209"
+   },
+   {
+    "n": "La Rueda invertida",
+    "g": "Arcanos invertidos",
+    "num": "X",
+    "dif": 240,
+    "zeon": 450,
+    "a": "Activa",
+    "ha": "240",
+    "hd": "NA",
+    "dur": "Instantáneo",
+    "e": "Ataque sobrenatural en 100 m de radio; RM contra 120 (+5 por cada 10) o se pierde para siempre un nivel, más uno por cada 40 de fallo.",
+    "pacto": "Romper al azar uno de sus pactos (necesita tener al menos cuatro).",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 205-209"
+   },
+   {
+    "n": "La Justicia invertida",
+    "g": "Arcanos invertidos",
+    "num": "XI",
+    "dif": 260,
+    "zeon": 500,
+    "a": "Activa",
+    "ha": "240",
+    "hd": "NA",
+    "dur": "Los poderes quedan drenados 1 minuto por cada 10 que supere la dificultad",
+    "e": "Ataque Anímico; RM contra 140 o pierde temporalmente sus habilidades de combate, sobrenaturales o psíquicas, que pasan al invocador.",
+    "pacto": "Cometer actos injustos que causen un caos masivo.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 205-209"
+   },
+   {
+    "n": "El Colgado invertido",
+    "g": "Arcanos invertidos",
+    "num": "XII",
+    "dif": 280,
+    "zeon": 550,
+    "a": "Activa",
+    "ha": "260",
+    "hd": "NA",
+    "dur": "Instantáneo",
+    "e": "Ataque sobrenatural a blancos en 50 m; RM contra 140 (+5 por cada 10) o penalizador a toda acción igual al fallo (se recupera a 10 por hora; de por vida si falla por más de 80).",
+    "pacto": "Sufrir Dolor intenso (−80) hasta que alguien acepte cargar con él para siempre.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 205-209"
+   },
+   {
+    "n": "La Muerte invertida",
+    "g": "Arcanos invertidos",
+    "num": "XIII",
+    "dif": 300,
+    "zeon": 600,
+    "a": "Activa",
+    "ha": "240+",
+    "hd": "NA",
+    "dur": "Instantáneo",
+    "e": "Ataque Anímico cuerpo a cuerpo, visible para cualquiera; RM contra 140 o muere. +10 a la HA por cada 10 sobre la dificultad.",
+    "pacto": "Causar sin motivo una masacre (normalmente de 50 personas o más).",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 205-209"
+   },
+   {
+    "n": "La Templanza invertida",
+    "g": "Arcanos invertidos",
+    "num": "XIV",
+    "dif": 320,
+    "zeon": 650,
+    "a": "Pasiva",
+    "ha": "NA",
+    "hd": "280",
+    "dur": "Escudo instantáneo; el poder detenido queda disperso 1 día por cada 10 que supere la dificultad",
+    "e": "Escudo de 500 puntos que solo para daño sobrenatural; si detiene un poder, el atacante hace RM contra 160 o pierde temporalmente ese tipo de poder.",
+    "pacto": "Perder dos niveles de experiencia.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 205-209"
+   },
+   {
+    "n": "El Diablo invertido",
+    "g": "Arcanos invertidos",
+    "num": "XV",
+    "dif": 340,
+    "zeon": 700,
+    "a": "Activa",
+    "ha": "300",
+    "hd": "NA",
+    "dur": "10 asaltos por cada 10 que supere la dificultad",
+    "e": "RM contra 140 (Anímico) o queda poseído y ataca a sus allegados con HA 300 sin defenderse; si muere, salta a su asesino. Acaba cuando alguien supera la RM.",
+    "pacto": "Cometer un acto de pura maldad.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 205-209"
+   },
+   {
+    "n": "La Torre invertida",
+    "g": "Arcanos invertidos",
+    "num": "XVI",
+    "dif": 340,
+    "zeon": 750,
+    "a": "Activa",
+    "ha": "300",
+    "hd": "NA",
+    "dur": "Instantáneo",
+    "e": "Ataque Anímico en Energía; si daña, 13 RM contra 120 (estados del cap. 14) más veneno y enfermedad de nivel 60 (+5 por cada 10); las superadas rebotan al invocador.",
+    "pacto": "Matar a quien posee la invocación oscura.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 205-209"
+   },
+   {
+    "n": "La Estrella invertida",
+    "g": "Arcanos invertidos",
+    "num": "XVII",
+    "dif": 380,
+    "zeon": 800,
+    "a": "Activa",
+    "ha": "320",
+    "hd": "NA",
+    "dur": "5 asaltos por cada 10 que supere la dificultad",
+    "e": "Descarga de energía oscura (como conjuro de Ataque) con daño base 200, y otra cada asalto; ese daño solo se cura con poderes místicos.",
+    "pacto": "Destruir la esperanza de un país o etnia.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 205-209"
+   },
+   {
+    "n": "La Luna invertida",
+    "g": "Arcanos invertidos",
+    "num": "XVIII",
+    "dif": 400,
+    "zeon": 850,
+    "a": "Activa",
+    "ha": "NA",
+    "hd": "350",
+    "dur": "1 asalto por cada 10 que supere la dificultad",
+    "e": "Usa su defensa como esquiva del invocador y crea una imagen ilusoria suya por cada defensa con éxito (distinguirla: Inhumano en Buscar o Detección de Ki).",
+    "pacto": "Urdir una mentira capaz de engañar a una nación.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 205-209"
+   },
+   {
+    "n": "El Sol invertido",
+    "g": "Arcanos invertidos",
+    "num": "XIX",
+    "dif": 420,
+    "zeon": 900,
+    "a": "Activa",
+    "ha": "350",
+    "hd": "NA",
+    "dur": "Instantáneo",
+    "e": "Descarga de calor con daño base 300 en un área de 500 m (+500 m por cada 10 sobre la dificultad); no permite elegir blancos.",
+    "pacto": "Sobrevivir un día perdiendo 1 PV por asalto, que solo recupera matando.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 205-209"
+   },
+   {
+    "n": "El Juicio invertido",
+    "g": "Arcanos invertidos",
+    "num": "XX",
+    "dif": 440,
+    "zeon": 950,
+    "a": "Activa",
+    "ha": "NA",
+    "hd": "NA",
+    "dur": "1 minuto por cada 10 que supere la dificultad",
+    "e": "Reduce a 0 el Gnosis de las entidades a 1 km (salvo el suyo; no afecta a Gnosis 45 o más); efecto automático.",
+    "pacto": "Aceptar la condena que dicte su mayor enemigo.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 205-209"
+   },
+   {
+    "n": "El Mundo invertido",
+    "g": "Arcanos invertidos",
+    "num": "XXI",
+    "dif": 460,
+    "zeon": 1000,
+    "a": "Activa",
+    "ha": "NA",
+    "hd": "NA",
+    "dur": "1 minuto por cada 10 que supere la dificultad",
+    "e": "En 1 km (+1 km por cada 10) todos pifian cada tirada; anula a otros Arcanos, no afecta a Gnosis superior a 45 y se anula con El Mundo puro.",
+    "pacto": "Haber fracasado y perdido todo, y fracasar al invocarlo.",
+    "libro": "Core Exxet, cap. 12 «La Convocatoria», p. 205-209"
+   }
+  ]
+ },
+ "otras": {
+  "fuente": "Excel Tablas!AB1110:AD1231 (nombre, dificultad, zeón). Efectos y pactos sin resumir: ver Arcana Exxet, cap. 5 y 6",
+  "lista": [
+   {
+    "n": "Rudraskha: Void nova",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 280,
+    "zeon": 450,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": null
+   },
+   {
+    "n": "Rudraskha: Exodus void nova",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 380,
+    "zeon": 800,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": null
+   },
+   {
+    "n": "Hermod, el Mensajero de los Dioses",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 150,
+    "zeon": 200,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Enamon",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 220,
+    "zeon": 500,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Naaga, Madre de los Venenos",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 140,
+    "zeon": 200,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Huginn y Muninn, Ojos de Cuervo",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 180,
+    "zeon": 200,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Huginn y Muninn: Visión verdadera",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 140,
+    "zeon": 120,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Huginn y Muninn: Ojo del mundo",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 200,
+    "zeon": 240,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Idea, Musa de la Locura",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 240,
+    "zeon": 400,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Galgaliel, Ángel de los Dones",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 260,
+    "zeon": 400,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Lix Tetrax",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 180,
+    "zeon": 200,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Garuda, Alas de Fuego",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 220,
+    "zeon": 350,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Raksasha",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 220,
+    "zeon": 400,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Idún, Señora de la Juventud Eterna",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 280,
+    "zeon": 500,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Idún: Rejuvenecer",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 240,
+    "zeon": 400,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Idún: Envejecer",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 280,
+    "zeon": 500,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Ethelthryth, Señora de los Nombres",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 280,
+    "zeon": 400,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Ethelthryth: In Nomine",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 240,
+    "zeon": 350,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Ethelthryth: Ordinare",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 320,
+    "zeon": 450,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Eir, la Primera Valkyria",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 280,
+    "zeon": 400,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Eir: El ojo de la muerte",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 200,
+    "zeon": 240,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Eir: Einjear",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 380,
+    "zeon": 800,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Veles, el Poder de la Magia",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 240,
+    "zeon": 350,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Thanathos",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 240,
+    "zeon": 400,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Caronte, Titiritero de Almas",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 340,
+    "zeon": 700,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Pandora, el Castigo Divino",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 280,
+    "zeon": 500,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Kagutsuchi: Hi no kodomo",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 200,
+    "zeon": 350,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Kagutsuchi: Hi no tsubasa",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 360,
+    "zeon": 650,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Forseti, Señor del Equilibrio",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 320,
+    "zeon": 600,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Forseti: Equilibirum",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 280,
+    "zeon": 500,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Forseti: Equilibirum mundi",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 340,
+    "zeon": 700,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Druaga",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 320,
+    "zeon": 550,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Druaga: Destructora de demonios",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 280,
+    "zeon": 400,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Druaga: Kali",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 340,
+    "zeon": 700,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Behemoth, Señor de la Tierra",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 280,
+    "zeon": 500,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Behemoth: Comunión con la tierra",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 240,
+    "zeon": 350,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Behemoth: Señor de la tierra",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 380,
+    "zeon": 800,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Leviathan, Señor de los Océanos",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 280,
+    "zeon": 500,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Leviathan: Comunión con el agua",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 240,
+    "zeon": 350,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Leviathan: Señor de las aguas",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 380,
+    "zeon": 800,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Ziz, Señor de los Cielos",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 280,
+    "zeon": 500,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Ziz: Comunión con el viento",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 240,
+    "zeon": 350,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Ziz: Señor del viento",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 380,
+    "zeon": 800,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Seiryu, el Dragón Celeste",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 400,
+    "zeon": 800,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Seiryu: Tormenta",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 220,
+    "zeon": 300,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Seiryu: Rayo",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 280,
+    "zeon": 500,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Seiryu: Señor del este",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 340,
+    "zeon": 660,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Seiryu: La furia de la última tormenta",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 400,
+    "zeon": 880,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Genbu, la Tortuga Negra",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 400,
+    "zeon": 800,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Genbu: Clarividencia",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 220,
+    "zeon": 300,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Genbu: El escudo definitivo",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 280,
+    "zeon": 500,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Genbu: Señor del norte",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 340,
+    "zeon": 660,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Genbu: Amo de las entrañas de la tierra",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 400,
+    "zeon": 880,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Suzaku, el Fénix",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 400,
+    "zeon": 800,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Suzaku: Buena fortuna",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 220,
+    "zeon": 300,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Suzaku: Calamidad",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 280,
+    "zeon": 500,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Suzaku: Señor del sur",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 340,
+    "zeon": 660,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Suzaku: El elegido del sol",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 400,
+    "zeon": 880,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Byakko, el Tigre Blanco",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 400,
+    "zeon": 800,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Byakko: Protección",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 220,
+    "zeon": 300,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Byakko: La garra del rey de las bestias",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 280,
+    "zeon": 500,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Byakko: Señor del oeste",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 340,
+    "zeon": 660,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Byakko: La bestia definitiva",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 400,
+    "zeon": 880,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Kirin, el Centro",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 440,
+    "zeon": 800,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Kirin: Feng Shui",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 440,
+    "zeon": 1000,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "El Vendedor",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 240,
+    "zeon": 800,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Tawil At-U'mr, Señor de las Puertas",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 400,
+    "zeon": 800,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Tawil At-U'mr: Compresión del tiempo",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 280,
+    "zeon": 500,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Tawil At-U'mr: La puerta",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 400,
+    "zeon": 900,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Tawil At-U'mr: Más allá del tiempo y el espacio",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 500,
+    "zeon": 1200,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 5 «Invocaciones»"
+   },
+   {
+    "n": "Zvilpogghua",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 320,
+    "zeon": 600,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": null
+   },
+   {
+    "n": "Zvilpogghua: Ossadagowah",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 300,
+    "zeon": 450,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": null
+   },
+   {
+    "n": "Vilfain",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 280,
+    "zeon": 600,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": null
+   },
+   {
+    "n": "Vilfain: Vaifron",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 200,
+    "zeon": 250,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": null
+   },
+   {
+    "n": "Vilfain: Norfiav",
+    "g": "Grandes bestias",
+    "num": null,
+    "dif": 260,
+    "zeon": 500,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": null
+   },
+   {
+    "n": "Linx Kazte Hex, la Sombra de la Muerte (Nv 4)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 260,
+    "zeon": 400,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Linx Kazte Hex, la Sombra de la Muerte (Nv 8)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 300,
+    "zeon": 600,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Linx Kazte Hex, la Sombra de la Muerte (Nv 12)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 380,
+    "zeon": 900,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Nerval, Defensor de los Perdidos (Nv 4)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 280,
+    "zeon": 350,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Nerval, Defensor de los Perdidos (Nv 7)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 340,
+    "zeon": 700,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Nerval, Defensor de los Perdidos (Nv 11)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 400,
+    "zeon": 900,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Eiko, la princesa Oni (Nv 3)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 220,
+    "zeon": 200,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Eiko, la princesa Oni (Nv 6)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 300,
+    "zeon": 480,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Eiko, la princesa Oni (Nv 9)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 360,
+    "zeon": 600,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Quezcatli, Hijo del Sol (Nv 2)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 200,
+    "zeon": 150,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Quezcatli, Hijo del Sol (Nv 4)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 240,
+    "zeon": 300,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Quezcatli, Hijo del Sol (Nv 6)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 260,
+    "zeon": 450,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Gygjur, Asesino de Dragones (Nv 5)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 270,
+    "zeon": 390,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Gygjur, Asesino de Dragones (Nv 9)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 380,
+    "zeon": 750,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Gygjur, Asesino de Dragones (Nv 13)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 490,
+    "zeon": 1400,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Arturia, el León Blanco (Nv 1)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 160,
+    "zeon": 180,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Arturia, el León Blanco (Nv 3)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 200,
+    "zeon": 300,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Arturia, el León Blanco (Nv 6)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 280,
+    "zeon": 400,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Kha-nefer, el Sacerdote Impío (Nv 3)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 230,
+    "zeon": 200,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Kha-nefer, el Sacerdote Impío (Nv 6)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 280,
+    "zeon": 450,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Kha-nefer, el Sacerdote Impío (Nv 9)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 320,
+    "zeon": 550,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Anassilish, el Sin Rostro (Nv 2)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 180,
+    "zeon": 150,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Anassilish, el Sin Rostro (Nv 5)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 280,
+    "zeon": 400,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Anassilish, el Sin Rostro (Nv 8)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 300,
+    "zeon": 600,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Ambrose Magus, el Hechicero (Nv 4)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 240,
+    "zeon": 200,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Ambrose Magus, el Hechicero (Nv 6)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 260,
+    "zeon": 350,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Ambrose Magus, el Hechicero (Nv 8)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 280,
+    "zeon": 500,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Ruatha Synn (Nv 4)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 280,
+    "zeon": 450,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Ruatha Synn (Nv 8)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 360,
+    "zeon": 750,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Ruatha Synn (Nv 12)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 460,
+    "zeon": 1000,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Kristoff, el Rey Pirata (Nv 4)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 250,
+    "zeon": 350,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Kristoff, el Rey Pirata (Nv 8)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 300,
+    "zeon": 500,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Kristoff, el Rey Pirata (Nv 11)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 380,
+    "zeon": 800,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Loly Ann (Nv 1)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 180,
+    "zeon": 150,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Loly Ann (Nv 3)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 220,
+    "zeon": 250,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Loly Ann (Nv 5)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 280,
+    "zeon": 400,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Aeriel, el Caballero de Argenta (Nv 6)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 290,
+    "zeon": 450,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Aeriel, el Caballero de Argenta (Nv 9)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 380,
+    "zeon": 750,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Aeriel, el Caballero de Argenta (Nv 12)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 460,
+    "zeon": 1250,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Wang Shou Bo (Nv 5)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 260,
+    "zeon": 400,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Wang Shou Bo (Nv 9)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 300,
+    "zeon": 600,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Wang Shou Bo (Nv 13)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 500,
+    "zeon": 1200,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Holst, Rey de Héroes (Nv 8)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 360,
+    "zeon": 750,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Holst, Rey de Héroes (Nv 12)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 440,
+    "zeon": 1200,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   },
+   {
+    "n": "Holst, Rey de Héroes (Nv 15)",
+    "g": "Encarnaciones",
+    "num": null,
+    "dif": 520,
+    "zeon": 1500,
+    "a": null,
+    "ha": null,
+    "hd": null,
+    "dur": null,
+    "e": null,
+    "pacto": null,
+    "libro": "Arcana Exxet, cap. 6 «Encarnaciones»"
+   }
+  ]
+ },
+ "habilidades": {
+  "fuente": "Core Exxet, cap. 12 «La Convocatoria», p. 194-197 (PDF 196-199); característica según el libro; nombres del panel Místicos!J24:J29",
+  "lista": [
+   {
+    "n": "Convocar",
+    "car": "POD",
+    "resumen": "Llama a un ser sobrenatural de una tipología decidida de antemano, que aparece en el asalto siguiente. Sin conocer bien el tipo de criatura: −50."
+   },
+   {
+    "n": "Dominar",
+    "car": "VOL",
+    "resumen": "Somete a un ser presente, que no puede negarse a ninguna orden. Puede intentar liberarse cada hora o ante órdenes contrarias a su naturaleza (nuevo control sin gastar Zeon)."
+   },
+   {
+    "n": "Atar",
+    "car": "POD",
+    "resumen": "Encierra al ser en un objeto o ser vivo de presencia igual o mayor (un ser vivo, hasta el doble de la suya). Mantenerlo cuesta cada día el Zeon de la atadura; atado es inmune a otras habilidades y no sube de nivel."
+   },
+   {
+    "n": "Desconvocar",
+    "car": "POD",
+    "resumen": "Expulsa al ser al flujo de almas; el margen sobre la dificultad son los días que tarda en poder volver por sí mismo."
+   }
+  ],
+  "reglas": [
+   {
+    "t": "Desarrollo",
+    "e": "Se desarrollan como las secundarias: base mínima de 5 puntos y maestría posible."
+   },
+   {
+    "t": "Uso",
+    "e": "Siempre son acciones activas con turno +20; se pueden usar varias en un asalto sin penalizador, pero solo un control de cada una por turno."
+   },
+   {
+    "t": "Enfrentadas",
+    "e": "Gana el resultado más alto. Convocar se opone a Convocar y Desconvocar; Dominar solo a sí misma. Un ser atado no puede ser convocado, dominado ni desconvocado."
+   },
+   {
+    "t": "Varios seres",
+    "e": "Convocar, Dominar o Desconvocar a un grupo de la misma clase: −50 y una sola tirada, pagando el Zeon de cada ser. Atar siempre es uno a uno."
+   },
+   {
+    "t": "Gnosis",
+    "e": "Gnosis superior a 30: no puede ser dominado; superior a 35: no puede ser atado; superior a 40: no puede ser convocado ni desconvocado sin su consentimiento."
+   },
+   {
+    "t": "Resistencia",
+    "e": "Los bonos especiales a la RM del ser (no su RM entera) se suman a la dificultad."
+   },
+   {
+    "t": "Círculo de convocadores",
+    "e": "Con habilidades a 50 puntos o menos entre sí y el mismo tiempo de ritual, el mejor suma +10 por cada otro miembro; el Zeon se reparte (mínimo 10 cada uno)."
+   },
+   {
+    "t": "Regeneración de seres atados",
+    "e": "No recuperan Zeon por sí mismos: absorben el que el convocador gasta a diario en la atadura."
+   },
+   {
+    "t": "Familiares",
+    "e": "Atar como si el ser tuviera dos niveles más y gastar diez veces el Zeon; el lazo consume a diario la mitad del coste de atar un ser de ese nivel. Presencias a 5 puntos o menos de diferencia."
+   }
+  ]
+ },
+ "dificultades": {
+  "fuente": "Core Exxet, cap. 12 «La Convocatoria», Tabla 64, p. 194 (PDF 196); no está en el Excel",
+  "cols": [
+   "Convocar",
+   "Dominar",
+   "Atar",
+   "Desconvocar"
+  ],
+  "filas": [
+   {
+    "nivel": 0,
+    "v": [
+     [
+      140,
+      10
+     ],
+     [
+      180,
+      20
+     ],
+     [
+      160,
+      5
+     ],
+     [
+      100,
+      5
+     ]
+    ]
+   },
+   {
+    "nivel": 1,
+    "v": [
+     [
+      160,
+      20
+     ],
+     [
+      200,
+      40
+     ],
+     [
+      180,
+      10
+     ],
+     [
+      120,
+      5
+     ]
+    ]
+   },
+   {
+    "nivel": 2,
+    "v": [
+     [
+      180,
+      40
+     ],
+     [
+      220,
+      80
+     ],
+     [
+      200,
+      20
+     ],
+     [
+      140,
+      10
+     ]
+    ]
+   },
+   {
+    "nivel": 3,
+    "v": [
+     [
+      200,
+      60
+     ],
+     [
+      240,
+      120
+     ],
+     [
+      220,
+      30
+     ],
+     [
+      160,
+      15
+     ]
+    ]
+   },
+   {
+    "nivel": 4,
+    "v": [
+     [
+      220,
+      80
+     ],
+     [
+      260,
+      160
+     ],
+     [
+      240,
+      40
+     ],
+     [
+      180,
+      20
+     ]
+    ]
+   },
+   {
+    "nivel": 5,
+    "v": [
+     [
+      240,
+      100
+     ],
+     [
+      280,
+      200
+     ],
+     [
+      260,
+      50
+     ],
+     [
+      200,
+      25
+     ]
+    ]
+   },
+   {
+    "nivel": 6,
+    "v": [
+     [
+      260,
+      120
+     ],
+     [
+      300,
+      240
+     ],
+     [
+      280,
+      60
+     ],
+     [
+      220,
+      30
+     ]
+    ]
+   },
+   {
+    "nivel": 7,
+    "v": [
+     [
+      280,
+      140
+     ],
+     [
+      320,
+      280
+     ],
+     [
+      300,
+      70
+     ],
+     [
+      240,
+      40
+     ]
+    ]
+   },
+   {
+    "nivel": 8,
+    "v": [
+     [
+      300,
+      160
+     ],
+     [
+      340,
+      320
+     ],
+     [
+      320,
+      80
+     ],
+     [
+      260,
+      50
+     ]
+    ]
+   },
+   {
+    "nivel": 9,
+    "v": [
+     [
+      320,
+      180
+     ],
+     [
+      360,
+      360
+     ],
+     [
+      340,
+      90
+     ],
+     [
+      280,
+      60
+     ]
+    ]
+   },
+   {
+    "nivel": 10,
+    "v": [
+     [
+      340,
+      200
+     ],
+     [
+      380,
+      400
+     ],
+     [
+      360,
+      100
+     ],
+     [
+      300,
+      80
+     ]
+    ]
+   },
+   {
+    "nivel": 11,
+    "v": [
+     [
+      360,
+      220
+     ],
+     [
+      400,
+      440
+     ],
+     [
+      380,
+      120
+     ],
+     [
+      320,
+      100
+     ]
+    ]
+   },
+   {
+    "nivel": 12,
+    "v": [
+     [
+      380,
+      240
+     ],
+     [
+      420,
+      480
+     ],
+     [
+      400,
+      140
+     ],
+     [
+      340,
+      120
+     ]
+    ]
+   },
+   {
+    "nivel": 13,
+    "v": [
+     [
+      400,
+      260
+     ],
+     [
+      440,
+      520
+     ],
+     [
+      420,
+      160
+     ],
+     [
+      360,
+      140
+     ]
+    ]
+   },
+   {
+    "nivel": 14,
+    "v": [
+     [
+      420,
+      280
+     ],
+     [
+      460,
+      560
+     ],
+     [
+      440,
+      180
+     ],
+     [
+      380,
+      160
+     ]
+    ]
+   },
+   {
+    "nivel": 15,
+    "v": [
+     [
+      440,
+      300
+     ],
+     [
+      480,
+      600
+     ],
+     [
+      460,
+      200
+     ],
+     [
+      400,
+      180
+     ]
+    ]
+   }
+  ]
+ },
+ "rituales": {
+  "fuente": "Core Exxet, cap. 12 «La Convocatoria», Tabla 65, p. 196 (PDF 198)",
+  "filas": [
+   {
+    "t": "Inmediato",
+    "bono": -100
+   },
+   {
+    "t": "Un asalto completo",
+    "bono": -50
+   },
+   {
+    "t": "Tres asaltos",
+    "bono": -20
+   },
+   {
+    "t": "Cinco asaltos",
+    "bono": 0
+   },
+   {
+    "t": "Un minuto",
+    "bono": 10
+   },
+   {
+    "t": "Una hora",
+    "bono": 20
+   },
+   {
+    "t": "Seis horas",
+    "bono": 30
+   },
+   {
+    "t": "Un día",
+    "bono": 40
+   },
+   {
+    "t": "Una semana",
+    "bono": 50
+   },
+   {
+    "t": "Un mes",
+    "bono": 60
+   },
+   {
+    "t": "Seis meses",
+    "bono": 70
+   },
+   {
+    "t": "Un año",
+    "bono": 80
+   },
+   {
+    "t": "Cinco años",
+    "bono": 90
+   },
+   {
+    "t": "Diez años",
+    "bono": 100
+   },
+   {
+    "t": "Más de cincuenta años",
+    "bono": 120
+   }
+  ]
+ },
+ "modificadores": {
+  "fuente": "Core Exxet, cap. 12 «La Convocatoria», Tabla 66, p. 197 (PDF 199)",
+  "filas": [
+   {
+    "t": "Conocer el verdadero nombre del ser",
+    "bono": 20
+   },
+   {
+    "t": "Tener una pertenencia suya",
+    "bono": 10
+   },
+   {
+    "t": "Tener una parte de él",
+    "bono": 20
+   },
+   {
+    "t": "No conocer el tipo de criatura (solo Convocar)",
+    "bono": -50
+   }
+  ]
+ },
+ "masa": {
+  "fuente": "Arcana Exxet, Tabla 2, p. 10; nivel teórico en Excel Místicos!Q25 (nivel + ventaja Tablas!E395:E397)",
+  "nota": "La ficha calcula el nivel para convocar en masa como el nivel del personaje más la ventaja Convocador de masas (1, 2 o 3); un Invocador no puede.",
+  "filas": [
+   {
+    "seres": 2,
+    "dif_nivel": 5,
+    "sube": 1
+   },
+   {
+    "seres": 5,
+    "dif_nivel": 6,
+    "sube": 2
+   },
+   {
+    "seres": 10,
+    "dif_nivel": 7,
+    "sube": 3
+   },
+   {
+    "seres": 25,
+    "dif_nivel": 8,
+    "sube": 4
+   },
+   {
+    "seres": 50,
+    "dif_nivel": 9,
+    "sube": 5
+   },
+   {
+    "seres": 100,
+    "dif_nivel": 10,
+    "sube": 6
+   },
+   {
+    "seres": 250,
+    "dif_nivel": 11,
+    "sube": 7
+   },
+   {
+    "seres": 500,
+    "dif_nivel": 12,
+    "sube": 8
+   },
+   {
+    "seres": 1000,
+    "dif_nivel": 13,
+    "sube": 9
+   }
+  ]
+ },
+ "especialidades": {
+  "fuente": "Excel Místicos!N27 y Q33; Core Exxet, cap. 12 «La Convocatoria», p. 198 (Elementalismo); Arcana Exxet, p. 11 (Invocadores)",
+  "lista": [
+   {
+    "n": "Elementalismo",
+    "e": "+30 a toda habilidad de convocatoria sobre seres de su elemento, −30 sobre el resto y −60 sobre los del elemento opuesto. No se puede cambiar."
+   },
+   {
+    "n": "Invocador",
+    "e": "No puede convocar criaturas, pero paga la mitad del Zeon de cualquier invocación; ata, domina y desconvoca con normalidad."
+   }
+  ]
+ },
+ "fracaso": {
+  "fuente": "Core Exxet, cap. 12 «La Convocatoria», Recuadro XI, p. 198 (PDF 200)",
+  "filas": [
+   {
+    "nivel": "−1 a −10",
+    "e": "No funciona; no se pierde Zeon."
+   },
+   {
+    "nivel": "−11 a −25",
+    "e": "No funciona y se pierde el Zeon."
+   },
+   {
+    "nivel": "−26 a −50",
+    "e": "No funciona y se pierde el doble de Zeon."
+   },
+   {
+    "nivel": "−51 a −75",
+    "e": "Convocar: aparece otro ser opuesto y de nivel superior, sin poder controlarlo ni atarlo (doble de Zeon). Dominar, Atar o Desconvocar: el ser se vuelve inmune a esa habilidad (doble de Zeon; al Atar, además, se liberan todos sus seres)."
+   },
+   {
+    "nivel": "−76 a −100",
+    "e": "El efecto se invierte: una horda opuesta (Convocar), el ser domina al convocador (Dominar), se liberan sus seres y ganan inmunidad (Atar) o aparecen más seres inmunes (Desconvocar). Cuádruple de Zeon."
+   },
+   {
+    "nivel": "Más de −100",
+    "e": "Consecuencias extremas: viajar ante una entidad opuesta, quedar dominado de por vida, ligar su destino al del ser o una legión inmune. Por lo general pierde todo su Zeon."
+   }
+  ]
+ },
+ "invocacion": {
+  "fuente": "Core Exxet, cap. 12 «La Convocatoria», p. 199-200 (PDF 201-202)",
+  "reglas": [
+   {
+    "t": "Pacto",
+    "e": "Se usa Convocar; al primer éxito la entidad propone un pacto. Cumplido, se la vuelve a llamar para sellarlo; pedirlo sin cumplirlo hace perder esa invocación para siempre."
+   },
+   {
+    "t": "Uso",
+    "e": "Cada uso exige superar su dificultad con Convocar y pagar su Zeon. Admite los bonos por tiempo (Tabla 65) pero no los de la Tabla 66. Turno +20; cada invocación es activa o pasiva según su naturaleza."
+   },
+   {
+    "t": "Margen",
+    "e": "Cuanto más se supere la dificultad, más potente es el efecto (casi siempre «por cada 10 que supere la dificultad»)."
+   },
+   {
+    "t": "Opuestos",
+    "e": "No se puede pactar con el Arcano opuesto a uno que ya se tiene (con La Justicia, nunca La Justicia invertida)."
+   }
+  ]
+ },
+ "espirituales": {
+  "fuente": "Excel Tablas!O1535:Q1537 (coste en PD y Gnosis); Core Exxet, cap. 26, p. 313 (PDF 315) (efecto)",
+  "filas": [
+   {
+    "n": "Interacción con el mundo",
+    "coste": 30,
+    "gnosis": 30,
+    "e": "Aun siendo inmaterial, puede tocar el mundo físico y atacar con sus armas naturales u objetos."
+   },
+   {
+    "n": "Manifestación",
+    "coste": 20,
+    "gnosis": 20,
+    "e": "Se deja ver y oír por cualquiera cuando quiere, no solo por quien ve espíritus."
+   },
+   {
+    "n": "Encarnación",
+    "coste": 60,
+    "gnosis": 30,
+    "e": "Se materializa a voluntad con forma corpórea; aun así solo le daña lo que puede dañar energía."
+   }
+  ]
+ },
+ "pd": {
+  "fuente": "Excel Tablas!D202:D223 y AA201:AD223 (coste en PD por punto de habilidad)",
+  "cols": [
+   "Convocar",
+   "Dominar",
+   "Atar",
+   "Desconvocar"
+  ],
+  "filas": [
+   {
+    "cat": "Guerrero",
+    "c": [
+     3,
+     3,
+     3,
+     3
+    ]
+   },
+   {
+    "cat": "Guerrero Acróbata",
+    "c": [
+     3,
+     3,
+     3,
+     3
+    ]
+   },
+   {
+    "cat": "Paladín",
+    "c": [
+     3,
+     3,
+     3,
+     1
+    ]
+   },
+   {
+    "cat": "Paladín (F)",
+    "c": [
+     3,
+     3,
+     3,
+     1
+    ]
+   },
+   {
+    "cat": "Paladín Oscuro",
+    "c": [
+     3,
+     1,
+     3,
+     3
+    ]
+   },
+   {
+    "cat": "Paladín Oscuro (RD)",
+    "c": [
+     3,
+     1,
+     3,
+     3
+    ]
+   },
+   {
+    "cat": "Maestro en Armas",
+    "c": [
+     3,
+     3,
+     3,
+     3
+    ]
+   },
+   {
+    "cat": "Tecnicista",
+    "c": [
+     3,
+     3,
+     3,
+     3
+    ]
+   },
+   {
+    "cat": "Tao",
+    "c": [
+     3,
+     3,
+     3,
+     3
+    ]
+   },
+   {
+    "cat": "Explorador",
+    "c": [
+     3,
+     3,
+     3,
+     3
+    ]
+   },
+   {
+    "cat": "Sombra",
+    "c": [
+     3,
+     3,
+     3,
+     3
+    ]
+   },
+   {
+    "cat": "Ladrón",
+    "c": [
+     3,
+     3,
+     3,
+     3
+    ]
+   },
+   {
+    "cat": "Asesino",
+    "c": [
+     3,
+     3,
+     3,
+     3
+    ]
+   },
+   {
+    "cat": "Hechicero",
+    "c": [
+     2,
+     2,
+     2,
+     2
+    ]
+   },
+   {
+    "cat": "Warlock",
+    "c": [
+     2,
+     2,
+     2,
+     2
+    ]
+   },
+   {
+    "cat": "Ilusionista",
+    "c": [
+     3,
+     3,
+     3,
+     3
+    ]
+   },
+   {
+    "cat": "Hechicero Mentalista",
+    "c": [
+     2,
+     2,
+     2,
+     2
+    ]
+   },
+   {
+    "cat": "Conjurador",
+    "c": [
+     1,
+     1,
+     1,
+     1
+    ]
+   },
+   {
+    "cat": "Guerrero Conjurador",
+    "c": [
+     1,
+     1,
+     1,
+     1
+    ]
+   },
+   {
+    "cat": "Mentalista",
+    "c": [
+     3,
+     3,
+     3,
+     3
+    ]
+   },
+   {
+    "cat": "Guerrero Mentalista",
+    "c": [
+     3,
+     3,
+     3,
+     3
+    ]
+   },
+   {
+    "cat": "Novel",
+    "c": [
+     2,
+     2,
+     2,
+     2
+    ]
+   }
+  ]
+ }
+}

@@ -29,10 +29,11 @@ vi.mock('../src/engine', () => ({
 }));
 
 const store = await import('../src/store');
-const { Juego, regeneracionDiaria } = await import('../src/ui/Juego');
+const { Juego, regeneracionDiaria, REGLAS_DESCANSO } = await import('../src/ui/Juego');
 const { parse } = await import('../src/model/ficha');
 
 const T = 120_000;
+const vacia = () => ({ r: {}, asalto: 1, efectos: [], conts: [], mant: [], favH: [], favC: [], notas: '' });
 beforeAll(() => { motor(); }, T);
 afterEach(() => { cleanup(); abierta.value = null; valores.value = {}; store.fichas.value = []; poner.mockClear(); });
 
@@ -62,7 +63,7 @@ describe('Modo juego', () => {
     const texto = document.body.textContent!;
     expect(texto).toContain('Lock');
     expect(texto).toContain('Hechicero');
-    for (const t of ['Medicina', 'Ocultismo', 'Desarmado', 'Baile espectral', '12 ki', 'Aseamiento', 'Coste en zeón de los conjuros de libre acceso', 'Próximamente']) expect(texto).toContain(t);
+    for (const t of ['Medicina', 'Ocultismo', 'Desarmado', 'Baile espectral', '12 ki', 'Aseamiento', 'Próximamente']) expect(texto).toContain(t);
     expect(texto).toContain('30 PV / día');
   }, T);
 
@@ -81,6 +82,27 @@ describe('Modo juego', () => {
     expect(JSON.parse(localStorage.getItem('anima.fichas')!)[0].sesion.r.pv).toBe(120);
   }, T);
 
+  it('reglas de descanso del Core: ki 6 por hora, CV 1 por hora y los negativos continuos bajan con la regeneración (tabla 24)', async () => {
+    expect(REGLAS_DESCANSO.kiPorHora * REGLAS_DESCANSO.horas).toBe(144);
+    expect(REGLAS_DESCANSO.cvPorHora * REGLAS_DESCANSO.horas).toBe(24);
+    const r = REGLAS_DESCANSO.reduccionNegativosPorDia;
+    expect([1, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(r)).toEqual([5, 5, 10, 10, 15, 20, 25, 30, 40, 50]);
+    expect([12, 13, 14, 15].map(r)).toEqual([120, 240, 360, 480]);     // «por hora» ×24
+    expect(r(16)).toBe(Infinity);
+    expect(r(0)).toBe(0);
+  });
+
+  it('descansar baja un negativo continuo según la regeneración de la ficha y lo quita al llegar a 0; los temporales se van', async () => {
+    const f = abrirLock();                                   // regeneración 3: -5 al día
+    await esperar();
+    store.guardarSesion(f.id, { ...vacia(), efectos: [{ n: 'Herida', a: null, m: -10, nota: '' }, { n: 'Aturdido', a: 3, m: -20, nota: '' }, { n: 'Bendición', a: null, m: 10, nota: '' }] });
+    await waitFor(() => expect(document.querySelector('.juego-hud-stats')!.textContent).toContain('-20'));
+    fireEvent.click(boton('Descansar un día'));
+    expect(sesion(f.id)!.efectos.map((e) => [e.n, e.m])).toEqual([['Herida', -5], ['Bendición', 10]]);   // lo positivo no se toca
+    fireEvent.click(boton('Descansar un día'));
+    expect(sesion(f.id)!.efectos.map((e) => e.n)).toEqual(['Bendición']);
+  }, T);
+
   it('lanzar un conjuro descuenta zeón y añade el mantenido; deshacer lo devuelve', async () => {
     const f = abrirLock();
     await esperar();
@@ -92,6 +114,17 @@ describe('Modo juego', () => {
     fireEvent.click(boton('Deshacer'));
     expect(sesion(f.id)!.r.zeon ?? 970).toBe(970);
     expect(sesion(f.id)!.mant).toEqual([]);
+  }, T);
+
+  it('los conjuros de libre acceso elegidos salen con su coste de zeón y se lanzan como los demás', async () => {
+    const f = abrirLock();
+    await esperar();
+    // Aseamiento (libre acceso, nivel 4) está en las entradas de Lock (Místicos!AG12): su grado Base cuesta zeón
+    await waitFor(() => expect(boton(/^Lanzar Aseamiento, grado Base/)).toBeTruthy(), { timeout: 20_000 });
+    fireEvent.click(boton(/^Lanzar Aseamiento, grado Base/));
+    const gastado = 970 - (sesion(f.id)!.r.zeon ?? 970);
+    expect(gastado).toBeGreaterThan(0);
+    expect(document.querySelector('.juego')!.textContent).not.toContain('Coste en zeón de los conjuros de libre acceso');
   }, T);
 
   it('requisito de INT y zeón negativo avisan, no bloquean', async () => {

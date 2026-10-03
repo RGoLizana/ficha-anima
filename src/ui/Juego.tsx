@@ -10,18 +10,31 @@ import { Icon } from './Icon';
 import { Avatar } from './Avatar';
 import { Proximamente, txt } from './campos';
 
-/** Descanso de un día. Provisional: las cifras exactas saldrán de los libros; se cambian aquí y en ningún otro sitio. */
+/** Descanso de un día, según el reglamento (Core Exxet) y lo que da la ficha de Excel (si chocan, manda el Excel):
+ *  - PV: la regeneración de la ficha (Principal!K11, p. ej. «30 PV / día»; tabla 24 del Core, columna «Descansando»).
+ *  - Zeón: la regeneración zeónica de la ficha (Místicos!J12; el Core dice que es el ACT final por día).
+ *  - Ki: el gastado se recupera a 6 puntos por hora. CV: se recuperan a ritmo natural, uno por hora.
+ *  - Cansancio: se recupera del todo descansando entre hora y media y tres horas.
+ *  - Negativos continuos a toda acción: bajan cada día según el nivel de regeneración (tabla 24). */
 export const REGLAS_DESCANSO = {
   /** La regeneración de la ficha (Principal!K11, p. ej. "30 PV / día") pasada a PV por día según su unidad. */
   pvPorDia: { 'día': 1, min: 24 * 60, turno: 24 * 60 * 20 } as Record<string, number>, // 20 asaltos por minuto
   /** Zeón recuperado = regeneración zeónica (Místicos!J12) × este factor. */
   zeonPorDia: 1,
+  /** Horas de recuperación de un «día de descanso». */
+  horas: 24,
+  kiPorHora: 6,
+  cvPorHora: 1,
   /** Lo recuperado no pasa del máximo de la ficha (si ya estaba por encima, se queda como está). */
   topeEnMaximo: true,
   /** Recursos que vuelven al máximo. */
-  alMaximo: ['ki', 'cv', 'cans', 'acc'] as Recurso[],
+  alMaximo: ['cans', 'acc'] as Recurso[],
   quitaEfectosConAsaltos: true,
   quitaMantenidos: true,
+  /** Tabla 24 del Core: cuánto baja al día el negativo continuo según el nivel de regeneración (Infinity = desaparece). */
+  reduccionNegativosPorDia: (nivel: number) =>
+    nivel <= 0 ? 0 : nivel <= 3 ? 5 : nivel <= 5 ? 10 : nivel === 6 ? 15 : nivel === 7 ? 20 : nivel === 8 ? 25 : nivel === 9 ? 30 : nivel === 10 ? 40
+      : nivel === 11 ? 50 : nivel === 12 ? 120 : nivel === 13 ? 240 : nivel === 14 ? 360 : nivel === 15 ? 480 : Infinity,
 };
 
 type Valores = Record<Recurso, number>;
@@ -151,16 +164,28 @@ function Partida({ f }: { f: Ficha }) {
     const reg = regeneracionDiaria();
     const zeon = n('Místicos!J12') * R.zeonPorDia;
     const sube = (k: Recurso, c: number) => (R.topeEnMaximo ? Math.max(cur[k], Math.min(max[k], cur[k] + c)) : cur[k] + c);
+    const baja = R.reduccionNegativosPorDia(n('Principal!J11'));
+    let negativos = 0;
     const nuevo = guardar((x) => {
       x.r.pv = sube('pv', reg ?? 0);
       x.r.zeon = sube('zeon', zeon);
+      x.r.ki = sube('ki', R.kiPorHora * R.horas);
+      x.r.cv = sube('cv', R.cvPorHora * R.horas);
       for (const k of R.alMaximo) x.r[k] = max[k];
       if (R.quitaEfectosConAsaltos) x.efectos = x.efectos.filter((e) => e.a === null);
+      // negativos continuos (efectos sin fin con modificador negativo): bajan según la regeneración y desaparecen al llegar a 0
+      x.efectos = x.efectos.flatMap((e) => {
+        if (e.a !== null || e.m >= 0 || baja <= 0) return [e];
+        const m = Math.min(0, e.m + baja);
+        negativos += 1;
+        return m === 0 ? [] : [{ ...e, m }];
+      });
       if (R.quitaMantenidos) x.mant = [];
       x.asalto = 1;
     });
     avisar('Un día de descanso',
-      `${signo(nuevo.r.pv! - cur.pv)} PV · ${signo(nuevo.r.zeon! - cur.zeon)} zeón · ki, CVs, cansancio y acciones al máximo`
+      `${signo(nuevo.r.pv! - cur.pv)} PV · ${signo(nuevo.r.zeon! - cur.zeon)} zeón · ${signo(nuevo.r.ki! - cur.ki)} ki · ${signo(nuevo.r.cv! - cur.cv)} CV · cansancio y acciones al máximo`
+      + (negativos ? ` · ${negativos} negativo${negativos > 1 ? 's' : ''} continuo${negativos > 1 ? 's' : ''} reducido${negativos > 1 ? 's' : ''}` : '')
       + (reg === null ? ' · ⚠ La ficha no indica una regeneración diaria: no se recuperan PV.' : ''), s);
   };
 
@@ -365,7 +390,7 @@ function Estado({ ctx, nuevoAsalto, descansar }: { ctx: Ctx; nuevoAsalto: () => 
         <button type="button" class="btn primary" onClick={descansar}>Descansar un día</button>
         <p class="muted small">
           Recupera PV (regeneración {reg === null ? 'no indicada en la ficha' : `${reg}/día`}), zeón (regeneración zeónica {n('Místicos!J12')}/día),
-          CVs, ki, cansancio y acciones; quita los efectos con asaltos y los mantenidos. Los valores definitivos saldrán de los libros. Se puede deshacer.
+          CVs, ki, cansancio y acciones; quita los efectos con asaltos y los mantenidos. Ki +6 por hora y CV +1 por hora (24 h), PV y zeón según tu ficha, y los negativos continuos bajan según tu regeneración (Core, tabla 24). Se puede deshacer.
         </p>
         {reg === null && <p class="nota">La ficha no indica una regeneración diaria de PV ({txt('Principal!K11') || 'vacía'}): al descansar se recuperan 0 PV.</p>}
       </Panel>
@@ -585,7 +610,12 @@ function conjurosDe(todos: Conjuro[]) {
   }
   for (const r of rango(12, 50)) {
     const nombre = txt(`Místicos!Y${r}`);
-    const c = nombre && todos.find((x) => x.n === nombre);
+    const c = nombre && (todos.find((x) => x.n === nombre && x.v !== 'Libre acceso') ?? todos.find((x) => x.n === nombre));
+    if (c) out.set(c.n, { ...c, sel: true });
+  }
+  for (const r of rango(12, 50)) {      // libre acceso elegidos (Místicos AG): con su coste de zeón, como el resto
+    const nombre = txt(`Místicos!AG${r}`);
+    const c = nombre && todos.find((x) => x.n === nombre && x.v === 'Libre acceso');
     if (c) out.set(c.n, { ...c, sel: true });
   }
   return [...out.values()].sort((a, b) => a.v.localeCompare(b.v) || a.l - b.l);
@@ -682,7 +712,6 @@ function Magia({ ctx }: { ctx: Ctx }) {
 
       <Panel t="Libre acceso" pill={`${libres.length} conjuros`} open={false}>
         {libres.length ? <p class="small">{libres.map(([c, l]) => (l ? `${c} ${l}` : c)).join(' · ')}</p> : <div class="juego-vacio">Sin conjuros de libre acceso.</div>}
-        <p class="nota">Coste en zeón de los conjuros de libre acceso <Proximamente /></p>
       </Panel>
     </>
   );
@@ -694,12 +723,13 @@ const t = (col: string, fila: number) => `Creación de Técnicas!${col}${fila}`;
 
 function Ki({ ctx }: { ctx: Ctx }) {
   const tecnicas = BASES.map((b) => ({ b, nombre: txt(t('D', b)) })).filter((x) => x.nombre && x.nombre !== 'Nombre de la técnica');
+  const acu = n('Ki!D24');
   return (
     <>
       <Panel t="Ki" color="var(--ki)" pill={`${txt('Ki!I10') === 'Sí' ? 'unificado · ' : ''}acumula ${txt('Ki!D24') || 0}/asalto`}>
         <RecursoFila ctx={ctx} k="ki" />
         {ctx.cur.ki < 0 && <p class="aviso" role="status">Ki por debajo de 0 ({ctx.cur.ki}).</p>}
-        <p class="nota">Acumulación de ki y de zeón por asalto, reservas de ki por característica y conjuros o poderes propios del gremio <Proximamente /></p>
+        <p class="nota">Reservas de ki por característica (con el ki sin unificar) y conjuros o poderes propios del gremio <Proximamente /></p>
       </Panel>
       <Panel t="Técnicas">
         {tecnicas.length ? tecnicas.map(({ b, nombre }) => {
@@ -713,7 +743,7 @@ function Ki({ ctx }: { ctx: Ctx }) {
               <div class="row between"><h3>{nombre}</h3><span class="chip">Nivel {txt(t('P', b))}</span></div>
               {efectos.length > 0 && <p class="small">{efectos.join(' · ')}</p>}
               {desc && <p class="muted small">{desc}</p>}
-              <p class="muted small">Coste {coste || '—'} = <strong class="juego-txt">{total} ki</strong>{mant.length ? ` · mantener ${mant.join(', ')}` : ''}</p>
+              <p class="muted small">Coste {coste || '—'} = <strong class="juego-txt">{total} ki</strong>{acu > 0 ? ` · ${Math.ceil(total / acu)} ${Math.ceil(total / acu) === 1 ? 'asalto' : 'asaltos'} acumulando (${acu}/asalto)` : ''}{mant.length ? ` · mantener ${mant.join(', ')}` : ''}</p>
               <button type="button" class="btn" onClick={() => ctx.gastar('ki', total, nombre)}>Usar (−{total} ki)</button>
             </article>
           );

@@ -274,3 +274,7 @@ escribía sobre una fórmula (PDs!Z188).
   «Desplegar/Plegar todo», imagen del personaje (cabecera de la ficha → iconos de la lista, ficha y modo juego; se guarda en la ficha),
   marcas «Próximamente» en lo que falta (páginas de Sheele y Equipo y PDF de grimorios en Imprimir, coste del libre acceso y acumulaciones
   en el modo juego, convocatoria e invocaciones en el compendio) y Metamagia siguiendo el orden del árbol (en curso).
+- **Libros oficiales** (Core Exxet y Arcana Exxet; lo fanmade se ignora y si el libro choca con el Excel manda el Excel): modo juego con las
+  reglas de descanso (ki +6/hora, CV +1/hora, cansancio, negativos continuos por regeneración, tabla 24), coste de los conjuros de libre acceso
+  y asaltos de acumulación de ki; compendio con la pestaña **Convocatoria** (22+22 Arcanos con dificultad y zeón del Excel, 120 invocaciones
+  más, reglas de las 4 habilidades, habilidades espirituales y costes de PD; `tools/export_convocatoria.py`). Lo que no se pudo verificar va a `null`.
