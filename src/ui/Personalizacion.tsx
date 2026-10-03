@@ -1,7 +1,7 @@
 import type { ComponentChildren, JSX } from 'preact';
 import type { Ficha } from '../model/ficha';
 import { formulaLista } from '../engine';
-import { Campo, Panel, txt, v } from './campos';
+import { Avisos, Campo, Panel, txt, v } from './campos';
 
 // Hoja "Personalización" del Excel: contenido que no está en las reglas de Anima
 const p = (c: string) => `Personalización!${c}`;
@@ -64,6 +64,7 @@ export function Personalizacion({ f }: { f: Ficha }) {
             ))}
           </tbody>
         </table>
+        <Avisos claves={[p('I16')]} />
       </PanelP>
 
       <div class="cols-2">
@@ -142,7 +143,7 @@ export function Personalizacion({ f }: { f: Ficha }) {
           {C('L50', 'Transformado')}
           {C('P50', 'Fase lunar actual')}
         </div>
-        {txt(p('I51')) && <p class="muted small">{txt(p('I51'))}</p>}
+        <Avisos claves={[p('I51')]} />
         <h3 class="sub">Otros</h3>
         <div class="grid-fields">
           {C('E50', "Ebudan: Sue' Aman")}

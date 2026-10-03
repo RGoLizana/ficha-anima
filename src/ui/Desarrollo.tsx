@@ -14,32 +14,49 @@ export function Desarrollo({ f }: { f: Ficha }) {
   const cats = FILA_CAT.map((r) => txt(`PDs!O${r}`)).filter(Boolean);
   const n = Math.max(1, cats.length);
   const [avanzado, setAvanzado] = useState(false);
+  // Máximos de las habilidades primarias (los calcula el Excel en PDs!L:T de las filas 86, 104 y 120 y en las reglas de PDs!Z29, V86 y V104)
+  const totalPD = Number(txt('PDs!Z194')) || 0;
+  const pct = (p: number) => `${Math.round((totalPD * p) / 100)} PD (${p} % de tus ${totalPD} PD)`;
+  const topes = (fila: number) => ['L', 'N', 'P', 'R', 'T'].slice(0, n).map((c, i) => [cats[i] || `Cat. ${i + 1}`, Number(txt(`PDs!${c}${fila}`)) || 0] as const).filter(([, v]) => v > 0);
+  const limiteCat = (fila: number): [string, string][] => { const t = topes(fila); return t.length ? [['Máx. de PD en primarias' + (n > 1 ? ' por categoría' : ''), t.map(([c, v]) => (n > 1 ? `${c}: ${Math.round(v)}` : `${Math.round(v)} PD`)).join(' · ')]] : []; };
+  const mitad = (fila: number) => { const m = Math.max(0, ...topes(fila).map(([, v]) => v)); return m ? `máx. ${Math.floor(m / 2)} PD (la mitad del límite)` : ''; };
 
   return (
     <>
-      <Avisos claves={['PDs!T194', 'PDs!V86', 'PDs!V104', 'PDs!V120', 'PDs!Z29+PDs!AA29']} />
       <Panel title="Puntos de desarrollo" extra={<span class="muted small">Nivel total {txt('PDs!R17')} · {txt('PDs!T17')} PD</span>}>
         <div class="pd-cats">
           {Array.from({ length: n }, (_, i) => (
             <ResumenCategoria key={i} i={i} nombre={cats[i] || 'Sin categoría'} />
           ))}
         </div>
+        <Avisos claves={['PDs!T194']} />
         <div class="grid-fields">
           <Campo f={f} clave="PDs!Z15" label="Límite de habilidades primarias" />
         </div>
         <p class="muted small">{txt('PDs!V16')}</p>
       </Panel>
 
-      <Bloque f={f} n={n} cats={cats} titulo="Habilidades de combate" filas={rango(25, 28)} cols={PRIM} />
+      <Bloque f={f} n={n} cats={cats} titulo="Habilidades de combate" filas={rango(25, 28)} cols={PRIM}
+        limites={[...limiteCat(86), ['Ataque + defensa juntos', `máx. ${pct(50)}`], ['Cada una (ataque, parada, esquiva)', `máx. ${pct(25)}`], ['Ataque frente a defensa', 'no más de 50 puntos de diferencia']]}
+        maximos={{ 25: `máx. ${pct(25)}`, 26: `máx. ${pct(25)}`, 27: `máx. ${pct(25)}` }}
+        avisos={<Avisos claves={['PDs!Z29+PDs!AA29']} />} />
       <Compras f={f} n={n} titulo="Tablas de armas" filas={rango(43, 48)} extra="Y" />
       <Compras f={f} n={n} titulo="Tablas de estilos" filas={rango(49, 58)} />
-      <Compras f={f} n={n} titulo="Artes marciales" filas={rango(59, 77)} grado="J" />
+      <Compras f={f} n={n} titulo="Artes marciales" filas={rango(59, 77)} grado="J" avisos={<Si clave="PDs!V86" re={/^(?!.*(Conocimiento Marcial|Ars Magnus))/} />} />
       <Compras f={f} n={n} titulo="Tablas de artes marciales con armas" filas={rango(78, 80)} />
-      <Compras f={f} n={n} titulo="Ars Magnus" filas={rango(81, 85)} />
-      <Bloque f={f} n={n} cats={cats} titulo="Ki" filas={rango(30, 42)} cols={PRIM} grupo />
-      <Bloque f={f} n={n} cats={cats} titulo="Habilidades místicas" filas={rango(93, 101)} cols={PRIM} grupo />
+      <Compras f={f} n={n} titulo="Ars Magnus" filas={rango(81, 85)} avisos={<Si clave="PDs!V86" re={/Ars Magnus/} />} />
+      <Bloque f={f} n={n} cats={cats} titulo="Ki" filas={rango(30, 42)} cols={PRIM} grupo
+        limites={[...limiteCat(86), ['Conocimiento Marcial', `máx. ${pct(10)}`]]} maximos={{ 42: `máx. ${pct(10)}` }}
+        avisos={<Si clave="PDs!V86" re={/Conocimiento Marcial/} />} />
+      <Bloque f={f} n={n} cats={cats} titulo="Habilidades místicas" filas={rango(93, 101)} cols={PRIM} grupo
+        limites={[...limiteCat(104), ['Proyección mágica', mitad(104)], ['Nivel de magia', `máx. ${pct(10)}`]].filter(([, v]) => v) as [string, string][]}
+        maximos={{ 96: mitad(104), 97: `máx. ${pct(10)}` }}
+        avisos={<Avisos claves={['PDs!V104']} />} />
       <Compras f={f} n={n} titulo="Tablas místicas" filas={[102, 103]} />
-      <Bloque f={f} n={n} cats={cats} titulo="Habilidades psíquicas" filas={[111, 112]} cols={PRIM} />
+      <Bloque f={f} n={n} cats={cats} titulo="Habilidades psíquicas" filas={[111, 112]} cols={PRIM}
+        limites={[...limiteCat(120), ['Proyección psíquica', mitad(120)]].filter(([, v]) => v) as [string, string][]}
+        maximos={{ 112: mitad(120) }}
+        avisos={<Avisos claves={['PDs!V120']} />} />
       <Compras f={f} n={n} titulo="Tablas psíquicas" filas={[113]} />
       <Compras f={f} n={n} titulo="Patrones mentales" filas={rango(114, 119)} />
       <Bloque f={f} n={n} cats={cats} titulo="Puntos de vida" filas={[188]} cols={SEC} total="Z" esp={null}
@@ -65,6 +82,11 @@ export function Desarrollo({ f }: { f: Ficha }) {
       </Panel>
     </>
   );
+}
+
+/** Avisos de una celda solo si su texto cumple `re` (una celda del Excel reúne avisos de varias tablas). */
+export function Si({ clave, re }: { clave: string; re: RegExp }) {
+  return re.test(txt(clave)) ? <Avisos claves={[clave]} /> : null;
 }
 
 export function ResumenCategoria({ i, nombre }: { i: number; nombre: string }) {
@@ -96,12 +118,21 @@ function Barra({ v: x, max }: { v: number; max: number }) {
 
 type Cols = { pd: string[]; coste: string[] };
 
-export function Bloque({ f, n, cats, titulo, filas, cols, grupo, total = 'AA', esp = 'Z', extra = [], cabecera }: {
+export function Bloque({ f, n, cats, titulo, filas, cols, grupo, total = 'AA', esp = 'Z', extra = [], cabecera, avisos, limites, maximos }: {
   f: Ficha; n: number; cats: string[]; titulo: string; filas: number[]; cols: Cols; grupo?: boolean;
-  total?: string; esp?: string | null; extra?: string[][]; cabecera?: preact.ComponentChildren;
+  total?: string; esp?: string | null; extra?: string[][]; cabecera?: preact.ComponentChildren; avisos?: preact.ComponentChildren;
+  /** Máximos del bloque que se ven encima de la tabla: [qué, cuánto]. */
+  limites?: [string, string][];
+  /** Máximo propio de una fila, junto a su casilla: {fila: texto}. */
+  maximos?: Record<number, string>;
 }) {
   return (
     <Panel title={titulo} extra={cabecera}>
+      {limites && limites.length > 0 && (
+        <dl class="limites" aria-label={`Máximos de ${titulo}`}>
+          {limites.map(([t, v]) => <div key={t}><dt>{t}</dt><dd>{v}</dd></div>)}
+        </dl>
+      )}
       <div class="table-wrap">
         <table class="tabla pd">
           <thead>
@@ -119,7 +150,7 @@ export function Bloque({ f, n, cats, titulo, filas, cols, grupo, total = 'AA', e
               const nombre = txt(`PDs!E${r}`);
               return (
                 <tr key={r} class={g ? 'grupo' : ''}>
-                  <th scope="row" class="left">{g && <span class="muted small">{g} · </span>}{nombre}</th>
+                  <th scope="row" class="left">{g && <span class="muted small">{g} · </span>}{nombre}{maximos?.[r] && <span class="limite-fila">{maximos[r]}</span>}</th>
                   {Array.from({ length: n }, (_, i) => (
                     <td key={i}>
                       <Campo f={f} clave={`PDs!${cols.pd[i]}${r}`} tipo="numero" class="mini"
@@ -137,13 +168,14 @@ export function Bloque({ f, n, cats, titulo, filas, cols, grupo, total = 'AA', e
           </tbody>
         </table>
       </div>
+      {avisos}
     </Panel>
   );
 }
 
 /** Filas de compra (tablas, artes marciales...): un desplegable por fila; se muestra una fila vacía más. */
-export function Compras({ f, n, titulo, filas, extra, grado }: {
-  f: Ficha; n: number; titulo: string; filas: number[]; extra?: string; grado?: string;
+export function Compras({ f, n, titulo, filas, extra, grado, avisos }: {
+  f: Ficha; n: number; titulo: string; filas: number[]; extra?: string; grado?: string; avisos?: preact.ComponentChildren;
 }) {
   const llenas = filas.filter((r) => f.entradas[`PDs!E${r}`]);
   const visibles = filas.slice(0, Math.min(filas.length, llenas.length + 1));
@@ -157,9 +189,12 @@ export function Compras({ f, n, titulo, filas, extra, grado }: {
           {f.entradas[`PDs!E${r}`] && Array.from({ length: n }, (_, i) => (
             <Campo key={i} f={f} clave={`PDs!${PRIM.pd[i]}${r}`} label={n > 1 ? `PD cat. ${i + 1}` : 'PD'} class="mini" />
           ))}
-          {txt(`PDs!V${r}`) && <p class="muted small compra-desc">{txt(`PDs!V${r}`)}</p>}
+          {/FALTAN|REPETIDA|SIN PAGAR/.test(txt(`PDs!V${r}`))
+            ? <Avisos claves={[`PDs!V${r}`]} />
+            : txt(`PDs!V${r}`) && <p class="muted small compra-desc">{txt(`PDs!V${r}`)}</p>}
         </div>
       ))}
+      {avisos}
     </Panel>
   );
 }

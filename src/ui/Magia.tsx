@@ -16,12 +16,15 @@ function visibles(f: Ficha, filas: number[], cols: string[]) {
 const LIBRE = '-';
 const NIVELES_LIBRES = "'Tablas'!$V$1090:$V$1109";
 
+/** Aviso de una celda del Excel solo si su texto cumple `re` (una misma celda avisa de cosas de paneles distintos). */
+function AvisoDe({ clave, re }: { clave: string; re: RegExp }) {
+  return re.test(txt(clave)) ? <Avisos claves={[clave]} /> : null;
+}
+
 export function Magia({ f }: { f: Ficha }) {
   const viasQueTiene = [LIBRE, ...new Set(rango(15, 25).map((r) => txt(m('C', r))).filter(Boolean))];
   return (
     <>
-      <Avisos claves={['Místicos!C29', 'PDs!V104']} />
-
       <Panel title="Nivel de magia" extra={<Barra usado={Number(txt(m('E', 12))) || 0} total={Number(txt(m('C', 12))) || 0} />}>
         <div class="salidas">
           {[['C', 'Nivel máximo'], ['E', 'Nivel usado'], ['G', 'Metamagia'], ['I', 'Acumulación'], ['J', 'Reg. zeónica'], ['L', 'ACT'],
@@ -34,6 +37,8 @@ export function Magia({ f }: { f: Ficha }) {
           <Campo f={f} clave={m('Q', 14)} label="Desequilibrio ofensivo" />
           <Campo f={f} clave={m('AS', 32)} label="Especialidad de proyección" />
         </div>
+        <AvisoDe clave={m('C', 29)} re={/Exceso de Nivel de Magia(?! inicial)/} />
+        <Avisos claves={['PDs!V104']} />
         <p class="muted small">Potencial innato <strong>{txt(m('L', 14))}</strong> · Vías opuestas: {txt(m('E', 27)) || '—'} · Conjuros seleccionados: {txt(m('H', 26)) || 0}</p>
       </Panel>
 
@@ -46,6 +51,7 @@ export function Magia({ f }: { f: Ficha }) {
             <p class="muted small">Nivel {txt(m('H', r)) || '—'}{txt(m('I', r)) ? ` · acumulación ${txt(m('I', r))}` : ''}</p>
           </div>
         ))}
+        <AvisoDe clave={m('C', 29)} re={/Vía cerrada|inicial/} />
       </Panel>
 
       <div class="cols-2">
@@ -72,6 +78,7 @@ export function Magia({ f }: { f: Ficha }) {
           <div class="grid-fields">
             <Campo f={f} clave={m('P', 26)} label="Especialidad" />
           </div>
+          <Avisos claves={[m('N', 27)]} />
           <p class="muted small">Convocación en masa: {txt(m('Q', 25)) || '—'}</p>
         </Panel>
       </div>
@@ -109,6 +116,7 @@ export function Magia({ f }: { f: Ficha }) {
             {f.entradas[m('J', r)] && <span class="muted small">Dif. {txt(m('P', r))} · Zeón {txt(m('Q', r))}</span>}
           </div>
         ))}
+        <Avisos claves={[m('J', 61)]} />
       </Panel>
 
       <Panel title="Ofudas preparados">

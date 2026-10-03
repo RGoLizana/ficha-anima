@@ -344,12 +344,12 @@ function RecursoFila({ ctx, k, hud }: { ctx: Ctx; k: Recurso; hud?: boolean }) {
 
 /** Avisos de los recursos: nunca bloquean. */
 function avisosRecursos(cur: Valores, max: Valores) {
-  const a: string[] = [];
-  if (cur.pv <= 0) a.push('PV a 0 o menos: el personaje está inconsciente o muriendo.');
-  else if (cur.pv > max.pv) a.push(`PV por encima del máximo de la ficha (${max.pv}).`);
+  const a: Partial<Record<Recurso, string>> = {};
+  if (cur.pv <= 0) a.pv = 'PV a 0 o menos: el personaje está inconsciente o muriendo.';
+  else if (cur.pv > max.pv) a.pv = `PV por encima del máximo de la ficha (${max.pv}).`;
   for (const k of ['zeon', 'ki', 'cv', 'cans', 'acc'] as Recurso[]) {
-    if (cur[k] < 0) a.push(`${REC[k].t} por debajo de 0 (${cur[k]}).`);
-    else if (cur[k] > max[k]) a.push(`${REC[k].t} por encima del máximo de la ficha (${max[k]}).`);
+    if (cur[k] < 0) a[k] = `${REC[k].t} por debajo de 0 (${cur[k]}).`;
+    else if (cur[k] > max[k]) a[k] = `${REC[k].t} por encima del máximo de la ficha (${max[k]}).`;
   }
   return a;
 }
@@ -359,6 +359,7 @@ function Estado({ ctx, nuevoAsalto, descansar }: { ctx: Ctx; nuevoAsalto: () => 
   const [cant, setCant] = useState('');
   const [ef, setEf] = useState({ n: '', a: '', m: '', nota: '' });
   const reg = regeneracionDiaria();
+  const avisos = avisosRecursos(cur, max);
   const mod = s.efectos.reduce((t, e) => t + e.m, 0);
   const rapido = (signo: number) => { poner('pv', cur.pv + signo * (Number(cant) || 0)); setCant(''); };
   const visibles = (['pv', 'zeon', 'ki', 'cv', 'cans', 'acc'] as Recurso[]).filter((k) => ['pv', 'cans', 'acc'].includes(k) || max[k] > 0 || cur[k] !== 0);
@@ -368,6 +369,7 @@ function Estado({ ctx, nuevoAsalto, descansar }: { ctx: Ctx; nuevoAsalto: () => 
         {visibles.map((k) => (
           <Fragment key={k}>
             <RecursoFila ctx={ctx} k={k} />
+            {avisos[k] && <p class="aviso" role="status">{avisos[k]}</p>}
             {k === 'pv' && (
               <div class="juego-rapido">
                 <label class="sr-only" for="juego-cantidad">Cantidad de daño o curación</label>
@@ -378,7 +380,6 @@ function Estado({ ctx, nuevoAsalto, descansar }: { ctx: Ctx; nuevoAsalto: () => 
             )}
           </Fragment>
         ))}
-        {avisosRecursos(cur, max).map((t) => <p class="aviso" role="status" key={t}>{t}</p>)}
       </Panel>
 
       <Panel t="Asalto" pill={`Asalto ${s.asalto}`}>

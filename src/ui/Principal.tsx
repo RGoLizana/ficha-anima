@@ -10,7 +10,6 @@ export function Principal({ f }: { f: Ficha }) {
 
   return (
     <>
-      <Avisos claves={['Principal!C19', 'Principal!N14']} />
       <Panel title="Personaje">
         <div class="grid-fields">
           <Campo f={f} clave="General!F22" label="Nombre" />
@@ -47,6 +46,7 @@ export function Principal({ f }: { f: Ficha }) {
           <Campo f={f} clave="Principal!Y14" label="Creado con magia" />
           <Campo f={f} clave="Principal!J77" label="Puntos de destino usados" tipo="numero" />
         </div>
+        <Avisos claves={['Principal!N14']} />
       </Panel>
 
       <Caracteristicas f={f} />
@@ -107,6 +107,7 @@ export function Caracteristicas({ f }: { f: Ficha }) {
           </div>
         ))}
       </div>
+      <Avisos claves={['Principal!C19']} />
     </Panel>
   );
 }

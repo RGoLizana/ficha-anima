@@ -18,6 +18,7 @@ function Entidad({ f, n, c, nivel }: { f: Ficha; n: number; c: string; nivel: st
         <Campo f={f} clave={e(nivel, 11)} label="Elan" tipo="numero" />
       </div>
       {visibles(f, c).map((r) => <Campo key={r} f={f} clave={e(c, r)} label="Don" />)}
+      <Avisos claves={[e(c, 26)]} />
     </Panel>
   );
 }
@@ -27,7 +28,6 @@ export function Elan({ f }: { f: Ficha }) {
     <>
       <Panel title="Elan" extra={<span class="muted small">{txt(e('L', 4))} · nivel {txt(e('P', 5))}</span>}>
         <p class="muted small">Elige la entidad y sus dones. Los límites de Elán solo avisan.</p>
-        <Avisos claves={['Elan!C26']} />
       </Panel>
       <div class="cols-2">
         <Entidad f={f} n={1} c="C" nivel="G" />

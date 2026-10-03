@@ -81,8 +81,6 @@ function Arbol({ f, a, nombre }: { f: Ficha; a: ArbolKi; nombre: string }) {
 export function Ki({ f }: { f: Ficha }) {
   return (
     <>
-      <Avisos claves={['Ki!C31']} />
-
       <Panel title="Puntos de Ki" extra={<Campo f={f} clave={k('I', 10)} label="Unificación" class="inline" />}>
         <div class="table-wrap">
           <table class="tabla">
@@ -108,6 +106,7 @@ export function Ki({ f }: { f: Ficha }) {
       <Panel title="Puntos de CM" extra={<span class="muted small">Límites libres: <strong>{txt(k('I', 39)) || 0}</strong></span>}>
         <p>CM usados <strong>{txt(k('E', 29)) || 0}</strong> de <strong>{txt(k('C', 29)) || 0}</strong></p>
         <Barra usado={Number(txt(k('E', 29))) || 0} total={Number(txt(k('C', 29))) || 0} />
+        <Avisos claves={[k('C', 31)]} />
         <div class="grid-fields">
           <Campo f={f} clave={k('C', 40)} label="Límite 1" />
           <Campo f={f} clave={k('C', 41)} label="Límite 2" />

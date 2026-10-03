@@ -88,23 +88,26 @@ export function Asistente({ id }: { id: string }) {
 
         {listo && paso === 1 && (
           <>
-            <Avisos claves={['Principal!C19', 'Principal!N14']} />
             <Caracteristicas f={f} />
+            <Avisos claves={['Principal!N14']} />
           </>
         )}
 
         {listo && paso === 2 && (
           <>
-            <Avisos claves={['PDs!T194', 'PDs!V86', 'PDs!V104', 'PDs!V120', 'PDs!Z29+PDs!AA29']} />
             <Panel title="Puntos de desarrollo" extra={<span class="muted small">Nivel total {txt('PDs!R17')} · {txt('PDs!T17')} PD</span>}>
               <div class="pd-cats">
                 {Array.from({ length: n }, (_, i) => <ResumenCategoria key={i} i={i} nombre={cats[i] || 'Sin categoría'} />)}
               </div>
+              <Avisos claves={['PDs!T194']} />
               <p class="muted small">Secundarias, Ki, tablas y artes marciales: en la sección <a href={`#/ficha/${id}/desarrollo`}>Desarrollo</a>.</p>
             </Panel>
-            <Bloque f={f} n={n} cats={cats} titulo="Combate" filas={rango(25, 28)} cols={PRIM} />
-            <Bloque f={f} n={n} cats={cats} titulo="Sobrenatural (místicas)" filas={rango(93, 101)} cols={PRIM} grupo />
-            <Bloque f={f} n={n} cats={cats} titulo="Psíquico" filas={[111, 112]} cols={PRIM} />
+            <Bloque f={f} n={n} cats={cats} titulo="Combate" filas={rango(25, 28)} cols={PRIM}
+              avisos={<><Avisos claves={['PDs!Z29+PDs!AA29']} /><Avisos claves={['PDs!V86']} /></>} />
+            <Bloque f={f} n={n} cats={cats} titulo="Sobrenatural (místicas)" filas={rango(93, 101)} cols={PRIM} grupo
+              avisos={<Avisos claves={['PDs!V104']} />} />
+            <Bloque f={f} n={n} cats={cats} titulo="Psíquico" filas={[111, 112]} cols={PRIM}
+              avisos={<Avisos claves={['PDs!V120']} />} />
             <Bloque f={f} n={n} cats={cats} titulo="Puntos de vida" filas={[188]} cols={SEC} total="Z" esp={null} />
           </>
         )}

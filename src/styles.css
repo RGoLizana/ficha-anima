@@ -422,3 +422,11 @@ details.juego-panel[open] > summary { border-bottom: 1px solid var(--line); }
 .ki-nodo.ki-bloqueada > * { opacity: .65; }
 .ki-nodo.ki-fuera > * { border-color: var(--danger); }
 .ki-estado { color: var(--danger); }
+
+/* Máximos de las habilidades primarias, encima de sus casillas */
+.limites { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 0 0 10px; padding: 8px 12px; border-radius: 8px; background: var(--surface-2); font-size: 14px; }
+.limites > div { display: flex; gap: 6px; align-items: baseline; }
+.limites dt { color: var(--muted); }
+.limites dt::after { content: ':'; }
+.limites dd { margin: 0; font-weight: 700; color: var(--gold-hi); }
+.limite-fila { display: block; font-size: 12px; font-weight: 600; color: var(--gold); }

@@ -25,7 +25,7 @@ export function Combate({ f }: { f: Ficha }) {
 
   return (
     <>
-      <Avisos claves={['PDs!T194', 'PDs!Z29+PDs!AA29']} />
+      <Avisos claves={['PDs!T194']} />
 
       <Panel title="Arma desarrollada">
         <div class="grid-fields">
@@ -35,6 +35,7 @@ export function Combate({ f }: { f: Ficha }) {
 
       <Panel title="Armas cuerpo a cuerpo">
         <div class="armas">{visibles(false).map((s) => <ArmaCard key={s.n} f={f} s={s} />)}</div>
+        <Avisos claves={['PDs!Z29+PDs!AA29']} />
       </Panel>
       <Panel title="Armas de proyectiles">
         <div class="armas">{visibles(true).map((s) => <ArmaCard key={s.n} f={f} s={s} />)}</div>
@@ -118,6 +119,7 @@ function ArmaCard({ f, s }: { f: Ficha; s: Ranura }) {
         <Campo f={f} clave={c(L.cal, r + 3)} label="Calidad del arma" />
         {s.proyectil && <Campo f={f} clave={c(L.cal, r + 4)} label="Calidad de la munición" />}
       </div>
+      <AvisoSi clave={c(L.sal[s.proyectil ? 3 : 2], r + 4)} re={/excesivo/i} />
       {arma ? (
         <>
           <Salidas valores={L.sal.filter((_, i) => i !== 3).map((k) => [k, txt(c(k, salida))])} tipo={txt(c(L.sal[3], salida))}
@@ -221,18 +223,26 @@ function Descripciones() {
   return <Panel title="Capacidades de combate (compradas en Desarrollo)"><div class="stack">{partes}</div></Panel>;
 }
 
+/** Aviso de una celda solo si su texto cumple re (PDs!V86 mezcla varias compras; la celda de tamaño también trae 'TA defensor'). */
+function AvisoSi({ clave, re }: { clave: string; re: RegExp }) {
+  const t = txt(clave);
+  return t && re.test(t) ? <p class="aviso" role="status">{t}</p> : null;
+}
+
 /** Tablas de armas, estilos, artes marciales y Ars Magnus: se compran aquí con PD (mismas celdas que en Desarrollo). */
 function Estilos({ f }: { f: Ficha }) {
   const n = Math.max(1, FILA_CAT.filter((r) => txt(`PDs!O${r}`)).length);
   const rango = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
   return (
     <>
-      <Avisos claves={['PDs!V86']} />
       <Compras f={f} n={n} titulo="Tablas de armas" filas={rango(43, 48)} extra="Y" />
+      <AvisoSi clave="PDs!V86" re={/conocimiento marcial/i} />
       <Compras f={f} n={n} titulo="Tablas de estilos" filas={rango(49, 58)} />
       <Compras f={f} n={n} titulo="Artes marciales" filas={rango(59, 77)} grado="J" />
+      <AvisoSi clave="PDs!V86" re={/artes marciales/i} />
       <Compras f={f} n={n} titulo="Tablas de artes marciales con armas" filas={rango(78, 80)} />
       <Compras f={f} n={n} titulo="Ars Magnus" filas={rango(81, 85)} />
+      <AvisoSi clave="PDs!V86" re={/ars magnus/i} />
     </>
   );
 }

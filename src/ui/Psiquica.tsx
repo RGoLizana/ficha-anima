@@ -17,11 +17,14 @@ const SALIDAS: [string, number, string][] = [
   ['O', 12, 'Turno'], ['P', 12, 'Proyección ataque'], ['Q', 12, 'Proyección defensa'],
 ];
 
+/** Aviso de una celda del Excel solo si su texto cumple `re` (C22 avisa de CVs y de innatos). */
+function AvisoDe({ clave, re }: { clave: string; re: RegExp }) {
+  return re.test(txt(clave)) ? <Avisos claves={[clave]} /> : null;
+}
+
 export function Psiquica({ f }: { f: Ficha }) {
   return (
     <>
-      <Avisos claves={['Psíquicos!C22']} />
-
       <Panel title="Potencial psíquico" extra={<span class="muted small">{txt(p('L', 5))} · nivel {txt(p('P', 5))}</span>}>
         <div class="salidas">
           {SALIDAS.map(([c, r, t]) => (
@@ -42,6 +45,7 @@ export function Psiquica({ f }: { f: Ficha }) {
             ))}
           </tbody>
         </table>
+        <AvisoDe clave={p('C', 22)} re={/CVs/} />
       </Panel>
 
       <div class="cols-2">
@@ -67,6 +71,7 @@ export function Psiquica({ f }: { f: Ficha }) {
             <span class="muted small">{txt(p('AB', r)) && `Bono ${txt(p('AB', r))}`}{txt(p('V', r + 1)) ? ` · ${txt(p('V', r + 1))} nv ${txt(p('Z', r + 1))}` : ''}</span>
           </div>
         ))}
+        <Avisos claves={['PDs!V120']} />
       </Panel>
 
       <Panel title="Poderes innatos" extra={<span class="muted small">{txt(p('AD', 16))}</span>}>
@@ -83,6 +88,7 @@ export function Psiquica({ f }: { f: Ficha }) {
             <span class="muted small">{txt(p('AK', r))} {txt(p('AL', r))}</span>
           </div>
         ))}
+        <AvisoDe clave={p('C', 22)} re={/innatos/} />
       </Panel>
 
       <Panel title="Dificultades y notas">

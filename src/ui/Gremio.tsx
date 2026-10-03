@@ -209,12 +209,11 @@ export function Gremio({ f }: { f: Ficha }) {
       </Panel>
 
       <Panel title="En este personaje" extra={<span class="muted small">Consume: nivel de vía {total.nivel} · CV {total.cv} · CM {total.cm} · PD {total.pd.reduce((a, c) => a + c, 0)}</span>}>
-        <Avisos claves={['Místicos!C29', 'Psíquicos!C22', 'PDs!T194']} />
         <div class="salidas">
-          <div class="stat"><div class="stat-v">{txt('Místicos!E12') || 0}/{txt('Místicos!C12') || 0}</div><div class="muted small">Nivel de magia usado</div></div>
-          <div class="stat"><div class="stat-v">{txt('Psíquicos!F20') || 0}</div><div class="muted small">CVs libres</div></div>
+          <div class="stat"><div class="stat-v">{txt('Místicos!E12') || 0}/{txt('Místicos!C12') || 0}</div><div class="muted small">Nivel de magia usado</div><Avisos claves={['Místicos!C29']} /></div>
+          <div class="stat"><div class="stat-v">{txt('Psíquicos!F20') || 0}</div><div class="muted small">CVs libres</div><Avisos claves={['Psíquicos!C22']} /></div>
           <div class="stat"><div class="stat-v">{txt('Ki!E29') || 0}/{txt('Ki!C29') || 0}</div><div class="muted small">CM usado</div></div>
-          <div class="stat"><div class="stat-v">{txt('PDs!AA194') || 0}/{txt('PDs!Z194') || 0}</div><div class="muted small">PD gastados</div></div>
+          <div class="stat"><div class="stat-v">{txt('PDs!AA194') || 0}/{txt('PDs!Z194') || 0}</div><div class="muted small">PD gastados</div><Avisos claves={['PDs!T194']} /></div>
         </div>
         <div class="row">
           <label class="field grow"><span class="lbl">Añadir de la biblioteca</span>
