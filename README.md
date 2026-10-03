@@ -50,3 +50,12 @@ Antes de publicar, ten en cuenta:
 - **Licencia:** HyperFormula es GPL-3.0 para uso no comercial. Si publicas la web, el código fuente debe poder
   distribuirse bajo una licencia compatible (GPL-3.0).
 - Para que se despliegue en cada `push`, cambia el disparador de `deploy.yml` a `push` en `main`.
+
+## Licencia y contenido del juego
+
+- **Código:** GPL-3.0 (ver `LICENSE`). Usa HyperFormula bajo su licencia GPL-3.0.
+- **Contenido del juego:** *Anima: Beyond Fantasy*, su reglamento, tablas, textos y logotipo pertenecen a sus propietarios
+  (Anima Project Studio / Edge Entertainment). Este proyecto es una herramienta no oficial de aficionados, sin ánimo de
+  lucro; los datos de las tablas se extraen de la ficha de Excel de la comunidad y se incluyen solo para que la web calcule
+  igual que ella. Si eres titular de los derechos y quieres que algo se retire, abre una *issue*.
+
