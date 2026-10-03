@@ -270,3 +270,7 @@ escribía sobre una fórmula (PDs!Z188).
   dificultades; Ars Magnus), importar/exportar .json, y los elementos que tiene cada personaje (`ficha.propio`). La hoja interna `Gremio` del
   motor suma a Místicos!E12 (nivel de magia usado), Psíquicos!E12 (CV usados), Ki!E29 (CM usado) y PDs!K194:S194 (PD por categoría); con ceros
   no cambia nada (comprobado con las fichas reales). El compendio muestra lo propio marcado «GREMIO». No se escribe en el Excel al exportar.
+- **Retoques de uso:** libre acceso solo de las vías que tiene el personaje (o «-» si es libre), grimorios informativos como desplegables con
+  «Desplegar/Plegar todo», imagen del personaje (cabecera de la ficha → iconos de la lista, ficha y modo juego; se guarda en la ficha),
+  marcas «Próximamente» en lo que falta (páginas de Sheele y Equipo y PDF de grimorios en Imprimir, coste del libre acceso y acumulaciones
+  en el modo juego, convocatoria e invocaciones en el compendio) y Metamagia siguiendo el orden del árbol (en curso).

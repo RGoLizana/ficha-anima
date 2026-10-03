@@ -352,3 +352,44 @@ details.juego-panel[open] > summary { border-bottom: 1px solid var(--line); }
   .juego-hud-stats { flex: 1 1 100%; }
   .juego-toast { bottom: 24px; }
 }
+
+/* Desplegables de los grimorios informativos: se ve que son listas que se abren */
+.desplegable { border: 1px solid var(--line-2); border-radius: 10px; background: var(--surface); }
+.desplegable > .desp-cab { width: 100%; list-style: none; display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 14px; cursor: pointer; border: 0; border-radius: 10px; background: transparent; color: var(--text); font: inherit; text-align: left; }
+.desplegable > .desp-cab:hover { background: var(--surface-2); }
+.desplegable .chevron { color: var(--gold); font-size: 12px; transition: transform .15s; }
+.desplegable.abierto .chevron { transform: rotate(90deg); }
+.desplegable .verbo { margin-left: auto; }
+.desplegable > .cuerpo-desp { padding: 12px 14px 14px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 10px; }
+
+/* Imagen del personaje */
+.avatar { overflow: hidden; }
+.avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.avatar.editable { cursor: pointer; }
+.avatar.editable:hover { border-color: var(--gold-hi); }
+.avatar-edit { gap: 4px; }
+
+/* Lo que aún no está implementado */
+.proximamente { display: inline-flex; align-items: center; font-size: 12px; font-weight: 700; letter-spacing: .04em; padding: 2px 9px; border-radius: 999px; border: 1px dashed var(--line-2); color: var(--muted); white-space: nowrap; }
+.btn[disabled], .btn.pronto { opacity: .55; cursor: not-allowed; }
+
+/* Árbol de metamagia: dibujo de la hoja, con desplazamiento horizontal dentro de su caja */
+.mm-scroll { max-width: 100%; overflow: auto; margin-top: 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+.mm-arbol { position: relative; margin: 12px; }
+.mm-lineas { position: absolute; inset: 0; }
+.mm-lineas path { fill: none; stroke: var(--line-2); stroke-width: 2; }
+.mm-lineas path.on { stroke: var(--gold); stroke-width: 3; }
+.mm-nodo { position: absolute; box-sizing: border-box; padding: 3px; }
+.mm-nodo .check { box-sizing: border-box; width: 100%; height: 100%; flex-direction: column; align-items: stretch; justify-content: space-between; gap: 2px;
+  padding: 6px; border: 1px solid var(--line-2); border-radius: 8px; background: var(--surface-2); font-size: 12px; line-height: 1.2; position: relative; }
+.mm-nodo .check input { position: absolute; right: 6px; bottom: 6px; }
+.mm-nodo .check:focus-within { outline: 2px solid var(--gold); outline-offset: 2px; }
+.mm-nombre { font-weight: 600; color: var(--text); overflow-wrap: anywhere; }
+.mm-pie { display: flex; flex-wrap: wrap; gap: 0 6px; padding-right: 24px; color: var(--muted); font-size: 11px; }
+.mm-raiz .check { border-style: dashed; border-color: var(--gold); }
+.mm-disponible .check { border-color: var(--gold); }
+.mm-comprada .check { border: 2px solid var(--gold); background: #3a3020; }
+.mm-bloqueada .check { opacity: .6; }
+.mm-fuera .check { border-color: var(--danger); }
+.mm-estado { color: var(--danger); }
+.mm-alto { opacity: .35; }

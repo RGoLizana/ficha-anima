@@ -4,7 +4,7 @@ import { abrir, abierta, valores } from '../engine';
 import { nombreDe, entradasMotor } from '../model/ficha';
 import { PaginaPdf, type ValorPdf } from '../pdf/Pagina';
 import { tramosNotas } from '../pdf/notas';
-import { txt } from './campos';
+import { Proximamente, txt } from './campos';
 
 // Vista de impresión: las mismas páginas A4 que exporta el Excel. "Imprimir / guardar PDF" usa el diálogo del
 // navegador (destino "Guardar como PDF"); el texto queda seleccionable.
@@ -29,6 +29,9 @@ export function Imprimir({ id }: { id: string }) {
         <div class="grow muted small">Hoja A4 igual que la del Excel. En el diálogo elige “Guardar como PDF”, A4, sin márgenes ni encabezados.</div>
         {([['pagNotas', 'Página de notas'], ['idiomas', 'Idiomas en notas'], ['notas', 'Notas de cada sección']] as const).map(([k, t]) => (
           <label class="check" key={k}><input type="checkbox" checked={op[k]} onChange={(e) => setOp({ ...op, [k]: e.currentTarget.checked })} /> {t}</label>
+        ))}
+        {['Página de Sheele', 'Página de Equipo', 'Imagen del personaje en la hoja', 'PDF de grimorio (apaisado)'].map((t) => (
+          <label class="check pronto" key={t} title="Todavía no está disponible"><input type="checkbox" disabled /> {t} <Proximamente /></label>
         ))}
         <button class="btn primary" disabled={!listo} onClick={() => { const t = document.title; document.title = nombre; print(); document.title = t; }}>
           Imprimir / guardar PDF

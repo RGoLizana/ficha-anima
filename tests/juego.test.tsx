@@ -62,7 +62,7 @@ describe('Modo juego', () => {
     const texto = document.body.textContent!;
     expect(texto).toContain('Lock');
     expect(texto).toContain('Hechicero');
-    for (const t of ['Medicina', 'Ocultismo', 'Desarmado', 'Baile espectral', '12 ki', 'Aseamiento', 'coste pendiente'.replace('coste', 'Coste')]) expect(texto).toContain(t);
+    for (const t of ['Medicina', 'Ocultismo', 'Desarmado', 'Baile espectral', '12 ki', 'Aseamiento', 'Coste en zeón de los conjuros de libre acceso', 'Próximamente']) expect(texto).toContain(t);
     expect(texto).toContain('30 PV / día');
   }, T);
 

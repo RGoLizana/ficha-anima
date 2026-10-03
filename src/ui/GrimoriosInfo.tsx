@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'preact/hooks';
-import { Panel, txt } from './campos';
+import type { ComponentChildren } from 'preact';
+import { Panel, Proximamente, txt } from './campos';
 
 // Grimorios informativos: todas las vías del mago (o disciplinas del psíquico) a la vez, sin elegir una sola como en
 // la hoja "Grimorio de Vía" del Excel. Los datos salen de las tablas del Excel (tools/export_grimorios.py).
@@ -37,29 +38,68 @@ function Carta({ c, aprendido }: { c: Conjuro; aprendido: boolean }) {
   );
 }
 
+/** Desplegables de un panel: cerrados al principio (se ve la lista de vías, no cientos de tarjetas) y con botones para abrir o cerrar todos. */
+function useAbiertas() {
+  const [abiertas, setAbiertas] = useState<Set<string>>(new Set());
+  return {
+    abiertas,
+    alternar: (k: string) => setAbiertas((a) => { const n = new Set(a); if (!n.delete(k)) n.add(k); return n; }),
+    todas: (ks: string[]) => setAbiertas(new Set(ks)),
+    ninguna: () => setAbiertas(new Set()),
+  };
+}
+
+function Desplegable({ k, abierto, alternar, titulo, resumen, children }: { k: string; abierto: boolean; alternar: (k: string) => void; titulo: ComponentChildren; resumen?: string; children: ComponentChildren }) {
+  return (
+    <div class={`desplegable${abierto ? ' abierto' : ''}`}>
+      <button type="button" class="desp-cab" aria-expanded={abierto} onClick={() => alternar(k)}>
+        <span class="chevron" aria-hidden="true">{'▶'}</span>
+        <strong>{titulo}</strong>
+        {resumen && <span class="muted small">{resumen}</span>}
+        <span class="verbo muted small">{abierto ? 'Ocultar' : 'Mostrar'}</span>
+      </button>
+      {abierto && <div class="cuerpo-desp">{children}</div>}
+    </div>
+  );
+}
+
+function Botones({ claves, ab }: { claves: string[]; ab: ReturnType<typeof useAbiertas> }) {
+  return (
+    <div class="row wrap">
+      <button class="btn" onClick={() => ab.todas(claves)}>Desplegar todo</button>
+      <button class="btn" onClick={ab.ninguna}>Plegar todo</button>
+      <button class="btn" disabled title="Todavía no está disponible">Descargar grimorio en PDF</button><Proximamente />
+    </div>
+  );
+}
+
 /** Todas las vías de Místicos (y su subvía) con sus conjuros por nivel. Lo que está por encima del nivel aprendido sale atenuado. */
 export function GrimorioVias() {
   const datos = useDatos();
+  const ab = useAbiertas();
   const filas = rango(15, 25).map((r) => ({ via: txt(`Místicos!C${r}`), sub: txt(`Místicos!E${r}`), nivel: Number(txt(`Místicos!H${r}`)) || 0 })).filter((x) => x.via);
   return (
     <Panel title="Todas mis vías" extra={<span class="muted small">Informativo: los conjuros de cada vía que tiene el personaje (en gris, los aún no alcanzados)</span>}>
       {!filas.length && <p class="muted">Elige vías en la sección Magia para verlas aquí.</p>}
       {filas.length > 0 && !datos && <p class="muted">Cargando conjuros…</p>}
-      {datos && filas.map(({ via, sub, nivel }) => (
-        <details key={via} open>
-          <summary><strong>{via}{sub ? ` · ${sub}` : ''}</strong> <span class="muted small">nivel aprendido {nivel}</span></summary>
-          {unicos([via, sub]).map((v) => {
-            const lista = datos.conjuros.filter((c) => c.v === v).sort((a, b) => a.l - b.l);
-            return (
-              <div key={v}>
-                {v !== via && <h4>{v}</h4>}
-                {!lista.length && <p class="muted small">Sin conjuros propios (solo libre acceso).</p>}
-                <div class="armas">{lista.map((c) => <Carta key={c.n} c={c} aprendido={c.l <= nivel} />)}</div>
-              </div>
-            );
-          })}
-        </details>
-      ))}
+      {datos && filas.length > 0 && <Botones claves={filas.map((x) => x.via)} ab={ab} />}
+      {datos && filas.map(({ via, sub, nivel }) => {
+        const total = unicos([via, sub]).reduce((n, v) => n + datos.conjuros.filter((c) => c.v === v).length, 0);
+        return (
+          <Desplegable key={via} k={via} abierto={ab.abiertas.has(via)} alternar={ab.alternar} titulo={`${via}${sub ? ` · ${sub}` : ''}`} resumen={`nivel aprendido ${nivel} · ${total} conjuros`}>
+            {unicos([via, sub]).map((v) => {
+              const lista = datos.conjuros.filter((c) => c.v === v).sort((a, b) => a.l - b.l);
+              return (
+                <div key={v}>
+                  {v !== via && <h4>{v}</h4>}
+                  {!lista.length && <p class="muted small">Sin conjuros propios (solo libre acceso).</p>}
+                  <div class="armas">{lista.map((c) => <Carta key={c.n} c={c} aprendido={c.l <= nivel} />)}</div>
+                </div>
+              );
+            })}
+          </Desplegable>
+        );
+      })}
     </Panel>
   );
 }
@@ -80,20 +120,22 @@ function PoderCarta({ p, aprendido }: { p: Poder; aprendido: boolean }) {
 /** Todas las disciplinas afines del psíquico con sus poderes; los ya elegidos en Psíquica salen destacados. */
 export function GrimorioDisciplinas() {
   const datos = useDatos();
+  const ab = useAbiertas();
   const disciplinas = [25, 27, 29, 31, 33, 35].map((r) => txt(`Psíquicos!C${r}`)).filter(Boolean);
   const aprendidos = new Set(rango(17, 43).map((r) => txt(`Psíquicos!AS${r}`)).filter(Boolean));
   return (
     <Panel title="Todas mis disciplinas" extra={<span class="muted small">Informativo: los poderes de cada disciplina afín (en gris, los no aprendidos)</span>}>
       {!disciplinas.length && <p class="muted">Elige disciplinas afines arriba para verlas aquí.</p>}
       {disciplinas.length > 0 && !datos && <p class="muted">Cargando poderes…</p>}
-      {datos && disciplinas.map((d) => (
-        <details key={d} open>
-          <summary><strong>{d}</strong></summary>
-          <div class="armas">
-            {datos.poderes.filter((p) => p.d === d).sort((a, b) => a.l - b.l).map((p) => <PoderCarta key={p.n} p={p} aprendido={aprendidos.has(p.n)} />)}
-          </div>
-        </details>
-      ))}
+      {datos && disciplinas.length > 0 && <Botones claves={disciplinas} ab={ab} />}
+      {datos && disciplinas.map((d) => {
+        const poderes = datos.poderes.filter((p) => p.d === d).sort((a, b) => a.l - b.l);
+        return (
+          <Desplegable key={d} k={d} abierto={ab.abiertas.has(d)} alternar={ab.alternar} titulo={d} resumen={`${poderes.filter((p) => aprendidos.has(p.n)).length} aprendidos · ${poderes.length} poderes`}>
+            <div class="armas">{poderes.map((p) => <PoderCarta key={p.n} p={p} aprendido={aprendidos.has(p.n)} />)}</div>
+          </Desplegable>
+        );
+      })}
     </Panel>
   );
 }

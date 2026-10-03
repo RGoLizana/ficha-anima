@@ -12,7 +12,12 @@ function visibles(f: Ficha, filas: number[], cols: string[]) {
   return filas.slice(0, Math.min(filas.length, ultima + 2));
 }
 
+// libre acceso: vías que tiene el personaje (Místicos C15:C25) y, si el conjuro es de libre elección, «-» con la lista de niveles más amplia
+const LIBRE = '-';
+const NIVELES_LIBRES = "'Tablas'!$V$1090:$V$1109";
+
 export function Magia({ f }: { f: Ficha }) {
+  const viasQueTiene = [LIBRE, ...new Set(rango(15, 25).map((r) => txt(m('C', r))).filter(Boolean))];
   return (
     <>
       <Avisos claves={['Místicos!C29', 'PDs!V104']} />
@@ -82,13 +87,17 @@ export function Magia({ f }: { f: Ficha }) {
       </Panel>
 
       <Panel title="Conjuros de libre acceso" extra={<span class="muted small">Restantes: <strong>{txt(m('AK', 10))}</strong></span>}>
-        {visibles(f, rango(12, 50), ['AE', 'AG', 'AK']).map((r) => (
-          <div class="compra" key={r}>
-            <Campo f={f} clave={m('AE', r)} label="Vía asociada" />
-            <Campo f={f} clave={m('AG', r)} label="Conjuro" class="grow" />
-            <Campo f={f} clave={m('AK', r)} label="Nivel" class="mini" />
-          </div>
-        ))}
+        <p class="muted small">Elige primero la vía a la que pertenece (solo las que tienes, o «-» si es de libre elección) y su nivel; después sale la lista de conjuros.</p>
+        {visibles(f, rango(12, 50), ['AE', 'AG', 'AK']).map((r) => {
+          const libre = f.entradas[m('AE', r)] === LIBRE;
+          return (
+            <div class="compra" key={r}>
+              <Campo f={f} clave={m('AE', r)} label={`Vía asociada (${LIBRE} si es libre)`} fijas={viasQueTiene} />
+              <Campo f={f} clave={m('AK', r)} label="Nivel" class="mini" {...(libre ? { lista: NIVELES_LIBRES } : {})} />
+              <Campo f={f} clave={m('AG', r)} label="Conjuro" class="grow" />
+            </div>
+          );
+        })}
       </Panel>
 
       <Panel title="Conjuros activos, criaturas atadas e invocaciones" extra={<span class="muted small">Coste zeónico al día: <strong>{txt(m('H', 61)) || txt(m('G', 61)) || 0}</strong></span>}>

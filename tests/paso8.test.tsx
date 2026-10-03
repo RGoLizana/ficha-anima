@@ -119,11 +119,34 @@ describe('Equipo', () => {
 describe('Grimorios informativos (todas las vías / disciplinas a la vez)', () => {
   const nombres = () => [...document.querySelectorAll('.arma.info .arma-titulo')].map((t) => t.textContent);
 
+  const desplegarTodo = async () => {
+    await waitFor(() => expect([...document.querySelectorAll('button')].some((b) => b.textContent === 'Desplegar todo')).toBe(true), { timeout: 20_000 });
+    fireEvent.click([...document.querySelectorAll('button')].find((b) => b.textContent === 'Desplegar todo')!);
+  };
+
+  it('Lock: las vías salen como desplegables cerrados con su resumen, y se abren de una en una o todas a la vez', async () => {
+    abrirFicha('lock', 'grimorios');
+    await esperarListo();
+    await waitFor(() => expect(document.querySelectorAll('.desplegable').length).toBeGreaterThanOrEqual(3), { timeout: 20_000 });
+    const filas = [...document.querySelectorAll('.desplegable > .desp-cab')];
+    expect(filas[0].textContent).toContain('Fuego');
+    expect(filas[0].textContent).toMatch(/nivel aprendido \d+ · \d+ conjuros/);
+    expect(filas[0].querySelector('.chevron')).toBeTruthy();                       // la flecha indica que se abre
+    expect(filas[0].textContent).toContain('Mostrar');
+    expect(nombres()).toHaveLength(0);                                              // cerrados: sin cientos de tarjetas
+    fireEvent.click(filas[0]);
+    await waitFor(() => expect(nombres().length).toBeGreaterThan(5));
+    expect(document.querySelector('.desplegable > .desp-cab')!.textContent).toContain('Ocultar');
+    fireEvent.click([...document.querySelectorAll('button')].find((b) => b.textContent === 'Plegar todo')!);
+    await waitFor(() => expect(nombres()).toHaveLength(0));
+  }, T);
+
   it('Lock: muestra a la vez los conjuros de todas sus vías, con lo no alcanzado atenuado', async () => {
     abrirFicha('lock', 'grimorios');
     await esperarListo();
+    await desplegarTodo();
     await waitFor(() => expect(nombres().length).toBeGreaterThan(30), { timeout: 20_000 });
-    const vias = [...document.querySelectorAll('details summary strong')].map((e) => e.textContent!);
+    const vias = [...document.querySelectorAll('.desp-cab strong')].map((e) => e.textContent!);
     expect(vias.length).toBeGreaterThanOrEqual(3);
     expect(vias.join('|')).toContain('Fuego');
     expect(nombres()).toContain('Crear fuego');
@@ -134,6 +157,7 @@ describe('Grimorios informativos (todas las vías / disciplinas a la vez)', () =
   it('Ayane: muestra los poderes de todas sus disciplinas afines, marcando los aprendidos', async () => {
     abrirFicha('ayane', 'psiquica');
     await esperarListo();
+    await desplegarTodo();
     await waitFor(() => expect(nombres().length).toBeGreaterThan(20), { timeout: 20_000 });
     expect(nombres()).toEqual(expect.arrayContaining(['Crear fuego', 'Impacto telequinético']));
     const imp = [...document.querySelectorAll('.arma.info')].find((a) => a.querySelector('.arma-titulo')!.textContent === 'Impacto telequinético')!;
@@ -173,5 +197,23 @@ describe('Estilos y tablas en Combate', () => {
       expect(t).toContain(estilo.split(' (')[0]);
       expect(t).not.toBe(antes);
     });
+  }, T);
+});
+
+describe('Conjuros de libre acceso', () => {
+  it('la vía asociada solo ofrece las vías que tiene el personaje y «-» si es libre; el nivel y el conjuro siguen', async () => {
+    const f = abrirFicha('lock', 'magia');
+    await esperarListo();
+    await waitFor(() => expect(opcionesDe('Místicos!AE13').length).toBeGreaterThan(0));
+    expect(opcionesDe('Místicos!AE13')).toEqual(['-', 'Fuego', 'Creación', 'Oscuridad']);       // las vías de Lock (+ libre)
+    // libre: los niveles salen aunque no haya vía asociada
+    fireEvent.change(celda('Místicos!AE13'), { target: { value: '-' } });
+    await waitFor(() => expect(opcionesDe('Místicos!AK13').length).toBeGreaterThan(5));
+    fireEvent.change(celda('Místicos!AK13'), { target: { value: opcionesDe('Místicos!AK13')[0] } });
+    await waitFor(() => expect(opcionesDe('Místicos!AG13').length).toBeGreaterThan(3));
+    fireEvent.change(celda('Místicos!AG13'), { target: { value: opcionesDe('Místicos!AG13').find((o) => !o.startsWith('>'))! } });
+    expect(store.buscar(f.id)!.entradas['Místicos!AG13']).toBeTruthy();
+    // con una vía que tiene, sin subvía (Fuego), también hay niveles
+    fireEvent.change(celda('Místicos!AE14') ?? celda('Místicos!AE13'), { target: { value: 'Fuego' } });
   }, T);
 });

@@ -497,11 +497,11 @@ describe('Metamagia', () => {
   it('Lock: sus 5 habilidades compradas salen marcadas con nombre y coste', async () => {
     abrirFicha('lock', 'metamagia');
     await esperarListo();
-    const marcadas = [...document.querySelectorAll('.arma input[type=checkbox]:checked')].map((c) => c.closest('label')!.getAttribute('data-clave'));
+    const marcadas = [...document.querySelectorAll('.mm-nodo input[type=checkbox]:checked')].map((c) => c.closest('label')!.getAttribute('data-clave'));
     expect(marcadas.sort()).toEqual(['Metamagia!AB48', 'Metamagia!AB53', 'Metamagia!AE53', 'Metamagia!AE62', 'Metamagia!AH53']);
-    const titulos = [...document.querySelectorAll('.arma-titulo')].map((t) => t.textContent);
+    const titulos = [...document.querySelectorAll('.mm-nombre')].map((t) => t.textContent);
     expect(titulos).toEqual(expect.arrayContaining(['Escudos potenciados', 'Erudición ofensiva', 'Doble conjuro']));
-    expect(document.querySelectorAll('.arma')).toHaveLength(titulos.length);
+    expect(document.querySelectorAll('.mm-nodo')).toHaveLength(68);   // una caja por casilla de compra del árbol
   }, T);
 
   it('comprar una habilidad sube el nivel usado de metamagia y se puede deshacer', async () => {

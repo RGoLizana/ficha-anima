@@ -2,6 +2,7 @@ import { signal } from '@preact/signals';
 import { fichas, crear, duplicar, borrar, importar, importarExcel, exportar } from '../store';
 import { ir } from '../router';
 import { Icon } from './Icon';
+import { Avatar } from './Avatar';
 import { nombreDe } from '../model/ficha';
 
 const filtro = signal('');
@@ -63,7 +64,7 @@ export function Lista() {
           {lista.map((f) => (
             <article class="card stack" key={f.id}>
               <div class="row">
-                <div class="avatar">{nombreDe(f).trim()[0]?.toUpperCase() ?? '?'}</div>
+                <Avatar f={f} />
                 <div class="grow">
                   <h2 class="card-title">{nombreDe(f) || 'Sin nombre'}</h2>
                   <div class="muted small">

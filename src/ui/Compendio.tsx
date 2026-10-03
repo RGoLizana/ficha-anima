@@ -3,7 +3,7 @@ import type { ComponentChildren } from 'preact';
 import { abrir, abierta, valores } from '../engine';
 import { buscar } from '../store';
 import { nombreDe, entradasMotor } from '../model/ficha';
-import { txt } from './campos';
+import { Proximamente, txt } from './campos';
 import { biblioteca } from '../gremio/almacen';
 import type { Biblioteca } from '../gremio/modelo';
 import '../compendio.css';
@@ -372,6 +372,7 @@ export function Compendio({ id }: { id?: string }) {
         {([['magia', 'Magia', conjuros.length], ['psi', 'Mentalismo', poderes.length], ['fav', '★ Favoritos', fav.size]] as [Tab, string, number][]).map(([t, titulo, c]) => (
           <button role="tab" id={`tab-${t}`} data-tab={t} key={t} aria-selected={tab === t} aria-controls="layout" tabIndex={tab === t ? 0 : -1} onClick={() => cambiarTab(t)}>{titulo} <small>{c}</small></button>
         ))}
+        <span class="tab-pronto">Convocatoria e invocaciones <Proximamente /></span>
       </div>
 
       <div class={`layout${vista === 'tarjetas' ? ' tarjetas' : ''}${ids.length ? ' con-bandeja' : ''}`} id="layout" role="tabpanel" aria-labelledby={`tab-${tab}`}>

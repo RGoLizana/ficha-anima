@@ -17,21 +17,22 @@ type Props = {
   label: ComponentChildren;
   tipo?: 'texto' | 'numero' | 'lista' | 'area';
   lista?: string;              // fórmula de las opciones; por defecto, el desplegable de esa celda en el Excel
+  fijas?: string[];            // opciones ya conocidas (sustituyen a la lista del Excel)
   excluir?: string[];          // opciones que no se ofrecen (p.ej. ya elegidas en otra casilla)
   sinTab?: boolean;            // fuera del orden del tabulador (se edita con clic)
   class?: string;
 };
 
 /** Casilla editable ligada a una celda de entrada del Excel. Vacía = valor por defecto de la plantilla. */
-export function Campo({ f, clave, label, tipo, lista, excluir = [], sinTab, class: cls }: Props) {
-  const formula = lista ?? formulaLista(clave);
-  tipo ??= formula ? 'lista' : 'texto';
+export function Campo({ f, clave, label, tipo, lista, fijas, excluir = [], sinTab, class: cls }: Props) {
+  const formula = fijas ? undefined : lista ?? formulaLista(clave);
+  tipo ??= formula || fijas ? 'lista' : 'texto';
   const actual = f.entradas[clave] ?? v(clave) ?? '';
-  const [ops, setOps] = useState<string[]>([]);
-  const cargar = () => { if (formula) opciones(clave, formula).then(setOps).catch(() => setOps([])); };
+  const [ops, setOps] = useState<string[]>(fijas ?? []);
+  const cargar = () => { if (fijas) setOps(fijas); else if (formula) opciones(clave, formula).then(setOps).catch(() => setOps([])); };
   // la lista puede depender de otros datos de la ficha (p.ej. PD de un arte marcial según su grado):
   // se recarga en cuanto cambia cualquier valor calculado, no al abrir el desplegable (llegaría tarde)
-  useEffect(cargar, [clave, formula, formula ? valores.value : null]);
+  useEffect(cargar, [clave, formula, formula ? valores.value : null, fijas?.join('|')]);
 
   const guardar = (raw: string) => {
     if (tipo === 'numero') {
@@ -127,4 +128,9 @@ export function Compra({ f, clave, label, class: cls }: { f: Ficha; clave: strin
       <span>{label ?? valor}</span>
     </label>
   );
+}
+
+/** Marca de lo que aún no está hecho. */
+export function Proximamente({ texto }: { texto?: string }) {
+  return <span class="proximamente" title={texto ?? 'Todavía no está disponible'}>Próximamente</span>;
 }

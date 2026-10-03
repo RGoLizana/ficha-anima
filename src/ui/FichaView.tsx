@@ -5,6 +5,7 @@ import { abrir, abierta, errorMotor, motor, valores } from '../engine';
 import { nombreDe, entradasMotor } from '../model/ficha';
 import { Icon } from './Icon';
 import { ExportarExcel } from './ExportarExcel';
+import { Avatar } from './Avatar';
 import { Dato, Panel, txt } from './campos';
 import { Principal } from './Principal';
 import { Trasfondo } from './Trasfondo';
@@ -82,7 +83,7 @@ export function FichaView({ id, seccion }: { id: string; seccion: string }) {
     <div class="page">
       <header class="topbar">
         <a class="icon-btn plain" href="#/" aria-label="Volver a la lista"><Icon name="back" /></a>
-        <div class="avatar sm">{nombre.trim()[0]?.toUpperCase() ?? '?'}</div>
+        <Avatar f={f} sm editable />
         <div class="grow">
           <div class="char-name">{nombre || 'Sin nombre'}</div>
           <div class="muted small">{[txt('Principal!K5'), txt('Principal!O6') && `Nivel ${txt('Principal!O6')}`, txt('General!F23')].filter(Boolean).join(' · ')}</div>

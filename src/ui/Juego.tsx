@@ -7,7 +7,8 @@ import { buscar, guardado, guardarSesion } from '../store';
 import { abrir, abierta, errorMotor, motor, valores } from '../engine';
 import { nombreDe, type Ficha, type Recurso, type Sesion, entradasMotor } from '../model/ficha';
 import { Icon } from './Icon';
-import { txt } from './campos';
+import { Avatar } from './Avatar';
+import { Proximamente, txt } from './campos';
 
 /** Descanso de un día. Provisional: las cifras exactas saldrán de los libros; se cambian aquí y en ningún otro sitio. */
 export const REGLAS_DESCANSO = {
@@ -89,7 +90,7 @@ function Cabecera({ f, children }: { f: Ficha; children?: ComponentChildren }) {
   return (
     <header class="topbar juego-top">
       <a class="icon-btn plain" href={`#/ficha/${f.id}/principal`} aria-label="Salir del modo juego (volver a la ficha)" title="Salir del modo juego"><Icon name="back" /></a>
-      <div class="avatar sm">{nombre.trim()[0]?.toUpperCase() ?? '?'}</div>
+      <Avatar f={f} sm />
       <div class="grow">
         <div class="char-name">{nombre || 'Sin nombre'}</div>
         <div class="muted small">{[txt('Principal!K5'), txt('Principal!O6') && `Nivel ${txt('Principal!O6')}`, txt('General!F23')].filter(Boolean).join(' · ')}</div>
@@ -681,7 +682,7 @@ function Magia({ ctx }: { ctx: Ctx }) {
 
       <Panel t="Libre acceso" pill={`${libres.length} conjuros`} open={false}>
         {libres.length ? <p class="small">{libres.map(([c, l]) => (l ? `${c} ${l}` : c)).join(' · ')}</p> : <div class="juego-vacio">Sin conjuros de libre acceso.</div>}
-        <p class="nota">Coste pendiente: el zeón de los conjuros de libre acceso no está en los grimorios.</p>
+        <p class="nota">Coste en zeón de los conjuros de libre acceso <Proximamente /></p>
       </Panel>
     </>
   );
@@ -698,7 +699,7 @@ function Ki({ ctx }: { ctx: Ctx }) {
       <Panel t="Ki" color="var(--ki)" pill={`${txt('Ki!I10') === 'Sí' ? 'unificado · ' : ''}acumula ${txt('Ki!D24') || 0}/asalto`}>
         <RecursoFila ctx={ctx} k="ki" />
         {ctx.cur.ki < 0 && <p class="aviso" role="status">Ki por debajo de 0 ({ctx.cur.ki}).</p>}
-        <p class="nota">Pendiente de los libros: la acumulación de ki por asalto no se lleva aquí.</p>
+        <p class="nota">Acumulación de ki y de zeón por asalto, reservas de ki por característica y conjuros o poderes propios del gremio <Proximamente /></p>
       </Panel>
       <Panel t="Técnicas">
         {tecnicas.length ? tecnicas.map(({ b, nombre }) => {

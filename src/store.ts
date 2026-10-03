@@ -61,6 +61,11 @@ export function guardarPropio(id: string, propio: Elegido[]) {
   if (abierta.value === id) for (const [k, v] of Object.entries(entradasConsumo(propio))) void poner(k, v);
 }
 
+/** Pone o quita (null) la imagen del personaje. No toca `entradas` ni el motor. */
+export function guardarRetrato(id: string, retrato: string | null) {
+  cambiar(id, (f) => { const { retrato: _viejo, ...resto } = f; return retrato ? { ...resto, retrato } : resto; });
+}
+
 /** Guarda el estado de la partida (Modo juego). No toca `entradas` ni el motor: no cambia ningún cálculo. */
 export function guardarSesion(id: string, sesion: Sesion) {
   cambiar(id, (f) => ({ ...f, sesion }));

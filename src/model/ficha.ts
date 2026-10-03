@@ -25,6 +25,8 @@ export interface Ficha {
   sesion?: Sesion;
   /** Elementos propios del gremio que tiene el personaje (vías, disciplinas, Ars Magnus) y lo que consumen. Se suma a los totales. */
   propio?: Elegido[];
+  /** Imagen del personaje (data URL JPEG ya reducida): sale en los iconos de las fichas y en la página principal. */
+  retrato?: string;
 }
 
 export const RECURSOS = ['pv', 'zeon', 'ki', 'cv', 'cans', 'acc'] as const;
@@ -95,6 +97,7 @@ export function parse(data: unknown): Ficha {
   }
   const sesion = parseSesion(d.sesion);
   const propio = parseElegidos(d.propio);
+  const retrato = typeof d.retrato === 'string' && /^data:image\/(jpeg|png|webp);base64,/.test(d.retrato) && d.retrato.length < 400_000 ? d.retrato : undefined;
   return {
     version: VERSION,
     id: typeof d.id === 'string' ? d.id : crypto.randomUUID(),
@@ -104,5 +107,6 @@ export function parse(data: unknown): Ficha {
     resumen: typeof d.resumen === 'object' && d.resumen !== null ? (d.resumen as Resumen) : undefined,
     ...(sesion ? { sesion } : {}),
     ...(propio.length ? { propio } : {}),
+    ...(retrato ? { retrato } : {}),
   };
 }
