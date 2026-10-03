@@ -1,5 +1,7 @@
 # Fichas Anima
 
+Web: https://rgolizana.github.io/ficha-anima/
+
 Ficha de **Anima Beyond Fantasy** como aplicación web: crear, ver y editar personajes, con los mismos cálculos que la
 ficha de Excel v8.7.0 y PDF igual que el del Excel. Funciona en el navegador, sin servidor: las fichas se guardan en el
 propio navegador y se pueden exportar/importar como `.json`.
@@ -42,7 +44,9 @@ Windows con Excel y `pip install openpyxl pywin32 pdfplumber`; las rutas de los 
 El flujo `.github/workflows/deploy.yml` compila y publica la web, pero está en modo **manual** (Actions → Deploy →
 Run workflow). Antes hay que activar Pages en *Settings → Pages → Source: GitHub Actions*.
 
-Antes de publicar, ten en cuenta:
+La web está publicada (repositorio público, Pages activado). Para actualizarla: Actions → Deploy → Run workflow.
+
+Sobre la publicación, ten en cuenta:
 
 - **El sitio de GitHub Pages es público**, aunque el repositorio sea privado (y en planes gratuitos Pages solo está
   disponible para repositorios públicos). Publicar la web publica también `plantilla.json`, que contiene las tablas y
