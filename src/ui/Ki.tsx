@@ -1,5 +1,6 @@
 import type { Ficha } from '../model/ficha';
 import { Avisos, Campo, Compra, Panel, txt } from './campos';
+import { ElementosGremio } from './ElementosGremio';
 import arboles from '../data/ki-arbol.json';
 
 // Hoja Ki del Excel
@@ -111,6 +112,7 @@ export function Ki({ f }: { f: Ficha }) {
           <Campo f={f} clave={k('C', 40)} label="Límite 1" />
           <Campo f={f} clave={k('C', 41)} label="Límite 2" />
         </div>
+        <ElementosGremio f={f} tipo="ars" />
       </Panel>
 
       <Panel title="Habilidades del Ki" extra={<span class="muted small">Marca las que has comprado (coste en CM)</span>}>

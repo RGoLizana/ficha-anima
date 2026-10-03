@@ -110,4 +110,43 @@ describe('Gremio', () => {
     const f = store.importar(JSON.stringify({ ...read('ref/fichas/lock.json'), propio: [{ tipo: 'ars', n: 'Sello', cm: 20, pd: 30, cat: 2 }, { n: '' }] }));
     expect(store.buscar(f.id)!.propio).toEqual([{ tipo: 'ars', n: 'Sello', nivel: 0, cv: 0, cm: 20, pd: 30, cat: 2 }]);
   });
+
+  it('una vía de gremio se elige también en Magia, junto a las demás vías, y consume su nivel usado', async () => {
+    guardarBiblioteca({ ...BIBLIOTECA_VACIA, vias: [{ n: 'Ars Gnosis', tipo: 'Vía mayor', nota: '', conjuros: [] }] });
+    const f = store.importar(JSON.stringify(read('ref/fichas/lock.json')));
+    render(<FichaView id={f.id} seccion="magia" />);
+    await waitFor(() => expect(document.querySelector('.banner')).toBeNull(), { timeout: 20_000 });
+    await waitFor(() => expect(document.body.textContent).toContain('Añadir vía de gremio'));
+    const antes = valor('Místicos!E12');
+    const sel = [...document.querySelectorAll('label.field')].find((l) => l.textContent!.startsWith('Añadir vía de gremio'))!.querySelector('select')!;
+    fireEvent.change(sel, { target: { value: 'Ars Gnosis' } });
+    await waitFor(() => expect(store.buscar(f.id)!.propio).toHaveLength(1));
+    const nivel = [...document.querySelectorAll('label.field')].find((l) => l.textContent!.startsWith('Nivel usado') && l.closest('.compra')?.textContent!.includes('Ars Gnosis'))!.querySelector('input')!;
+    fireEvent.change(nivel, { target: { value: '20' } });
+    await waitFor(() => expect(valor('Místicos!E12')).toBe(antes + 20));
+    expect(store.buscar(f.id)!.entradas['Místicos!E12']).toBeUndefined();   // no se escribe en el Excel
+    fireEvent.click(document.querySelector('[aria-label="Quitar Ars Gnosis"]')!);
+    await waitFor(() => expect(valor('Místicos!E12')).toBe(antes));
+  }, T);
+
+  it('disciplinas en Psíquica y Ars Magnus en Ki se eligen igual y consumen CV, CM y PD', async () => {
+    guardarBiblioteca({ ...BIBLIOTECA_VACIA, disciplinas: [{ n: 'Resonancia', mod: 'Sin modificador', poderes: [] }], arsMagnus: [{ n: 'Sello', pd: 30, cm: 20, e: '' }] });
+    const f = store.importar(JSON.stringify(read('ref/fichas/lock.json')));
+    const anadir = (etq: string, v: string) => fireEvent.change([...document.querySelectorAll('label.field')].find((l) => l.textContent!.startsWith(etq))!.querySelector('select')!, { target: { value: v } });
+    render(<FichaView id={f.id} seccion="psiquica" />);
+    await waitFor(() => expect(document.body.textContent).toContain('Añadir disciplina de gremio'), { timeout: 20_000 });
+    const cv = valor('Psíquicos!E12');
+    anadir('Añadir disciplina', 'Resonancia');
+    await waitFor(() => expect(valor('Psíquicos!E12')).toBe(cv + 1));          // una disciplina consume 1 CV por defecto
+    fireEvent.change([...document.querySelectorAll('.compra label.field')].find((l) => l.textContent!.startsWith('CV usados'))!.querySelector('input')!, { target: { value: '4' } });
+    await waitFor(() => expect(valor('Psíquicos!E12')).toBe(cv + 4));
+    cleanup(); abierta.value = null;
+    render(<FichaView id={f.id} seccion="ki" />);
+    await waitFor(() => expect(document.body.textContent).toContain('Añadir Ars Magnus de gremio'), { timeout: 20_000 });
+    const cm = valor('Ki!E29'), pd = valor('PDs!K194');
+    anadir('Añadir Ars Magnus', 'Sello');
+    await waitFor(() => expect(valor('Ki!E29')).toBe(cm + 20));
+    expect(valor('PDs!K194')).toBe(pd + 30);
+    expect(store.buscar(f.id)!.entradas['Ki!E29']).toBeUndefined();
+  }, T);
 });

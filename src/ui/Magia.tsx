@@ -1,4 +1,5 @@
 import type { Ficha } from '../model/ficha';
+import { ElementosGremio } from './ElementosGremio';
 import { Avisos, Campo, Panel, txt } from './campos';
 
 // Hoja Místicos del Excel
@@ -51,6 +52,7 @@ export function Magia({ f }: { f: Ficha }) {
             <p class="muted small">Nivel {txt(m('H', r)) || '—'}{txt(m('I', r)) ? ` · acumulación ${txt(m('I', r))}` : ''}</p>
           </div>
         ))}
+        <ElementosGremio f={f} tipo="via" />
         <AvisoDe clave={m('C', 29)} re={/Vía cerrada|inicial/} />
       </Panel>
 

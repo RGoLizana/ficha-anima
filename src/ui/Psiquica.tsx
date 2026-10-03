@@ -1,5 +1,6 @@
 import type { Ficha } from '../model/ficha';
 import { Avisos, Campo, Panel, txt } from './campos';
+import { ElementosGremio } from './ElementosGremio';
 
 // Hoja Psíquicos del Excel
 const p = (col: string, fila: number) => `Psíquicos!${col}${fila}`;
@@ -71,6 +72,7 @@ export function Psiquica({ f }: { f: Ficha }) {
             <span class="muted small">{txt(p('AB', r)) && `Bono ${txt(p('AB', r))}`}{txt(p('V', r + 1)) ? ` · ${txt(p('V', r + 1))} nv ${txt(p('Z', r + 1))}` : ''}</span>
           </div>
         ))}
+        <ElementosGremio f={f} tipo="disciplina" />
         <Avisos claves={['PDs!V120']} />
       </Panel>
 
