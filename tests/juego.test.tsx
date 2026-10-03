@@ -235,4 +235,16 @@ describe('regeneración diaria', () => {
     expect(regeneracionDiaria('10 PV / min *')).toBe(14400);
     expect(regeneracionDiaria('')).toBeNull();
   });
+
+  it('calculadora de daño: Daño por % como en el Excel y sin tocar la ficha', async () => {
+    const f = abrirLock();
+    await esperar();
+    const antes = JSON.stringify(store.buscar(f.id)!.entradas);
+    const calc = document.querySelector('.calc')!;
+    const [dano, pct] = [...calc.querySelectorAll('input')];
+    fireEvent.input(dano, { target: { value: '105' } });     // se sube a la decena: 110
+    fireEvent.input(pct, { target: { value: '50' } });
+    await waitFor(() => expect(calc.querySelector('.calc-final strong')!.textContent).toBe('55'));
+    expect(JSON.stringify(store.buscar(f.id)!.entradas)).toBe(antes);
+  }, T);
 });

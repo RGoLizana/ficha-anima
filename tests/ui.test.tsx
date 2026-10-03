@@ -258,12 +258,11 @@ describe('Combate', () => {
     expect(celda('Combate!J53')).toBeTruthy();                        // calidad de la munición
   }, T);
 
-  it('calculadora de daño: Daño y % dan el final del Excel', async () => {
+  it('la calculadora de daño ya no está en la ficha (solo en el modo juego)', async () => {
     abrirFicha('sesshomaru', 'combate');
     await esperarListo();
-    fireEvent.change(celda('Combate!U12'), { target: { value: '100' } });
-    fireEvent.change(celda('Combate!V12'), { target: { value: '50' } });
-    await waitFor(() => expect(document.querySelector('.calc-final strong')!.textContent).toBe('50'));
+    expect(celda('Combate!U12')).toBeFalsy();
+    expect(document.querySelector('.calc')).toBeNull();
   }, T);
 
   it('modificadores a toda acción y a acciones físicas se reflejan en su total', async () => {

@@ -35,6 +35,8 @@ function llenarTodo(hoja: string): Record<string, Entrada> {
 // Huecos conocidos: celdas de entrada que aún no tienen casilla (se vacía al completar los pasos 8 y 9).
 const HUECOS: Record<string, (c: string) => boolean> = {
   General: (c) => c === 'General!M5', // retrato (paso 9)
+  // calculadora de daño: solo está en el modo juego (no escribe en la ficha)
+  Combate: (c) => /^Combate!(U|V)(12|14|16)$/.test(c),
   // celdas desbloqueadas sin uso: ninguna fórmula del libro las lee (fila 77 tras el 5.º efecto de Ki, filas 129 y 132 bajo el Elan)
   'Personalización': (c) => /^Personalización![A-Q](77|129|132)$/.test(c),
 };

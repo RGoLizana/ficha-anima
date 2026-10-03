@@ -168,7 +168,7 @@ textarea { padding: 12px; resize: vertical; width: 100%; }
 .barra > div { height: 100%; background: var(--gold); border-radius: 3px; }
 .barra > div.over { background: var(--danger); }
 .tabla.pd .left { text-align: left; font-weight: 400; }
-.tabla.pd tr.grupo th { padding-top: 12px; }
+.tabla.pd tr.grupo-cab th { text-align: left; padding: 16px 0 4px; font: 700 12px var(--body); letter-spacing: .08em; text-transform: uppercase; color: var(--gold); border-bottom: 1px solid var(--line); }
 .tabla.pd td .field { align-items: center; gap: 0; }
 .tabla.pd td .field label { font-size: 11px; font-weight: 400; }
 .coste { color: var(--muted); }
@@ -444,3 +444,15 @@ details.juego-panel[open] > summary { border-bottom: 1px solid var(--line); }
 .seg { display: inline-grid; grid-auto-flow: column; border: 1px solid var(--line-2); border-radius: 10px; overflow: hidden; }
 .seg button { border: 0; background: transparent; min-height: 44px; padding: 0 16px; font: 700 14px var(--body); color: var(--muted); cursor: pointer; }
 .seg button[aria-pressed="true"] { background: var(--surface-2); color: var(--text); box-shadow: inset 0 -3px 0 var(--gold); }
+
+/* resumen de las artes marciales */
+.arte-marcial { background: var(--bg); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; border-left: 3px solid var(--gold); }
+.arte-marcial + .arte-marcial { margin-top: 8px; }
+.arte-marcial .chip { font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: var(--surface-2); color: var(--gold); }
+
+/* un dato que no debe pasar desapercibido dentro de un grupo de casillas */
+.destacado { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: center; padding: 12px 14px; border-radius: 12px; border: 2px solid var(--gold); background: var(--surface-2); }
+.destacado .field { color: var(--gold); font-size: 15px; font-weight: 700; }
+.destacado .field label { color: var(--gold); font-size: 15px; font-weight: 700; }
+.destacado .field input { width: 96px; border-color: var(--gold); font-weight: 700; font-size: 18px; }
+.destacado p { flex: 1 1 220px; margin: 0; color: var(--text); }

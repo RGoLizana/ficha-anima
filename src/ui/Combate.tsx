@@ -1,6 +1,7 @@
 import type { Ficha } from '../model/ficha';
 import { Avisos, Campo, Panel, txt } from './campos';
 import { Compras, FILA_CAT } from './Desarrollo';
+import { ArteMarcial } from './ArtesMarciales';
 
 // Hoja Combate del Excel. Diez ranuras de arma en parejas (izquierda/derecha): 1-6 cuerpo a cuerpo, 7-10 proyectiles.
 const CABECERAS = [28, 35, 42, 49, 58]; // fila de la primera línea de cada pareja
@@ -76,15 +77,6 @@ export function Combate({ f }: { f: Ficha }) {
               <p class="muted small">Total: <strong>{txt(c('AF', 15)) || 0}</strong></p>
             </div>
           </div>
-        </Panel>
-        <Panel title="Calculadora de daño">
-          {[12, 14, 16].map((r) => (
-            <div class="calc" key={r}>
-              <Campo f={f} clave={c('U', r)} label="Daño" tipo="numero" class="mini" />
-              <Campo f={f} clave={c('V', r)} label="%" tipo="numero" class="mini" />
-              <div class="calc-final"><span class="muted small">Final</span><strong>{txt(c('W', r)) || 0}</strong></div>
-            </div>
-          ))}
         </Panel>
       </div>
 
@@ -209,7 +201,7 @@ function Descripciones() {
     return items.length ? (
       <div key={titulo}>
         <h3 class="sub">{titulo}</h3>
-        {items.map(([n, d]) => <p class="small" key={n}><strong>{n}</strong>{d ? ` — ${d}` : ''}</p>)}
+        {items.map(([n, d]) => titulo === 'Artes marciales' ? <ArteMarcial key={n} nombre={n} efecto={d} /> : <p class="small" key={n}><strong>{n}</strong>{d ? ` — ${d}` : ''}</p>)}
       </div>
     ) : null;
   };

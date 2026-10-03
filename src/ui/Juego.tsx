@@ -468,6 +468,24 @@ function Arma({ titulo, chip, sal, crit, cls = '' }: { titulo: string; chip?: st
   );
 }
 
+/** Daño × % como en el Excel (el daño se sube a la decena): tres líneas para repartir un ataque. Solo en pantalla: no toca la ficha. */
+function CalculadoraDano() {
+  const [filas, setFilas] = useState([{ d: '', p: '' }, { d: '', p: '' }, { d: '', p: '' }]);
+  const final = (x: { d: string; p: string }) => (Math.ceil((Number(x.d) || 0) / 10) * (Number(x.p) || 0)) / 10;
+  const cambiar = (i: number, k: 'd' | 'p', v: string) => setFilas(filas.map((x, j) => (j === i ? { ...x, [k]: v } : x)));
+  return (
+    <Panel t="Calculadora de daño" pill="solo en pantalla" open={false}>
+      {filas.map((x, i) => (
+        <div class="calc" key={i}>
+          <label class="field mini">Daño<input type="number" inputMode="numeric" value={x.d} onInput={(e) => cambiar(i, 'd', e.currentTarget.value)} /></label>
+          <label class="field mini">%<input type="number" inputMode="numeric" value={x.p} onInput={(e) => cambiar(i, 'p', e.currentTarget.value)} /></label>
+          <div class="calc-final"><span class="muted small">Final</span><strong>{final(x)}</strong></div>
+        </div>
+      ))}
+    </Panel>
+  );
+}
+
 function Combate({ conZeon }: { conZeon: boolean }) {
   const desarrollada = txt('Principal!F31');
   const armas = RANURAS.filter((s) => txt(c(LADO[s.lado].arma, s.r)));
@@ -506,6 +524,8 @@ function Combate({ conZeon }: { conZeon: boolean }) {
           )}
         </div>
       </Panel>
+
+      <CalculadoraDano />
 
       <Panel t="Armadura" pill={piezas.join(' · ') || 'sin armadura'}>
         <table class="tabla">

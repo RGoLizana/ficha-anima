@@ -46,7 +46,10 @@ export function Ventajas({ f }: { f: Ficha }) {
       <Panel title="Bonos a características" extra={<span class="muted small">PC usados: <strong>{txt('Principal!J54')}</strong></span>}>
         <div class="grid-fields">
           {CARACT.map(([c, k]) => <Campo key={c} f={f} clave={`Principal!${c}`} label={k} tipo="numero" />)}
-          <Campo f={f} clave="Principal!J49" label="PC liberalizados" tipo="numero" />
+        </div>
+        <div class="destacado">
+          <Campo f={f} clave="Principal!J49" label="PC liberalizados" tipo="numero" class="mini" />
+          <p class="small">Puntos que dejas de usar en bonos a características y pasan a ser PC libres. Quedan <strong>{txt('Principal!J48') || 0}</strong> PC para repartir en bonos.</p>
         </div>
       </Panel>
 

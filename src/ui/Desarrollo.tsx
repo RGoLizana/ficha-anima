@@ -1,3 +1,4 @@
+import { Fragment } from 'preact';
 import { useState } from 'preact/hooks';
 import type { Ficha } from '../model/ficha';
 import { Avisos, Campo, Panel, txt, v } from './campos';
@@ -5,6 +6,8 @@ import { Avisos, Campo, Panel, txt, v } from './campos';
 // Hoja PDs del Excel. Cada habilidad tiene, por categoría (hasta 5), una columna de coste y otra de PD invertidos.
 export const PRIM = { pd: ['M', 'O', 'Q', 'S', 'U'], coste: ['L', 'N', 'P', 'R', 'T'] };   // primarias, Ki, místicas, psíquicas
 export const SEC = { pd: ['K', 'M', 'O', 'Q', 'S'], coste: ['J', 'L', 'N', 'P', 'R'] };    // secundarias y PV
+/** Nombres completos de los grupos de habilidades (el Excel los abrevia). */
+const GRUPO: Record<string, string> = { 'Perc.': 'Perceptivas', 'Conv.': 'Convocatoria' };
 export const FILA_CAT = [7, 9, 11, 13, 15];
 const rango = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
 
@@ -149,8 +152,10 @@ export function Bloque({ f, n, cats, titulo, filas, cols, grupo, total = 'AA', e
               const g = grupo ? txt(`PDs!D${r}`) : '';
               const nombre = txt(`PDs!E${r}`);
               return (
-                <tr key={r} class={g ? 'grupo' : ''}>
-                  <th scope="row" class="left">{g && <span class="muted small">{g} · </span>}{nombre}{maximos?.[r] && <span class="limite-fila">{maximos[r]}</span>}</th>
+                <Fragment key={r}>
+                {g && <tr class="grupo-cab"><th colSpan={n + extra.length + (esp ? 1 : 0) + 2} scope="colgroup">{GRUPO[g] ?? g}</th></tr>}
+                <tr>
+                  <th scope="row" class="left">{nombre}{maximos?.[r] && <span class="limite-fila">{maximos[r]}</span>}</th>
                   {Array.from({ length: n }, (_, i) => (
                     <td key={i}>
                       <Campo f={f} clave={`PDs!${cols.pd[i]}${r}`} tipo="numero" class="mini"
@@ -163,6 +168,7 @@ export function Bloque({ f, n, cats, titulo, filas, cols, grupo, total = 'AA', e
                   {esp && <td><Campo f={f} clave={`PDs!${esp}${r}`} tipo="numero" class="mini" label={<span class="sr-only">Especial {nombre}</span>} /></td>}
                   <td class="total">{txt(`PDs!${total}${r}`)}</td>
                 </tr>
+                </Fragment>
               );
             })}
           </tbody>
