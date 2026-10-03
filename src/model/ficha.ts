@@ -27,6 +27,8 @@ export interface Ficha {
   propio?: Elegido[];
   /** Imagen del personaje (data URL JPEG ya reducida): sale en los iconos de las fichas y en la página principal. */
   retrato?: string;
+  /** Pestañas del menú que el jugador ha ocultado en este personaje (p. ej. «psiquica» en un mago). Solo afecta al menú. */
+  ocultas?: string[];
 }
 
 export const RECURSOS = ['pv', 'zeon', 'ki', 'cv', 'cans', 'acc'] as const;
@@ -98,6 +100,7 @@ export function parse(data: unknown): Ficha {
   const sesion = parseSesion(d.sesion);
   const propio = parseElegidos(d.propio);
   const retrato = typeof d.retrato === 'string' && /^data:image\/(jpeg|png|webp);base64,/.test(d.retrato) && d.retrato.length < 400_000 ? d.retrato : undefined;
+  const ocultas = Array.isArray(d.ocultas) ? [...new Set(d.ocultas.filter((x): x is string => typeof x === 'string' && /^[a-z]{2,20}$/.test(x)))] : [];
   return {
     version: VERSION,
     id: typeof d.id === 'string' ? d.id : crypto.randomUUID(),
@@ -108,5 +111,6 @@ export function parse(data: unknown): Ficha {
     ...(sesion ? { sesion } : {}),
     ...(propio.length ? { propio } : {}),
     ...(retrato ? { retrato } : {}),
+    ...(ocultas.length ? { ocultas } : {}),
   };
 }

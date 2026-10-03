@@ -55,10 +55,29 @@ export function editar(id: string, clave: string, valor: Entrada | null) {
   if (abierta.value === id) void poner(clave, valor);
 }
 
+/** Varias celdas de una vez (una sola actualización de la ficha); null o '' vacía la celda. Solo escribe las que cambian. */
+export function editarVarias(id: string, cambios: Record<string, Entrada | null>) {
+  const f = buscar(id);
+  if (!f) return;
+  const distintos = Object.entries(cambios).filter(([k, v]) => String(f.entradas[k] ?? '') !== String(v ?? ''));
+  if (!distintos.length) return;
+  cambiar(id, (g) => {
+    const entradas = { ...g.entradas };
+    for (const [k, v] of distintos) if (v === null || v === '') delete entradas[k]; else entradas[k] = v;
+    return { ...g, entradas, actualizada: new Date().toISOString() };
+  });
+  if (abierta.value === id) for (const [k, v] of distintos) void poner(k, v);
+}
+
 /** Guarda los elementos propios del gremio de un personaje y actualiza lo que consumen en el motor si la ficha está abierta. */
 export function guardarPropio(id: string, propio: Elegido[]) {
   cambiar(id, (f) => ({ ...f, propio, actualizada: new Date().toISOString() }));
   if (abierta.value === id) for (const [k, v] of Object.entries(entradasConsumo(propio))) void poner(k, v);
+}
+
+/** Guarda qué pestañas del menú están ocultas en un personaje. No toca `entradas` ni el motor. */
+export function guardarOcultas(id: string, ocultas: string[]) {
+  cambiar(id, (f) => { const { ocultas: _viejas, ...resto } = f; return ocultas.length ? { ...resto, ocultas } : resto; });
 }
 
 /** Pone o quita (null) la imagen del personaje. No toca `entradas` ni el motor. */

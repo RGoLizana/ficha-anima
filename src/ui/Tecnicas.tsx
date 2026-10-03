@@ -1,5 +1,7 @@
 import type { Ficha } from '../model/ficha';
+import { signal } from '@preact/signals';
 import { Avisos, Campo, Panel, txt } from './campos';
+import { TecnicasAsistente } from './TecnicasAsistente';
 
 // Hoja "Creación de Técnicas": diez técnicas en bloques de 34 filas (el 6.º tiene 35). b = fila de la cabecera.
 const BASES = [12, 46, 80, 114, 148, 183, 217, 251, 285, 319];
@@ -16,14 +18,22 @@ const GRUPOS = [
   { sel: 'AB', niv: 'AG', tipo: 'AC', clase: 'AG', nom: 'AB' },
 ];
 
+/** Cómo se editan las técnicas: paso a paso (guiado) o todas las casillas del Excel (experto). */
+export const modoTecnicas = signal<'guiado' | 'experto'>('guiado');
+
 export function Tecnicas({ f }: { f: Ficha }) {
   return (
     <>
       <Panel title="Técnicas" extra={<span class="muted small">Acumulaciones de Ki: <strong>{txt(col('R', 5)).replace(/\s+/g, ' ')}</strong></span>}>
         <Campo f={f} clave={col('W', 6)} label="Árbol de técnicas" tipo="area" />
-        <p class="muted small">Cada técnica combina efectos y desventajas; el coste en Ki y CM se calcula solo.</p>
+        <div class="row wrap">
+          <div class="seg" role="group" aria-label="Modo de edición">
+            {(['guiado', 'experto'] as const).map((m) => <button type="button" key={m} aria-pressed={modoTecnicas.value === m} onClick={() => { modoTecnicas.value = m; }}>{m === 'guiado' ? 'Guiado' : 'Experto'}</button>)}
+          </div>
+          <span class="muted small">{modoTecnicas.value === 'guiado' ? 'Paso a paso, con el coste de cada opción a la vista.' : 'Todas las casillas de la hoja, como en el Excel.'}</span>
+        </div>
       </Panel>
-      {BASES.map((b, i) => <Tecnica key={b} f={f} b={b} n={i + 1} />)}
+      {modoTecnicas.value === 'guiado' ? <TecnicasAsistente f={f} /> : BASES.map((b, i) => <Tecnica key={b} f={f} b={b} n={i + 1} />)}
     </>
   );
 }

@@ -11,6 +11,9 @@ const M = mapa as unknown as {
   versiones: Record<string, Version>; renombres: Record<string, string>; anclas: Record<string, Record<string, string>>;
 };
 const ACTUAL = '8.7.0';
+// Casillas de versiones antiguas que la 8.7.0 ya no tiene y que no cambian ningún cálculo: no se avisa de ellas.
+//  Sheele!S23 (8.4.x): «En 'Resumen': Sí/No»; la 8.7.0 ya no tiene ese interruptor.
+const OBSOLETAS = new Set(['Sheele!S23']);
 const ENTRADAS = new Set(Object.entries(M.entradas).flatMap(([h, cs]) => cs.split(' ').map((c) => `${h}!${c}`)));
 
 export interface Importada { entradas: Entradas; version: string; avisos: string[] }
@@ -112,7 +115,7 @@ export function leerFicha(datos: Uint8Array): Importada {
       else {
         const t = (mig.filas[hoja] ?? []).find(([a, , n]) => c.fila >= a && c.fila < a + n);
         if (!t) {
-          if (M.defectos[origen] !== valor) saltadas.push(`${origen}=${muestra(valor)} (sin fila en la ${ACTUAL})`);
+          if (M.defectos[origen] !== valor && !OBSOLETAS.has(origen)) saltadas.push(`${origen}=${muestra(valor)} (sin fila en la ${ACTUAL})`);
           continue;
         }
         destino = `${hoja}!${letras(c.col)}${c.fila - t[0] + t[1]}`;

@@ -1,6 +1,6 @@
 import { Fragment } from 'preact';
-import { useEffect } from 'preact/hooks';
-import { buscar, actualizar, exportar, guardado, guardarResumen } from '../store';
+import { useEffect, useState } from 'preact/hooks';
+import { buscar, actualizar, exportar, guardado, guardarOcultas, guardarResumen } from '../store';
 import { abrir, abierta, errorMotor, motor, valores } from '../engine';
 import { nombreDe, entradasMotor } from '../model/ficha';
 import { Icon } from './Icon';
@@ -78,6 +78,8 @@ export function FichaView({ id, seccion }: { id: string; seccion: string }) {
   }
   const sec = SECCIONES.find((s) => s.id === seccion) ?? SECCIONES[0];
   const nombre = nombreDe(f);
+  const ocultas = f.ocultas ?? [];
+  const menu = SECCIONES.filter((s) => s.id === sec.id || !ocultas.includes(s.id)); // la que estás viendo no desaparece
 
   return (
     <div class="page">
@@ -102,15 +104,18 @@ export function FichaView({ id, seccion }: { id: string; seccion: string }) {
       {motor.value !== 'error' && !listo && <p class="banner" role="status">Preparando los cálculos de la ficha…</p>}
 
       <div class="sheet">
+        <div class="sidebar">
         <nav class="sections" aria-label="Secciones">
-          {SECCIONES.map((s, i) => (
+          {menu.map((s, i) => (
             <Fragment key={s.id}>
-              {s.extra && !SECCIONES[i - 1]?.extra && <div class="nav-extra" role="separator">Fuera de las reglas</div>}
+              {s.extra && !menu[i - 1]?.extra && <div class="nav-extra" role="separator">Fuera de las reglas</div>}
               <a href={`#/ficha/${id}/${s.id}`} class={(s.id === sec.id ? 'active ' : '') + (s.extra ? 'extra' : '')}
                 aria-current={s.id === sec.id ? 'page' : undefined}>{s.t}</a>
             </Fragment>
           ))}
         </nav>
+        <PersonalizarMenu id={id} ocultas={ocultas} activa={sec.id} />
+        </div>
 
         <main class="content stack">
           {/* hasta que el motor tenga esta ficha no se pintan las secciones: los desplegables dependen de sus datos */}
@@ -176,4 +181,28 @@ function defensa() {
   const d = txt('Principal!H26');
   const tipo = txt('Principal!F26').replace(/^H\.\s*/, '').replace(/:$/, '');
   return d ? `${d} ${tipo}` : '';
+}
+
+/** «Personalizar menú»: casillas para ocultar pestañas que no hacen falta en este personaje (la ficha no se toca). */
+function PersonalizarMenu({ id, ocultas, activa }: { id: string; ocultas: string[]; activa: string }) {
+  const [abierto, setAbierto] = useState(false);
+  const alternar = (s: string) => guardarOcultas(id, ocultas.includes(s) ? ocultas.filter((x) => x !== s) : [...ocultas, s]);
+  return (
+    <div class="menu-personalizar">
+      <button type="button" class="menu-personalizar-boton" aria-expanded={abierto} onClick={() => setAbierto(!abierto)}>
+        Personalizar menú{ocultas.length ? ` (${ocultas.length} ocultas)` : ''}
+      </button>
+      {abierto && (
+        <>
+          <p class="muted small">Oculta las pestañas que este personaje no usa. No se borra nada: los datos siguen en la ficha.</p>
+          {SECCIONES.filter((s) => s.id !== 'principal').map((s) => (
+            <label class="check" key={s.id}>
+              <input type="checkbox" checked={!ocultas.includes(s.id)} disabled={s.id === activa} onChange={() => alternar(s.id)} />
+              <span>{s.t}</span>
+            </label>
+          ))}
+        </>
+      )}
+    </div>
+  );
 }

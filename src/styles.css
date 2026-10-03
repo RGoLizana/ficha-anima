@@ -430,3 +430,17 @@ details.juego-panel[open] > summary { border-bottom: 1px solid var(--line); }
 .limites dt::after { content: ':'; }
 .limites dd { margin: 0; font-weight: 700; color: var(--gold-hi); }
 .limite-fila { display: block; font-size: 12px; font-weight: 600; color: var(--gold); }
+
+/* personalizar el menú de pestañas */
+.sidebar { border-right: 1px solid var(--line); display: flex; flex-direction: column; }
+.sidebar .sections { border-right: 0; }
+.menu-personalizar { padding: 8px 12px 20px; font-size: 14px; }
+.menu-personalizar-boton { min-height: 40px; width: 100%; text-align: left; border: 0; background: transparent; cursor: pointer; color: var(--muted); font: 600 14px var(--body); padding: 0 12px; border-radius: 8px; }
+.menu-personalizar-boton:hover { background: var(--surface); color: var(--text); }
+.menu-personalizar .check { min-height: 40px; }
+@media (max-width: 900px) { .sidebar { border-right: 0; border-bottom: 1px solid var(--line); } .sidebar .sections { border-bottom: 0; } .menu-personalizar { padding: 0 16px 8px; } }
+
+/* selector de dos modos (guiado / experto) */
+.seg { display: inline-grid; grid-auto-flow: column; border: 1px solid var(--line-2); border-radius: 10px; overflow: hidden; }
+.seg button { border: 0; background: transparent; min-height: 44px; padding: 0 16px; font: 700 14px var(--body); color: var(--muted); cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--surface-2); color: var(--text); box-shadow: inset 0 -3px 0 var(--gold); }

@@ -278,3 +278,13 @@ escribía sobre una fórmula (PDs!Z188).
   reglas de descanso (ki +6/hora, CV +1/hora, cansancio, negativos continuos por regeneración, tabla 24), coste de los conjuros de libre acceso
   y asaltos de acumulación de ki; compendio con la pestaña **Convocatoria** (22+22 Arcanos con dificultad y zeón del Excel, 120 invocaciones
   más, reglas de las 4 habilidades, habilidades espirituales y costes de PD; `tools/export_convocatoria.py`). Lo que no se pudo verificar va a `null`.
+- **Técnicas de Ki, asistente** (hecho): `src/ui/TecnicasAsistente.tsx` (modo «Guiado» por defecto; «Experto» = las casillas del Excel de antes).
+  Ocho pasos (empezar con plantilla del libro, nivel, efecto principal, más efectos, duración, desventajas, reparto de ki, resumen) con el
+  coste en CM/Ki de cada opción antes de elegirla, contadores en vivo (CM con mínimo/máximo, ki sin repartir, asaltos de acumulación con la
+  acumulación del personaje, desventajas), avisos que dicen cómo arreglarlos y nunca bloquean (los del Excel AM33…AM43 más los del Core). El
+  ki se reparte solo («más barato» / «más rápido», con selector por defecto); lo escrito a mano se conserva y avisa; el ajuste de las
+  desventajas va a la característica principal salvo que se elija otra. Escribe las mismas celdas que el Excel: la réplica de las cuentas
+  (`src/tecnicas/calculo.ts`, tablas en `src/data/tecnicas.json` por `tools/export_tecnicas.py`) solo sirve para la vista previa y
+  `tests/tecnicas.test.ts` comprueba que coincide con el motor en todos los efectos y desventajas. Efectos/desventajas personalizados: solo en experto.
+- **Menú personalizable:** «Personalizar menú» oculta pestañas por personaje (`ficha.ocultas`), p. ej. Psíquica en un mago.
+- Importador: la casilla `Sheele!S23` de las 8.4.x («En 'Resumen'») ya no avisa; la 8.7.0 no tiene ese interruptor.

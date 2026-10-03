@@ -31,6 +31,8 @@ vi.mock('../src/engine', () => ({
 
 const store = await import('../src/store');
 const { FichaView } = await import('../src/ui/FichaView');
+const { modoTecnicas } = await import('../src/ui/Tecnicas');
+modoTecnicas.value = 'experto';   // estas pruebas miran todas las casillas de la hoja
 
 const T = 120_000;
 beforeAll(() => { motor(); }, T);
