@@ -1,5 +1,6 @@
 import type { Ficha } from '../model/ficha';
 import { Campo, Panel, txt } from './campos';
+import { ViaChip, claseVia, estiloVia } from './GrimoriosInfo';
 
 // Grimorio de Magia (hoja "Grimorio Magia") y Grimorio de Vía (hoja "Grimorio de Vía")
 const GRADOS = ['Base', 'Intermedio', 'Avanzado', 'Arcano'];
@@ -18,11 +19,11 @@ function Conjuro({ hoja, b, mas, nombre }: { hoja: string; b: number; mas: numbe
   const c = (base: string, fila: number) => txt(`${hoja}!${col(base, mas)}${fila}`);
   const titulo = c('C', b);
   return (
-    <article class="arma conjuro">
+    <article class={'arma conjuro' + claseVia(c('M', b))} style={estiloVia(c('M', b))}>
       {nombre}
       {valido(titulo) && titulo !== 'Libre Acceso' && <h3 class="arma-titulo">{titulo}</h3>}
       <p class="small muted">
-        Nivel <strong>{c('I', b)}</strong> · {c('M', b)} · {c('I', b + 1)} · {c('M', b + 1)} · Diario {c('Q', b + 1)}
+        Nivel <strong>{c('I', b)}</strong> · <ViaChip via={c('M', b)} /> · {c('I', b + 1)} · {c('M', b + 1)} · Diario {c('Q', b + 1)}
       </p>
       <table class="tabla grados">
         <thead><tr><th scope="col" class="left">Grado</th><th scope="col">Int. R.</th><th scope="col">Zeón</th><th scope="col">Mant.</th><th scope="col" class="left">Efecto</th></tr></thead>
@@ -74,6 +75,7 @@ export function GrimorioVia({ f }: { f: Ficha }) {
           <Campo f={f} clave="Grimorio de Vía!J7" label="Subvía" />
           <Campo f={f} clave="Grimorio de Vía!P7" label="Colores por vía" />
         </div>
+        {(txt('Grimorio de Vía!J6') || txt('Grimorio de Vía!J7')) && <p class="row wrap">{[txt('Grimorio de Vía!J6'), txt('Grimorio de Vía!J7')].filter(Boolean).map((v) => <ViaChip key={v} via={v} />)}</p>}
         <p class="muted small">Muestra todos los conjuros de la vía por niveles (2 a 100), con sus grados.</p>
       </Panel>
       {!hayVia && <p class="muted">Elige una vía (y subvía) para ver sus conjuros.</p>}

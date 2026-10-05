@@ -10,6 +10,7 @@ import { Icon } from './Icon';
 import { Avatar } from './Avatar';
 import { txt } from './campos';
 import { biblioteca } from '../gremio/almacen';
+import { MAX_CV, NIVELES, avisos, bonoDe, dominadosMantenibles, efecto, innatosDe, nivelMantenido, siguiente, ventajasDe } from '../psiquica/mantenidos';
 
 /** Descanso de un día, según el reglamento (Core Exxet) y lo que da la ficha de Excel (si chocan, manda el Excel):
  *  - PV: la regeneración de la ficha (Principal!K11, p. ej. «30 PV / día»; tabla 24 del Core, columna «Descansando»).
@@ -194,7 +195,7 @@ function Partida({ f }: { f: Ficha }) {
         negativos += 1;
         return m === 0 ? [] : [{ ...e, m }];
       });
-      if (R.quitaMantenidos) x.mant = [];
+      if (R.quitaMantenidos) { x.mant = []; delete x.mantPsi; }
       x.asalto = 1;
     });
     avisar('Un día de descanso',
@@ -848,21 +849,73 @@ const p = (col: string, fila: number) => `Psíquicos!${col}${fila}`;
 function Psi({ ctx }: { ctx: Ctx }) {
   const poderes = rango(11, 63, 2).map((r) => ({ r, n: txt(p('V', r)) })).filter((x) => x.n);
   return (
-    <Panel t="Psíquica" color="var(--psi)" pill={`potencial ${txt(p('H', 11)) || 0}`}>
-      <RecursoFila ctx={ctx} k="cv" />
-      {ctx.cur.cv < 0 && <p class="aviso" role="status">CVs por debajo de 0 ({ctx.cur.cv}).</p>}
-      <div class="salidas">
-        <Stat v={txt(p('H', 11))} l="Potencial" />
-        <Stat v={txt(p('P', 12))} l="Proyección" />
-        <Stat v={txt(p('O', 12))} l="Turno" />
-      </div>
-      {poderes.length ? poderes.map(({ r, n: nombre }) => (
-        <article class="juego-tecnica juego-poder-psi" key={r}>
-          <div class="row between"><h3>{nombre}</h3><span class="chip">Nivel {txt(p('Z', r + 1)) || '—'}</span></div>
-          <p class="muted small">{txt(p('V', r + 1))}{txt(p('AA', r)) ? ` · ${txt(p('AA', r))} CVs potenciados` : ''}{txt(p('AB', r)) ? ` · bono ${txt(p('AB', r))}` : ''}</p>
-        </article>
-      )) : <div class="juego-vacio">Sin poderes psíquicos.</div>}
-      <PoderesGremio f={ctx.f} />
+    <>
+      <Panel t="Psíquica" color="var(--psi)" pill={`potencial ${txt(p('H', 11)) || 0}`}>
+        <RecursoFila ctx={ctx} k="cv" />
+        {ctx.cur.cv < 0 && <p class="aviso" role="status">CVs por debajo de 0 ({ctx.cur.cv}).</p>}
+        <div class="salidas">
+          <Stat v={txt(p('H', 11))} l="Potencial" />
+          <Stat v={txt(p('P', 12))} l="Proyección" />
+          <Stat v={txt(p('O', 12))} l="Turno" />
+        </div>
+        {poderes.length ? poderes.map(({ r, n: nombre }) => (
+          <article class="juego-tecnica juego-poder-psi" key={r}>
+            <div class="row between"><h3>{nombre}</h3><span class="chip">Nivel {txt(p('Z', r + 1)) || '—'}</span></div>
+            <p class="muted small">{txt(p('V', r + 1))}{txt(p('AA', r)) ? ` · ${txt(p('AA', r))} CVs potenciados` : ''}{txt(p('AB', r)) ? ` · bono ${txt(p('AB', r))}` : ''}</p>
+          </article>
+        )) : <div class="juego-vacio">Sin poderes psíquicos.</div>}
+        <PoderesGremio f={ctx.f} />
+      </Panel>
+      <MantenidosPsi ctx={ctx} />
+    </>
+  );
+}
+
+/** Innatos activos en la sesión: mantener, subir de nivel con CV libres (−CV de la reserva) y soltar. Avisa, nunca bloquea. */
+function MantenidosPsi({ ctx }: { ctx: Ctx }) {
+  const { s, cur, guardar, avisar } = ctx;
+  const bono = bonoDe(ventajasDe(txt));
+  const posibles = new Map(dominadosMantenibles(txt).map((x) => [x.n, x]));
+  for (const i of innatosDe(txt)) if (i.poder) posibles.set(i.n, { n: i.n, nat: i.nat, poder: i.poder });
+  const activos = s.mantPsi ?? [];
+  const innatos = n(p('M', 13));
+  const datos = (nombre: string, cv: number) => { const x = posibles.get(nombre); return { nat: x?.nat ?? 0, cv, bono, min: x?.poder.min ?? 0 }; };
+  const mantener = (nombre: string) => {
+    const x = guardar((x) => { x.mantPsi = [...(x.mantPsi ?? []), { n: nombre, cv: 0 }]; });
+    const nv = nivelMantenido(datos(nombre, 0));
+    avisar(`Mantener ${nombre}`, `${NIVELES[nv]}: ${efecto(posibles.get(nombre)?.poder, nv)}` + (x.mantPsi!.length > innatos ? ` · ⚠ ${x.mantPsi!.length} mantenidos con ${innatos} innatos` : ''), s);
+  };
+  const subir = (i: number, cv: number) => {
+    const m = activos[i];
+    const x = guardar((x) => { x.mantPsi![i].cv = cv; x.r.cv = cur.cv - (cv - m.cv); });
+    const nv = nivelMantenido(datos(m.n, cv));
+    avisar(`${m.n} a ${NIVELES[nv]}`, `−${cv - m.cv} CV · ${efecto(posibles.get(m.n)?.poder, nv)}` + (x.r.cv! < 0 ? ' · ⚠ CVs libres por debajo de 0' : '') + (cv > MAX_CV ? ` · ⚠ más de ${MAX_CV} CV` : ''), s);
+  };
+  const libres = [...posibles.keys()].filter((k) => !activos.some((m) => m.n === k));
+  return (
+    <Panel t="Mantenidos psíquicos" pill={`${activos.length}/${innatos} innatos`}>
+      {activos.map((m, i) => {
+        const d = datos(m.n, m.cv);
+        const nv = nivelMantenido(d);
+        const sig = siguiente(d);
+        return (
+          <div class="juego-mant" key={m.n}>
+            <span><strong>{m.n}</strong> {NIVELES[nv]}{efecto(posibles.get(m.n)?.poder, nv) ? ` · ${efecto(posibles.get(m.n)?.poder, nv)}` : ''}{m.cv ? ` · ${m.cv} CV` : ''}</span>
+            {sig
+              ? <button type="button" class="btn" aria-label={`Subir ${m.n} a ${NIVELES[sig.nivel]} por ${sig.extra} CV`} onClick={() => subir(i, sig.cv)}>{NIVELES[sig.nivel]} −{sig.extra} CV</button>
+              : <span class="muted small">no sube más</span>}
+            <button type="button" class="icon-btn plain" aria-label={`Dejar de mantener ${m.n}`} onClick={() => guardar((x) => { x.mantPsi!.splice(i, 1); })}>✕</button>
+          </div>
+        );
+      })}
+      {!activos.length && <div class="juego-vacio">Ningún poder mantenido.</div>}
+      {avisos({ activos: activos.length, innatos, cvIncr: 0, cvLibres: 0, porPoder: activos.map((m) => m.cv) }).map((t) => <p class="aviso" role="status" key={t}>{t}</p>)}
+      {libres.length > 0 && (
+        <div class="juego-filtros" role="group" aria-label="Mantener un poder">
+          {libres.map((k) => <button type="button" class="chip" key={k} onClick={() => mantener(k)}>Mantener {k}</button>)}
+        </div>
+      )}
+      <p class="muted small">Los CV para subir de nivel no se recuperan mientras lo mantengas; al soltarlo vuelven a su ritmo (1 por hora). Core p. 212-213.</p>
     </Panel>
   );
 }

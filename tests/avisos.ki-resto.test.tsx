@@ -67,7 +67,6 @@ describe('avisos bajo su panel', () => {
     await esperarListo();
     store.editar(f.id, 'Elan!G11', -1);
     await waitFor(() => expect(avisosEn(panelDe('Elan 1')).join()).toContain('Exceso de Elán utilizado'), { timeout: 20_000 });
-    expect(avisosEn(panelDe('Elan')).join()).not.toContain('Exceso');
     store.editar(f.id, 'Elan!G11', null);
     await waitFor(() => expect(avisosEn(panelDe('Elan 1')).join()).not.toContain('Exceso'), { timeout: 20_000 });
   }, T);

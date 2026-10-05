@@ -1,4 +1,6 @@
 import type { Ficha } from '../model/ficha';
+import { useEffect, useState } from 'preact/hooks';
+import { opciones } from '../engine';
 import { Campo, Panel, txt } from './campos';
 
 // Hoja Sheele: compañera mágica (arma-espíritu) con sus características, mejoras y habilidades
@@ -11,6 +13,35 @@ function visibles(f: Ficha, filas: number[], cols: string[]) {
   const llena = (r: number) => cols.some((c) => f.entradas[s(c, r)]);
   const ultima = filas.reduce((x, r, i) => (llena(r) ? i : x), -1);
   return filas.slice(0, Math.min(filas.length, ultima + 2));
+}
+
+const TABLA = "'Tablas Sheele'!$C$";
+const GENERALES = `${TABLA}91:$C$108`;
+const TODAS = `${TABLA}91:$C$197`;           // genéricas + las de todos los tipos
+const TIPOS = `${TABLA}110:$C$197`;          // solo las de cada tipo (Aire, Tierra…)
+
+/** Mejora de Sheele: solo se ofrecen las de su tipo (M5) y las genéricas; una guardada de otro tipo se conserva y se avisa. */
+function Mejora({ f, clave, label }: { f: Ficha; clave: string; label: string }) {
+  const tipo = txt(s('M', 5));
+  const hay = valido(tipo) && tipo !== 'Nada';
+  const [tipos, setTipos] = useState<string[]>([]);
+  const [propias, setPropias] = useState<string[]>([]);
+  useEffect(() => { opciones(clave, TIPOS).then(setTipos).catch(() => setTipos([])); }, [clave]);
+  useEffect(() => {
+    if (!hay) { opciones(clave, TODAS).then(setPropias).catch(() => setPropias([])); return; }
+    Promise.all([opciones(clave, GENERALES), opciones(clave, 'INDIRECT(Sheele!V6)')])
+      .then(([g, a]) => setPropias([...g, ...a.filter((x) => !g.includes(x))]))
+      .catch(() => setPropias([]));
+  }, [clave, tipo]);
+  const actual = String(f.entradas[clave] ?? '');
+  const ajena = hay && propias.length > 0 && actual !== '' && !propias.includes(actual) && tipos.includes(actual);
+  return (
+    <div class="grow">
+      <Campo f={f} clave={clave} label={label} fijas={propias} />
+      {!hay && <p class="muted small">Elige primero el tipo de Sheele</p>}
+      {ajena && <p class="muted small">«{actual}» es una mejora de otro tipo (no es de {tipo}): se conserva, pero revísala</p>}
+    </div>
+  );
 }
 
 const GRUPOS: [string, number, number][] = [
@@ -65,8 +96,8 @@ export function Sheele({ f }: { f: Ficha }) {
       <Panel title="Mejoras de Sheele" plegable extra={<span class="muted small">Mejoras por nivel {txt(s('S', 8))}</span>}>
         {visibles(f, rango(24, 35), ['C', 'F']).map((r) => (
           <div class="compra" key={r}>
-            <Campo f={f} clave={s('C', r)} label="Mejora" class="grow" />
-            <Campo f={f} clave={s('F', r)} label="Segunda mejora" class="grow" />
+            <Mejora f={f} clave={s('C', r)} label="Mejora" />
+            <Mejora f={f} clave={s('F', r)} label="Segunda mejora" />
           </div>
         ))}
         <h3>Mejora de atributos</h3>

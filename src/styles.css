@@ -497,3 +497,33 @@ details.juego-panel[open] > summary { border-bottom: 1px solid var(--line); }
 .area-desc { font-size: 13px; color: var(--muted); line-height: 1.3; }
 .area-n { position: absolute; top: 10px; right: 10px; font-size: 12px; font-weight: 700; color: var(--on-gold); background: var(--gold); border-radius: 999px; padding: 2px 8px; }
 .personalizado details.plegable[hidden] { display: none; }
+
+/* Elan: resumen de poderes */
+.elan-resumen { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; align-items: start; }
+.elan-ent { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.elan-ent h3 { font: 700 18px var(--display); margin: 0; flex: 1 1 auto; }
+.elan-dones { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.elan-don { padding: 8px 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); display: flex; flex-direction: column; gap: 2px; }
+.elan-don.mio { border-color: var(--gold); border-left: 4px solid var(--gold); background: var(--surface-2); }
+.elan-don.bloqueado { opacity: .6; border-style: dashed; }
+.elan-estado { font-size: 13px; font-weight: 700; color: var(--muted); }
+.elan-don.mio .elan-estado { color: var(--gold); }
+.chip.elan-mal, .elan-mal { color: var(--danger); background: rgba(229, 143, 122, .14); }
+.elan-aviso { margin: 0; }
+
+/* Vías de magia con sus colores del Excel (--via la pone el componente) y barra de nivel de vía */
+.con-via { --via-suave: color-mix(in srgb, var(--via) 14%, var(--surface)); border-left: 4px solid var(--via); background: var(--via-suave); border-radius: 8px; }
+.via-chip { display: inline-block; padding: 0 8px; border-radius: 999px; border: 1px solid var(--line-2); }
+.via-chip.con-via { border: 1px solid var(--via); background: var(--via-suave); }
+.desplegable.con-via { padding-left: 6px; }
+.nivel-via { display: flex; flex-direction: column; gap: 4px; padding: 2px 8px 8px 12px; }
+.nivel-barra { position: relative; height: 10px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line-2); overflow: hidden; }
+.nivel-relleno { position: absolute; inset: 0 auto 0 0; background: var(--via, var(--gold)); }
+.nivel-barra .marca { position: absolute; top: 2px; bottom: 2px; width: 2px; margin-left: -1px; background: var(--muted); opacity: .8; }
+.nivel-barra .marca.lleno { background: var(--bg); opacity: .9; }
+.arma.info.aprendido { border-left: 4px solid var(--via, var(--gold)); }
+.arma.info.bloqueado { opacity: .5; filter: grayscale(.85); border-style: dashed; }
+
+/* Psíquica: ayudante de poderes mantenidos */
+.mant-psi { display: flex; flex-direction: column; gap: 4px; padding: 8px 0; border-top: 1px solid var(--surface-2); }
+.mant-psi:first-of-type { border-top: 0; }

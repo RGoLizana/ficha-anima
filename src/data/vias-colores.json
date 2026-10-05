@@ -1,0 +1,166 @@
+{
+ "Agua": {
+  "f": [
+   "#00B0F0"
+  ],
+  "t": null
+ },
+ "Aire": {
+  "f": [
+   "#7030A0"
+  ],
+  "t": "#FFFFFF"
+ },
+ "Caos": {
+  "f": [
+   "#000000",
+   "#1F497D"
+  ],
+  "t": "#FFFFFF"
+ },
+ "Conocimiento": {
+  "f": [
+   "#8064A2",
+   "#4BACC6"
+  ],
+  "t": "#FFFFFF"
+ },
+ "Creación": {
+  "f": [
+   "#FFFF00"
+  ],
+  "t": null
+ },
+ "Destrucción": {
+  "f": [
+   "#002060"
+  ],
+  "t": "#FFFFFF"
+ },
+ "Esencia": {
+  "f": [
+   "#9BBB59"
+  ],
+  "t": "#FFFFFF"
+ },
+ "Fuego": {
+  "f": [
+   "#FF0000"
+  ],
+  "t": "#FFFFFF"
+ },
+ "Guerra": {
+  "f": [
+   "#7F7F7F",
+   "#FF0000"
+  ],
+  "t": "#000000"
+ },
+ "Ilusión": {
+  "f": [
+   "#604A7B"
+  ],
+  "t": "#FFFFFF"
+ },
+ "Literae": {
+  "f": [
+   "#FFFFFF",
+   "#4F81BD"
+  ],
+  "t": "#000000"
+ },
+ "Luz": {
+  "f": [
+   "#FFFFFF"
+  ],
+  "t": "#0070C0"
+ },
+ "Muerte": {
+  "f": [
+   "#000000",
+   "#948A54"
+  ],
+  "t": "#D7E4BD"
+ },
+ "Musical": {
+  "f": [
+   "#FFFFFF",
+   "#FFFF00"
+  ],
+  "t": null
+ },
+ "Nigromancia": {
+  "f": [
+   "#0D0D0D"
+  ],
+  "t": "#948A54"
+ },
+ "Nobleza": {
+  "f": [
+   "#FFFFFF",
+   "#FFCC00"
+  ],
+  "t": "#000000"
+ },
+ "Oscuridad": {
+  "f": [
+   "#0D0D0D"
+  ],
+  "t": "#00B0F0"
+ },
+ "Paz": {
+  "f": [
+   "#93CDDD",
+   "#FFFFFF"
+  ],
+  "t": "#000000"
+ },
+ "Pecado": {
+  "f": [
+   "#FF8FB7",
+   "#FF0000"
+  ],
+  "t": "#000000"
+ },
+ "Sangre": {
+  "f": [
+   "#C00000",
+   "#FF5050"
+  ],
+  "t": null
+ },
+ "Sueños": {
+  "f": [
+   "#CCC1DA",
+   "#FFFFFF"
+  ],
+  "t": "#7030A0"
+ },
+ "Tiempo": {
+  "f": [
+   "#FAC090",
+   "#4A452A"
+  ],
+  "t": "#000000"
+ },
+ "Tierra": {
+  "f": [
+   "#984807"
+  ],
+  "t": "#FFFFFF"
+ },
+ "Umbral": {
+  "f": [
+   "#7030A0",
+   "#0070C0"
+  ],
+  "t": null
+ },
+ "Vacío": {
+  "f": [
+   "#000000",
+   "#BFBFBF"
+  ],
+  "t": null
+ }
+}

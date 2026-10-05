@@ -103,4 +103,26 @@ describe('usabilidad', () => {
     expect(new Set(visibles()).size).toBe(1);
     expect(visibles()[0]).not.toBe(activa.id.replace('area-', ''));
   }, T);
+
+  it('Elan: sin descripción arriba y con resumen de poderes al final, con coste y Elan que pide cada don', async () => {
+    const f = lock({ 'Elan!C11': 'Mikael', 'Elan!G11': 15, 'Elan!C13': 'Luz de esperanza' });
+    render(<FichaView id={f.id} seccion="elan" />);
+    await waitFor(() => expect(document.querySelector('.elan-resumen')).toBeTruthy(), { timeout: 20_000 });
+    expect(document.body.textContent).not.toContain('Elige la entidad y sus dones');
+    const titulos = [...document.querySelectorAll('main .panel-title')].map((h) => h.textContent);
+    expect(titulos.at(-1)).toBe('Resumen de poderes');
+    const don = (n: string) => [...document.querySelectorAll('.elan-don')].find((d) => d.querySelector('strong')!.textContent === n)!;
+    expect(don('Luz de esperanza').textContent).toContain('Adquirido');
+    expect(don('Luz de esperanza').textContent).toContain('Pide Elan 10 · cuesta 5');
+    expect(don('Extirpar enfermedades').textContent).toContain('Faltan 5 de Elan');       // pide 20 y la entidad tiene 15
+    expect(document.querySelector('.elan-ent header')!.textContent).toContain('Gastado 5 de 15');
+    expect(document.querySelector('.elan-aviso')).toBeNull();
+    cleanup(); abierta.value = null;
+    const g = lock({ 'Elan!C11': 'Mikael', 'Elan!G11': 15, 'Elan!C13': 'Luz de esperanza', 'Elan!U11': 'Mikael', 'Elan!Y11': 10, 'Elan!U13': 'Luz de esperanza' });
+    render(<FichaView id={g.id} seccion="elan" />);
+    await waitFor(() => expect(document.querySelector('.elan-aviso')).toBeTruthy(), { timeout: 20_000 });
+    const avisos = [...document.querySelectorAll('.elan-aviso')].map((a) => a.textContent).join(' ');
+    expect(avisos).toContain('Mikael en Elan 1 y en Elan 2');                              // salta al duplicar la entidad…
+    expect(avisos).toContain('Don repetido: Luz de esperanza');                            // …y el don
+  }, T);
 });

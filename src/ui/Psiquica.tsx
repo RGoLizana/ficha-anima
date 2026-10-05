@@ -1,6 +1,8 @@
 import type { Ficha } from '../model/ficha';
 import { Avisos, Campo, Panel, txt } from './campos';
 import { ElementosGremio } from './ElementosGremio';
+import { editar } from '../store';
+import { MAX_CV, NIVELES, POR_CV, avisos, bonoDe, dominadosMantenibles, efecto, innatosDe, nivelMantenido, siguiente, ventajasDe } from '../psiquica/mantenidos';
 
 // Hoja Psíquicos del Excel
 const p = (col: string, fila: number) => `Psíquicos!${col}${fila}`;
@@ -21,6 +23,49 @@ const SALIDAS: [string, number, string][] = [
 /** Aviso de una celda del Excel solo si su texto cumple `re` (C22 avisa de CVs y de innatos). */
 function AvisoDe({ clave, re }: { clave: string; re: RegExp }) {
   return re.test(txt(clave)) ? <Avisos claves={[clave]} /> : null;
+}
+
+const nv = (i: number) => NIVELES[i] ?? '—';
+
+/** Ayudante de poderes mantenidos: nivel de cada innato (el del Excel), CV mínimos para el siguiente y ventajas. Solo avisa. */
+function Mantenidos({ f }: { f: Ficha }) {
+  const vs = ventajasDe(txt);
+  const bono = bonoDe(vs);
+  const innatos = innatosDe(txt);
+  const nombres = new Set(innatos.map((i) => i.n));
+  const otros = dominadosMantenibles(txt).filter((x) => !nombres.has(x.n));
+  const cvIncr = innatos.reduce((t, i) => t + i.cv, 0);
+  const libres = Number(txt(p('F', 20))) || 0;
+  const comprados = Number(txt(p('M', 13))) || 0;
+  const lista = avisos({ activos: innatos.length, innatos: comprados, cvIncr, cvLibres: libres, porPoder: innatos.map((i) => i.cv) });
+  return (
+    <Panel title="Poderes mantenidos" extra={<span class="muted small">{innatos.length}/{comprados} innatos · {cvIncr} CV incrementando · {libres} CV libres</span>}>
+      <p class="muted small">Los innatos se mantienen sin tirada en el nivel que da tu potencial (o en la dificultad mínima del poder). Cada CV libre suma +{POR_CV}, hasta {MAX_CV}, y no se recupera mientras lo mantengas (Core p. 212-213).</p>
+      {vs.length > 0 && <p class="small">{vs.map((v) => <span class="chip" key={v.n} title={v.ref}>{v.n}: +{v.efecto} nivel</span>)}</p>}
+      {innatos.map((i) => {
+        const datos = { nat: i.nat, cv: i.cv, bono, min: i.poder?.min ?? 0 };
+        const ahora = i.excel >= 0 ? i.excel : nivelMantenido(datos);
+        const sig = siguiente(datos);
+        return (
+          <div class="mant-psi" key={i.fila}>
+            <div class="row between wrap"><strong>{i.n}</strong><span class="chip">{nv(ahora)}{efecto(i.poder, ahora) ? ` · ${efecto(i.poder, ahora)}` : ''}</span></div>
+            <span class="muted small">Potencial {i.nat}{i.cv ? ` + ${POR_CV * i.cv} (${i.cv} CV)` : ''}{i.poder ? ` · mínima ${nv(i.poder.min)}` : ' · no está en la tabla de poderes mantenibles'}</span>
+            {sig ? (
+              <div class="row wrap">
+                <span class="small">Siguiente: <strong>{nv(sig.nivel)}</strong>{efecto(i.poder, sig.nivel) ? ` (${efecto(i.poder, sig.nivel)})` : ''} con {sig.extra} CV más ({sig.cv} en total)</span>
+                <button type="button" class="btn" onClick={() => editar(f.id, p('AI', i.fila), sig.cv)}>Poner {sig.cv} CV</button>
+              </div>
+            ) : <span class="muted small">Con {MAX_CV} CV no sube de nivel.</span>}
+          </div>
+        );
+      })}
+      {!innatos.length && <p class="muted small">Ningún innato activo: elige poderes en «Poderes innatos».</p>}
+      {otros.length > 0 && (
+        <p class="small">Otros mantenibles: {otros.map((x) => `${x.n} (${nv(nivelMantenido({ nat: x.nat, cv: 0, bono, min: x.poder.min }))})`).join(' · ')}</p>
+      )}
+      {lista.map((t) => <p class="aviso" role="status" key={t}>{t}</p>)}
+    </Panel>
+  );
 }
 
 export function Psiquica({ f }: { f: Ficha }) {
@@ -92,6 +137,8 @@ export function Psiquica({ f }: { f: Ficha }) {
         ))}
         <AvisoDe clave={p('C', 22)} re={/innatos/} />
       </Panel>
+
+      <Mantenidos f={f} />
 
       <Panel title="Dificultades y notas" plegable>
         <div class="grid-fields">

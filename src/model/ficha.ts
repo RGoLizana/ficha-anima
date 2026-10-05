@@ -46,6 +46,8 @@ export interface Sesion {
   efectos: { n: string; a: number | null; m: number; nota: string }[]; // a = asaltos restantes (null = sin fin)
   conts: { n: string; v: number }[];
   mant: { n: string; m: number }[];
+  /** Poderes psíquicos mantenidos como innatos y CV libres puestos en incrementarlos (Core p. 212-213). */
+  mantPsi?: { n: string; cv: number }[];
   favH: string[];
   favC: string[];
   notas: string;
@@ -68,6 +70,7 @@ export function parseSesion(d: unknown): Sesion | undefined {
     efectos: objetos(o.efectos).map((e) => ({ n: str(e.n), a: num(e.a) ?? null, m: num(e.m) ?? 0, nota: str(e.nota) })),
     conts: objetos(o.conts).map((c) => ({ n: str(c.n), v: num(c.v) ?? 0 })),
     mant: objetos(o.mant).map((m) => ({ n: str(m.n), m: num(m.m) ?? 0 })),
+    ...(Array.isArray(o.mantPsi) ? { mantPsi: objetos(o.mantPsi).filter((m) => str(m.n)).map((m) => ({ n: str(m.n), cv: Math.max(0, Math.round(num(m.cv) ?? 0)) })) } : {}),
     favH: textos(o.favH),
     favC: textos(o.favC),
     notas: str(o.notas),

@@ -308,3 +308,7 @@ escribía sobre una fórmula (PDs!Z188).
   vacíos (`Panel plegable`) arrancan cerrados y se abren solos si hay datos escritos (los valores por defecto no cuentan); Principal pone las características antes
   que el estado actual; la lista de personajes enseña categoría, raza y nivel sin abrir la ficha.
 - **Personalización por áreas:** cinco tarjetas con icono (Campaña y personaje, Armas y armaduras, Ki y legados, Magia y mentalismo, Géminis/Elan/notas) que muestran solo los paneles de su área y cuántos tienen datos; el primer área con datos se abre sola.
+- **Elan:** sin descripción arriba; resumen de poderes al final (`src/data/elan.json`, `tools/export_elan.py`) con lo que pide y cuesta cada don según el Elan de cada entidad y avisos al duplicar entidad o don.
+- **Sheele:** las mejoras solo se ofrecen del tipo de Sheele elegido (más las genéricas); una guardada de otro tipo se conserva y avisa.
+- **Grimorios:** cada vía con su color del Excel (`src/data/vias-colores.json`, `tools/export_vias_colores.py`) y relleno según el nivel de vía en «Todas mis vías».
+- **Psíquica:** ayudante de poderes mantenidos (`src/psiquica/mantenidos.ts`, `src/data/mantenidos-psi.json`): nivel al que se mantiene cada innato, mínimo de CV para el siguiente nivel y ventajas que lo mejoran; en el modo juego, mantener/soltar con CV de sesión (`Sesion.mantPsi`).
