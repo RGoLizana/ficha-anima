@@ -23,7 +23,10 @@ function fmt(v: ValorPdf): string {
   return String(v);
 }
 
-export function PaginaPdf({ pagina, valores, logo }: { pagina: 'resumen' | 'notas'; valores: Record<string, ValorPdf>; logo: string }) {
+/** Hueco del retrato en la hoja del Excel («Retrato - Apariencia 7»), en puntos: bajo la barra de título, dentro del marco. */
+export const CAJA_RETRATO = { x: 379.1, y: 32.8, w: 183.2, h: 144.4 };
+
+export function PaginaPdf({ pagina, valores, logo, retrato }: { pagina: 'resumen' | 'notas'; valores: Record<string, ValorPdf>; logo: string; retrato?: string }) {
   const p = PAGINAS[pagina];
   return (
     <div class="pdf-pagina" style={{ position: 'relative', width: `${A4[0]}pt`, height: `${A4[1]}pt`, background: '#fff', overflow: 'hidden',
@@ -36,6 +39,10 @@ export function PaginaPdf({ pagina, valores, logo }: { pagina: 'resumen' | 'nota
           <img src={logo} alt="Anima Beyond Fantasy" style={{ width: '100%', height: '100%', objectFit: 'fill' }} />
         </div>
       ))}
+      {pagina === 'resumen' && retrato && (
+        <img class="pdf-retrato" src={retrato} alt="Imagen del personaje"
+          style={{ position: 'absolute', left: `${CAJA_RETRATO.x}pt`, top: `${CAJA_RETRATO.y}pt`, width: `${CAJA_RETRATO.w}pt`, height: `${CAJA_RETRATO.h}pt`, objectFit: 'contain' }} />
+      )}
       {p.textos.map((t, i) => {
         const v = t.text !== undefined ? t.text : t.ref ? valores[t.ref] : undefined;
         if (v === null || v === undefined || v === '') return null;

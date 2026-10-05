@@ -29,11 +29,11 @@ afterEach(() => { cleanup(); abierta.value = null; valores.value = {}; store.fic
 const ficha = () => store.importar(JSON.stringify(read('ref/fichas/lock.json')));
 
 describe('Próximamente', () => {
-  it('la vista de impresión marca lo que falta: páginas de Sheele y Equipo, imagen y grimorio', async () => {
+  it('la vista de impresión marca lo que falta: páginas de Sheele y Equipo y grimorio', async () => {
     render(<Imprimir id={ficha().id} />);
     const marcas = [...document.querySelectorAll('.topbar label.pronto')];
     expect(marcas.map((l) => l.textContent!.replace(/\s+/g, ' ').trim())).toEqual([
-      'Página de Sheele Próximamente', 'Página de Equipo Próximamente', 'Imagen del personaje en la hoja Próximamente', 'PDF de grimorio (apaisado) Próximamente']);
+      'Página de Sheele Próximamente', 'Página de Equipo Próximamente', 'PDF de grimorio (apaisado) Próximamente']);
     expect(marcas.every((l) => (l.querySelector('input') as HTMLInputElement).disabled)).toBe(true);
   }, T);
 
@@ -46,10 +46,10 @@ describe('Próximamente', () => {
     expect(b.parentElement!.querySelector('.proximamente')).toBeTruthy();
   }, T);
 
-  it('el modo juego marca lo pendiente de los libros', async () => {
+  it('el modo juego ya no tiene nada pendiente marcado', async () => {
     render(<Juego id={ficha().id} />);
     await waitFor(() => expect(document.querySelector('.juego')).toBeTruthy(), { timeout: 20_000 });
-    expect(document.querySelector('.juego')!.textContent).toContain('Próximamente');
+    expect(document.querySelector('.juego')!.textContent).not.toContain('Próximamente');
   }, T);
 
   it('el compendio ya tiene convocatoria como pestaña real (sin marca de Próximamente)', async () => {

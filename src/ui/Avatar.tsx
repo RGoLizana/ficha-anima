@@ -5,11 +5,12 @@ import { guardarRetrato } from '../store';
 import { reducirImagen } from '../util/imagen';
 
 /** Icono del personaje: su imagen, o la inicial del nombre. Con `editable`, un clic permite añadir, cambiar o quitar la imagen. */
-export function Avatar({ f, sm, editable }: { f: Ficha; sm?: boolean; editable?: boolean }) {
+export function Avatar({ f, sm, grande, editable }: { f: Ficha; sm?: boolean; grande?: boolean; editable?: boolean }) {
   const [error, setError] = useState('');
   const inicial = nombreDe(f).trim()[0]?.toUpperCase() ?? '?';
-  const contenido = f.retrato ? <img src={f.retrato} alt={`Imagen de ${nombreDe(f) || 'el personaje'}`} /> : inicial;
-  if (!editable) return <div class={`avatar${sm ? ' sm' : ''}`}>{contenido}</div>;
+  const contenido = f.retrato ? <img src={f.retrato} alt={`Imagen de ${nombreDe(f) || 'el personaje'}`} /> : grande ? <span class="avatar-vacio">{editable ? 'Añadir imagen' : inicial}</span> : inicial;
+  const clase = `avatar${sm ? ' sm' : ''}${grande ? ' xl' : ''}`;
+  if (!editable) return <div class={clase}>{contenido}</div>;
 
   async function elegir(e: Event) {
     const input = e.currentTarget as HTMLInputElement;
@@ -22,7 +23,7 @@ export function Avatar({ f, sm, editable }: { f: Ficha; sm?: boolean; editable?:
   }
   return (
     <span class="avatar-edit row">
-      <label class={`avatar${sm ? ' sm' : ''} editable`} title={f.retrato ? 'Cambiar la imagen del personaje' : 'Añadir una imagen del personaje'}>
+      <label class={`${clase} editable`} title={f.retrato ? 'Cambiar la imagen del personaje' : 'Añadir una imagen del personaje'}>
         {contenido}
         <input type="file" accept="image/*" hidden aria-label="Imagen del personaje" onChange={elegir} />
       </label>

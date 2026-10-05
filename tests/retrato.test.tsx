@@ -38,6 +38,18 @@ const subir = (archivo: File) => {
 };
 
 describe('imagen del personaje', () => {
+  it('en la pestaña Principal se ve grande y se puede cambiar desde ahí', async () => {
+    const f = store.importar(JSON.stringify({ ...read('ref/fichas/lock.json'), retrato: FOTO }));
+    render(<FichaView id={f.id} seccion="principal" />);
+    await waitFor(() => expect(document.querySelector('.avatar.xl img')).toBeTruthy(), { timeout: 20_000 });
+    expect(document.querySelector('.avatar.xl img')!.getAttribute('src')).toBe(FOTO);
+    cleanup(); abierta.value = null;
+    const g = store.importar(JSON.stringify(read('ref/fichas/ayane.json')));       // sin imagen: caja para añadirla
+    render(<FichaView id={g.id} seccion="principal" />);
+    await waitFor(() => expect(document.querySelector('.avatar.xl')).toBeTruthy(), { timeout: 20_000 });
+    expect(document.querySelector('.avatar.xl')!.textContent).toContain('Añadir imagen');
+  }, T);
+
   it('se añade desde la cabecera, se guarda en la ficha y sale en el icono; se puede quitar', async () => {
     const f = store.importar(JSON.stringify(read('ref/fichas/lock.json')));
     render(<FichaView id={f.id} seccion="principal" />);

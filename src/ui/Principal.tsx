@@ -1,6 +1,7 @@
 import type { Ficha } from '../model/ficha';
 import { Avisos, Campo, Panel, txt, v } from './campos';
 import { CampoCategoria } from './CategoriasGremio';
+import { Avatar } from './Avatar';
 
 const CARACT = [11, 12, 13, 14, 15, 16, 17, 18];
 const RESIST = [57, 58, 59, 60, 61, 62];
@@ -12,12 +13,17 @@ export function Principal({ f }: { f: Ficha }) {
   return (
     <>
       <Panel title="Personaje">
+        <div class="personaje-cab">
+          <Avatar f={f} grande editable />
+          <div class="stack grow">
         <div class="grid-fields">
           <Campo f={f} clave="General!F22" label="Nombre" />
           <Campo f={f} clave="General!F23" label="Raza" />
           <Campo f={f} clave="General!J23" label="Nephilim" />
           <Campo f={f} clave="Principal!Y11" label="Tipo de criatura" />
           <Campo f={f} clave="Principal!AB13" label="Gnosis" tipo="numero" />
+        </div>
+          </div>
         </div>
         <div class="stack-sm">
           {cats.map((r, i) => (

@@ -81,7 +81,7 @@ describe('Compendio', () => {
     expect(d.querySelector('.conv-dl')!.textContent).toContain('Pacto');
   }, T);
 
-  it('convocatoria: filtros de acción y dificultad; las Grandes Bestias sin resumir lo dicen', async () => {
+  it('convocatoria: filtros de acción y dificultad; las Grandes Bestias traen su efecto y las que no están en los libros lo dicen', async () => {
     await abrirCompendio();
     fireEvent.click(document.getElementById('tab-conv')!);
     fireEvent.click(boton(/^Arcanos mayores/, document.querySelector('.explorador')!));
@@ -95,7 +95,10 @@ describe('Compendio', () => {
     fireEvent.input(document.querySelector('[aria-label="Dificultad hasta"]')!, { target: { value: '' } });
     fireEvent.input(document.getElementById('q')!, { target: { value: 'Hermod' } });
     fireEvent.click(document.querySelector('.fila-main')!);
-    expect(document.querySelector('#detalle .nota')!.textContent).toContain('sin resumir');
+    expect(document.querySelector('#detalle .conv-dl')!.textContent).toContain('mensaje');                  // Grandes Bestias y Encarnaciones ya traen su efecto resumido
+    fireEvent.input(document.getElementById('q')!, { target: { value: 'Zvilpogghua' } });
+    fireEvent.click(document.querySelector('.fila-main')!);
+    expect(document.querySelector('#detalle .nota')!.textContent).toContain('sin resumir');                // las que no están en los libros oficiales lo dicen
   }, T);
 
   it('convocatoria: reglas, Encarnación/Manifestación y costes en PD como tablas', async () => {
@@ -288,6 +291,28 @@ describe('Compendio', () => {
       fireEvent.click(boton(/^Resonancia/, document.querySelector('.explorador')!));
       expect(contador()).toBe('1');
       expect(filas()[0].textContent).toContain('GREMIO');
+    } finally { guardarBiblioteca(BIBLIOTECA_VACIA); }
+  }, T);
+
+  it('los Ars Magnus del gremio salen aparte de las pestañas y solo si la biblioteca los tiene', async () => {
+    const { guardarBiblioteca } = await import('../src/gremio/almacen');
+    const { BIBLIOTECA_VACIA } = await import('../src/gremio/modelo');
+    await abrirCompendio();
+    expect(boton(/^Ars Magnus del gremio/)).toBeUndefined();
+    cleanup();
+    guardarBiblioteca({ ...BIBLIOTECA_VACIA, arsMagnus: [{ n: 'Sello de ejemplo', pd: 30, cm: 20, e: 'Un sello de gremio' }] });
+    try {
+      await abrirCompendio();
+      expect([...document.querySelectorAll('[role=tab]')]).toHaveLength(4);
+      fireEvent.click(boton(/^Ars Magnus del gremio/)!);
+      const s = document.querySelector('.ars-gremio')!;
+      expect(s.textContent).toContain('Sello de ejemplo');
+      expect(s.textContent).toContain('30 PD');
+      expect(s.textContent).toContain('GREMIO');
+      expect((document.getElementById('layout') as HTMLElement).hidden).toBe(true);
+      fireEvent.click(document.getElementById('tab-psi')!);
+      expect(document.querySelector('.ars-gremio')).toBeNull();
+      expect((document.getElementById('layout') as HTMLElement).hidden).toBe(false);
     } finally { guardarBiblioteca(BIBLIOTECA_VACIA); }
   }, T);
 

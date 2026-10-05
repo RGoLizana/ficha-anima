@@ -123,6 +123,7 @@ export function Compendio({ id }: { id?: string }) {
   const [abierto, setAbierto] = useState<string | null>(null);
   const [verCmp, setVerCmp] = useState(false);
   const [pj, setPj] = useState(false);
+  const [verArs, setVerArs] = useState(false);          // Ars Magnus del gremio (no son oficiales: aparte de las pestañas)
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(() => typeof matchMedia === 'function' && matchMedia('(min-width: 900px)').matches);
 
   useEffect(() => {
@@ -203,7 +204,7 @@ export function Compendio({ id }: { id?: string }) {
   const nActivos = [F.accion, F.mant, F.lmin !== '', F.lmax !== '', F.tipos.length, F.diario, F.cerrado, F.niveles.length].filter(Boolean).length;
   const favoritos = [...fav].map((i) => porId.get(i)).filter((x): x is Item => !!x).sort((a, b) => a.l - b.l || porNombre(a, b));
 
-  const cambiarTab = (t: Tab) => { if (t !== tab) { setTab(t); setAbierto(null); setAviso(''); } };
+  const cambiarTab = (t: Tab) => { setVerArs(false); if (t !== tab) { setTab(t); setAbierto(null); setAviso(''); } };
   const ir = (g: string) => { setSel({ ...sel, [tab]: g }); setAbierto(null); };
   const abiertoItem = abierto ? porId.get(abierto) ?? null : null;
   const ids = tab === 'fav' ? [] : cmp[tab];
@@ -496,7 +497,25 @@ export function Compendio({ id }: { id?: string }) {
         ))}
       </div>
 
-      <div class={`layout${vista === 'tarjetas' ? ' tarjetas' : ''}${enReglas ? ' sin-detalle' : ''}${ids.length ? ' con-bandeja' : ''}`} id="layout" role="tabpanel" aria-labelledby={`tab-${tab}`}>
+      {B.arsMagnus.length > 0 && (
+        <div class="tabs-extra">
+          <button type="button" class="btn" aria-pressed={verArs} onClick={() => setVerArs(!verArs)}>Ars Magnus del gremio <small>{B.arsMagnus.length}</small></button>
+        </div>
+      )}
+      {verArs && (
+        <section class="ars-gremio" aria-label="Ars Magnus del gremio">
+          <p class="muted small">Contenido propio del gremio (no está en las reglas oficiales). Cada Ars Magnus que tiene el personaje gasta sus CM y PD.</p>
+          {B.arsMagnus.map((a) => (
+            <article class="tarjeta-ars" key={a.n}>
+              <div class="row wrap"><strong class="grow">{a.n}</strong><span class="flag" title="Contenido propio del gremio">GREMIO</span></div>
+              <p class="small"><b>{a.pd}</b> PD · <b>{a.cm}</b> CM</p>
+              {a.e && <p class="muted small">{a.e}</p>}
+            </article>
+          ))}
+        </section>
+      )}
+
+      <div hidden={verArs} class={`layout${vista === 'tarjetas' ? ' tarjetas' : ''}${enReglas ? ' sin-detalle' : ''}${ids.length ? ' con-bandeja' : ''}`} id="layout" role="tabpanel" aria-labelledby={`tab-${tab}`}>
         <nav class="explorador" aria-label="Explorar">
           <div class="exp-grupo">{Boton({ g: "", label: todo })}</div>
           {grupos.map(([t, gs]) => <div class="exp-grupo" key={t}><p class="exp-tit">{t}</p>{gs.map((g) => Boton({ g }))}</div>)}

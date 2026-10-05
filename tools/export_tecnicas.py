@@ -67,7 +67,7 @@ def main():
         n = val(t, f"O{r}")
         if n is None or str(n).startswith(">") or re.match(r"Desventaja Personalizada", str(n)):
             continue
-        ops = [[val(t, f"P{q}") or "", val(t, f"Q{q}"), max(1, val(t, f"R{q}") or 1)] for q in range(201, 302) if val(t, f"O{q}") == n]
+        ops = [[val(t, f"P{q}") or "", val(t, f"Q{q}"), max(1, val(t, f"R{q}") or 1)] for q in range(201, 302) if str(val(t, f"O{q}")).lower() == str(n).lower()]
         if ops:
             desventajas.append({"n": n, "k": val(t, f"Q{r}"), "o": ops})
 

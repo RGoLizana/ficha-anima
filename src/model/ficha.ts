@@ -40,6 +40,8 @@ export type Recurso = (typeof RECURSOS)[number];
 export interface Sesion {
   /** Valor actual de cada recurso; si falta, vale lo de la ficha. */
   r: Partial<Record<Recurso, number>>;
+  /** Ki actual de cada característica (solo con el ki sin unificar); si falta una, vale su máximo. */
+  kc?: Partial<Record<string, number>>;
   asalto: number;
   efectos: { n: string; a: number | null; m: number; nota: string }[]; // a = asaltos restantes (null = sin fin)
   conts: { n: string; v: number }[];
@@ -61,6 +63,7 @@ export function parseSesion(d: unknown): Sesion | undefined {
   const r = typeof o.r === 'object' && o.r !== null ? (o.r as Record<string, unknown>) : {};
   return {
     r: Object.fromEntries(RECURSOS.filter((k) => num(r[k]) !== undefined).map((k) => [k, r[k]])),
+    ...(typeof o.kc === 'object' && o.kc !== null ? { kc: Object.fromEntries(['AGI', 'CON', 'DES', 'FUE', 'POD', 'VOL'].filter((k) => num((o.kc as Record<string, unknown>)[k]) !== undefined).map((k) => [k, (o.kc as Record<string, unknown>)[k]])) as Sesion['kc'] } : {}),
     asalto: num(o.asalto) ?? 1,
     efectos: objetos(o.efectos).map((e) => ({ n: str(e.n), a: num(e.a) ?? null, m: num(e.m) ?? 0, nota: str(e.nota) })),
     conts: objetos(o.conts).map((c) => ({ n: str(c.n), v: num(c.v) ?? 0 })),

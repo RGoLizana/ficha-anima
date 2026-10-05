@@ -161,6 +161,10 @@ def main():
         libro = f"{ARCANA}, cap. 6 «Encarnaciones»" if grupo == "Encarnaciones" else f"{ARCANA}, cap. 5 «Invocaciones»" if n.startswith(BESTIAS_ARCANA) else None
         otras.append({"n": n, "g": grupo, "num": None, "dif": val(t, f"AC{r}"), "zeon": val(t, f"AD{r}"), "a": None, "ha": None, "hd": None, "dur": None, "e": None, "pacto": None,
                       "libro": libro})
+    # efectos resumidos de Arcana Exxet (cap. 5 Invocaciones y cap. 6 Encarnaciones), en tools/invocaciones.json; las que no aparecen en los libros quedan a null
+    resumen = json.load(open(os.path.join(ROOT, "tools", "invocaciones.json"), encoding="utf-8")) if os.path.exists(os.path.join(ROOT, "tools", "invocaciones.json")) else {}
+    for x in otras:
+        x.update(resumen.get(x["n"], {}))
     assert all(isinstance(x["dif"], int) and isinstance(x["zeon"], int) for x in otras)
 
     pd = [{"cat": val(t, f"D{r}"), "c": [val(t, f"{c}{r}") for c in ("AA", "AB", "AC", "AD")]} for r in range(202, 224)]
@@ -173,7 +177,7 @@ def main():
 
     out = {
         "arcanos": {"fuente": f"Excel Tablas!AB1066:AD1109 (nombre, dificultad, zeón); {CORE}, p. 200-209 (PDF 202-211) (resto)", "lista": arcanos},
-        "otras": {"fuente": f"Excel Tablas!AB1110:AD1231 (nombre, dificultad, zeón). Efectos y pactos sin resumir: ver {ARCANA}, cap. 5 y 6",
+        "otras": {"fuente": f"Excel Tablas!AB1110:AD1231 (nombre, dificultad, zeón). Efectos resumidos de {ARCANA}, cap. 5 y 6 (tools/invocaciones.json); Rudraskha, Zvilpogghua y Vilfain no aparecen en los libros oficiales consultados",
                   "lista": otras},
         "habilidades": {"fuente": f"{CORE}, p. 194-197 (PDF 196-199); característica según el libro; nombres del panel Místicos!J24:J29", "lista": HABILIDADES,
                         "reglas": [{"t": a, "e": b} for a, b in REGLAS]},

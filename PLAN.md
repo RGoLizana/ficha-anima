@@ -294,3 +294,10 @@ escribía sobre una fórmula (PDs!Z188).
   entradas del motor (`src/gremio/categorias.ts`, `entradasMotor`): no se toca ninguna fórmula y sin categorías no se escribe nada. El selector de
   categoría de Principal y del asistente las ofrece marcadas «gremio». El Excel exportado lleva esas celdas en `Tablas` con un aviso de qué oficial
   sustituyen. Importar desde Excel NO trae categorías propias. Entrega 2 (hecha): el compendio (Convocatoria → Costes en PD) muestra las propias y las oficiales modificadas con la marca GREMIO, y al importar un Excel una categoría no oficial se deja vacía con aviso.
+- **Pendientes cerrados:** imagen del personaje grande en Principal y en la hoja del PDF (hueco «Retrato», opción en Imprimir); modo juego con reservas
+  de ki por característica (ki sin unificar; las técnicas gastan «AGI 3, CON 3…» de cada una), conjuros de vías de gremio y poderes de disciplinas de
+  gremio; compendio con los Ars Magnus del gremio y con el efecto de las 113 invocaciones de Arcana (Grandes Bestias y Encarnaciones, resumidas a
+  mano en `tools/invocaciones.json`; Rudraskha, Zvilpogghua y Vilfain no están en los libros); desventaja «Técnica Final» en el asistente de técnicas;
+  aviso al exportar a Excel de lo que el Excel no puede llevar (consumos de gremio, categorías propias).
+  No hecho a propósito: meter la imagen dentro del .xlsm (habría que escribir partes de dibujo del libro sin poder abrirlo en Excel para comprobarlo) y
+  leer fichas de gremio con otra disposición de hojas (solo se avisa, como se decidió).

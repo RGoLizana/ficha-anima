@@ -456,3 +456,18 @@ details.juego-panel[open] > summary { border-bottom: 1px solid var(--line); }
 .destacado .field label { color: var(--gold); font-size: 15px; font-weight: 700; }
 .destacado .field input { width: 96px; border-color: var(--gold); font-weight: 700; font-size: 18px; }
 .destacado p { flex: 1 1 220px; margin: 0; color: var(--text); }
+
+/* imagen del personaje en la pestaña Principal */
+.personaje-cab { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
+.personaje-cab .grid-fields { flex: 1 1 360px; }
+.avatar.xl { width: 168px; height: 168px; border-radius: 14px; border-width: 2px; font-size: 56px; overflow: hidden; }
+.avatar.xl img { width: 100%; height: 100%; object-fit: cover; }
+.avatar-vacio { font: 600 14px var(--body); color: var(--muted); text-align: center; padding: 8px; }
+.avatar.xl.editable { cursor: pointer; border-style: dashed; }
+.avatar.xl.editable:has(img) { border-style: solid; }
+
+/* reservas de ki por característica en el modo juego */
+.juego-reservas { display: flex; flex-direction: column; gap: 8px; }
+.juego-reserva { display: grid; grid-template-columns: 44px 44px minmax(90px, 1fr) 44px; gap: 8px; align-items: center; }
+.juego-reserva .small { grid-column: 1 / -1; padding-left: 52px; }
+.juego-reserva-n { font-weight: 700; color: var(--ki); }

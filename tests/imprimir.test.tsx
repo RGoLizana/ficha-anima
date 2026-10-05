@@ -41,3 +41,26 @@ describe('nombre del PDF', () => {
     expect(document.title).toBe(antes);      // el título se restaura después
   }, 120_000);
 });
+
+describe('imagen del personaje en la hoja', () => {
+  const FOTO = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ';
+  const casilla = () => [...document.querySelectorAll<HTMLInputElement>('.topbar input[type=checkbox]')].find((i) => i.closest('label')!.textContent!.includes('Imagen del personaje'))!;
+
+  it('sale en el hueco «Retrato» de la página 1 y se puede quitar', async () => {
+    const f = store.importar(JSON.stringify({ ...read('ref/fichas/lock.json'), retrato: FOTO }));
+    render(<Imprimir id={f.id} />);
+    await waitFor(() => expect(document.querySelector('.pdf-retrato')).toBeTruthy(), { timeout: 30_000 });
+    expect(document.querySelector('.pdf-retrato')!.getAttribute('src')).toBe(FOTO);
+    expect(casilla().disabled).toBe(false);
+    fireEvent.click(casilla());
+    await waitFor(() => expect(document.querySelector('.pdf-retrato')).toBeNull());
+  }, 120_000);
+
+  it('sin imagen la opción está deshabilitada y no sale nada', async () => {
+    const f = store.importar(JSON.stringify(read('ref/fichas/lock.json')));
+    render(<Imprimir id={f.id} />);
+    await waitFor(() => expect(document.querySelector('.pdf-hoja')).toBeTruthy(), { timeout: 30_000 });
+    expect(casilla().disabled).toBe(true);
+    expect(document.querySelector('.pdf-retrato')).toBeNull();
+  }, 120_000);
+});

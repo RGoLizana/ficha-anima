@@ -34,7 +34,7 @@ describe('convocatoria.json', () => {
     }
   });
 
-  it('las otras invocaciones salen del Excel; sin resumen del libro, sus efectos son null', () => {
+  it('las otras invocaciones salen del Excel; las que están en Arcana traen efecto resumido y las demás lo tienen a null', () => {
     const l: Inv[] = C.otras.lista;
     expect(l.length).toBeGreaterThan(100);
     for (const x of l) {
@@ -42,7 +42,8 @@ describe('convocatoria.json', () => {
       expect(r, x.n).toBeTruthy();
       expect(x.dif).toBe(v(r.replace('AB', 'AC')));
       expect(x.zeon).toBe(v(r.replace('AB', 'AD')));
-      expect([x.a, x.e, x.dur, x.pacto]).toEqual([null, null, null, null]);
+      if (x.libro === null) expect([x.a, x.e, x.dur, x.pacto]).toEqual([null, null, null, null]);
+      else { expect(typeof x.e, x.n).toBe('string'); expect(x.e!.length, x.n).toBeGreaterThan(20); }
     }
     expect(l.filter((x) => x.libro === null).map((x) => x.n.split(/[:,]/)[0]).sort()).toEqual(['Rudraskha', 'Rudraskha', 'Vilfain', 'Vilfain', 'Vilfain', 'Zvilpogghua', 'Zvilpogghua']);
   });

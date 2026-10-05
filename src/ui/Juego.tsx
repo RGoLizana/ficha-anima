@@ -8,7 +8,8 @@ import { abrir, abierta, errorMotor, motor, valores } from '../engine';
 import { nombreDe, type Ficha, type Recurso, type Sesion, entradasMotor } from '../model/ficha';
 import { Icon } from './Icon';
 import { Avatar } from './Avatar';
-import { Proximamente, txt } from './campos';
+import { txt } from './campos';
+import { biblioteca } from '../gremio/almacen';
 
 /** Descanso de un día, según el reglamento (Core Exxet) y lo que da la ficha de Excel (si chocan, manda el Excel):
  *  - PV: la regeneración de la ficha (Principal!K11, p. ej. «30 PV / día»; tabla 24 del Core, columna «Descansando»).
@@ -38,6 +39,13 @@ export const REGLAS_DESCANSO = {
 };
 
 type Valores = Record<Recurso, number>;
+type Reserva = { c: string; max: number; acu: number };
+const CARS = ['AGI', 'CON', 'DES', 'FUE', 'POD', 'VOL'];
+/** Con el ki sin unificar cada característica tiene su reserva (Ki!F12…F22 = máximo, Ki!D12…D22 = acumulación); unificado, esas casillas dicen «-». */
+function reservasDeKi(): Reserva[] | null {
+  const r = CARS.map((c, i) => ({ c, max: Number(txt(`Ki!F${12 + 2 * i}`)), acu: n(`Ki!D${12 + 2 * i}`) }));
+  return r.some((x) => txt(`Ki!F${12 + 2 * CARS.indexOf(x.c)}`) !== '' && Number.isFinite(x.max)) ? r.map((x) => ({ ...x, max: Number.isFinite(x.max) ? x.max : 0 })) : null;
+}
 const n = (k: string) => Number(txt(k)) || 0;
 
 const REC: Record<Recurso, { n: string; t: string; pasos: number[] }> = {
@@ -122,6 +130,9 @@ function Partida({ f }: { f: Ficha }) {
   const s = f.sesion ?? vacia();
   const val = (k: Recurso) => s.r[k] ?? ini[k];
   const cur = Object.fromEntries(Object.keys(REC).map((k) => [k, val(k as Recurso)])) as Valores;
+  const res = reservasDeKi();
+  const kcCur = Object.fromEntries((res ?? []).map((r) => [r.c, s.kc?.[r.c] ?? r.max]));
+  if (res) { cur.ki = Object.values(kcCur).reduce((t, x) => t + x, 0); max.ki = res.reduce((t, r) => t + r.max, 0); }   // el ki total es la suma de las reservas
 
   /** Cambia la sesión y la guarda (sola, sin botón). Devuelve la sesión nueva. */
   const guardar = (fn: (x: Sesion) => void) => {
@@ -169,7 +180,10 @@ function Partida({ f }: { f: Ficha }) {
     const nuevo = guardar((x) => {
       x.r.pv = sube('pv', reg ?? 0);
       x.r.zeon = sube('zeon', zeon);
-      x.r.ki = sube('ki', R.kiPorHora * R.horas);
+      if (res) {
+        x.kc = Object.fromEntries(res.map((r) => [r.c, Math.max(kcCur[r.c], Math.min(r.max, kcCur[r.c] + R.kiPorHora * R.horas))])) as Record<string, number>;
+        x.r.ki = (Object.values(x.kc) as number[]).reduce((t, v) => t + v, 0);
+      } else x.r.ki = sube('ki', R.kiPorHora * R.horas);
       x.r.cv = sube('cv', R.cvPorHora * R.horas);
       for (const k of R.alMaximo) x.r[k] = max[k];
       if (R.quitaEfectosConAsaltos) x.efectos = x.efectos.filter((e) => e.a === null);
@@ -203,8 +217,26 @@ function Partida({ f }: { f: Ficha }) {
     avisar(que, `−${cant} ${REC[k].n.toLowerCase()}` + (x.r[k]! < 0 ? ` · ⚠ ${REC[k].t} por debajo de 0` : ''), s);
   };
 
+  const ponerKc = (c: string, v: number) => guardar((x) => {
+    x.kc = { ...(x.kc ?? {}), [c]: Math.round(v) };
+    x.r.ki = (res ?? []).reduce((t, r) => t + (x.kc![r.c] ?? r.max), 0);
+  });
+  /** Gasta el ki de una técnica: con reservas por característica, cada una paga lo suyo («AGI 3, CON 3…»); unificado, el total. */
+  const gastarKi = (coste: string, que: string) => {
+    const partes = [...coste.matchAll(/(AGI|CON|DES|FUE|POD|VOL)\s+(\d+)/g)].map((m) => [m[1], Number(m[2])] as [string, number]);
+    const total = (coste.match(/\d+/g) ?? []).reduce((t, x) => t + Number(x), 0);
+    if (!res || !partes.length) { gastar('ki', total, que); return; }
+    const x = guardar((x) => {
+      x.kc = { ...kcCur, ...(x.kc ?? {}) };
+      for (const [c, q] of partes) x.kc[c] = (x.kc[c] ?? kcCur[c]) - q;
+      x.r.ki = res.reduce((t, r) => t + (x.kc![r.c] ?? r.max), 0);
+    });
+    const neg = partes.filter(([c]) => (x.kc![c] ?? 0) < 0).map(([c]) => c);
+    avisar(que, `−${partes.map(([c, q]) => `${c} ${q}`).join(', ')} ki` + (neg.length ? ` · ⚠ ${neg.join(', ')} por debajo de 0` : ''), s);
+  };
+
   const mod = s.efectos.reduce((t, e) => t + e.m, 0);
-  const ctx: Ctx = { f, s, max, cur, guardar, poner, avisar, gastar };
+  const ctx: Ctx = { f, s, max, cur, guardar, poner, avisar, gastar, res, kcCur, ponerKc, gastarKi };
   const conZeon = max.zeon > 0 || cur.zeon !== 0;
 
   return (
@@ -285,6 +317,10 @@ type Ctx = {
   poner: (k: Recurso, v: number) => Sesion;
   avisar: (t: string, d: string, antes?: Sesion) => void;
   gastar: (k: Recurso, cant: number, que: string) => void;
+  /** Reservas de ki por característica (null = ki unificado: una sola reserva) y ki actual de cada una. */
+  res: Reserva[] | null; kcCur: Record<string, number>;
+  ponerKc: (c: string, v: number) => void;
+  gastarKi: (coste: string, que: string) => void;
 };
 
 function Stat({ v, l, cls = '', extra }: { v: string; l: string; cls?: string; extra?: boolean }) {
@@ -368,7 +404,7 @@ function Estado({ ctx, nuevoAsalto, descansar }: { ctx: Ctx; nuevoAsalto: () => 
       <Panel t="Estado actual" pill="solo sesión">
         {visibles.map((k) => (
           <Fragment key={k}>
-            <RecursoFila ctx={ctx} k={k} />
+            {k === 'ki' && ctx.res ? <ReservasKi ctx={ctx} /> : <RecursoFila ctx={ctx} k={k} />}
             {avisos[k] && <p class="aviso" role="status">{avisos[k]}</p>}
             {k === 'pv' && (
               <div class="juego-rapido">
@@ -609,7 +645,7 @@ function Habilidades({ ctx }: { ctx: Ctx }) {
 }
 
 // Conjuros: datos de los grimorios (como GrimoriosInfo), cargados aparte la primera vez.
-type Conjuro = { n: string; v: string; l: number; d: string; t: string; a: string | null; g: [number, number, number | string | null, string][]; e: string };
+type Conjuro = { n: string; v: string; l: number; d: string; t: string; a: string | null; g: [number, number, number | string | null, string][]; e: string; gremio?: boolean };
 let grimorios: Conjuro[] | null = null;
 function useConjuros() {
   const [datos, setDatos] = useState(grimorios);
@@ -620,6 +656,18 @@ function useConjuros() {
 }
 const GRADOS = ['Base', 'Intermedio', 'Avanzado', 'Arcano'];
 const mantDe = (m: number | string | null) => (typeof m === 'number' && m > 0 ? m : 0);
+
+/** Conjuros de las vías de gremio que tiene el personaje (los de nivel hasta el que consume en esa vía). */
+function conjurosGremio(f: Ficha): (Conjuro & { sel?: boolean })[] {
+  const b = biblioteca.value;
+  return (f.propio ?? []).filter((e) => e.tipo === 'via').flatMap((e) => {
+    const via = b.vias.find((v) => v.n === e.n);
+    return (via?.conjuros ?? []).filter((c) => c.l <= e.nivel).map((c) => ({
+      n: c.n, v: e.n, l: c.l, d: c.d, t: c.t, a: c.a, e: c.e, gremio: true,
+      g: c.g.map(([int, zeon, mant, ef]) => [int ?? 0, zeon ?? 0, mant, ef]) as Conjuro['g'],
+    }));
+  });
+}
 
 /** Conjuros que tiene el personaje: los de sus vías hasta el nivel aprendido y los seleccionados en Místicos. */
 function conjurosDe(todos: Conjuro[]) {
@@ -649,7 +697,7 @@ function Magia({ ctx }: { ctx: Ctx }) {
   const [q, setQ] = useState('');
   const INT = n('Principal!G15');
   const ACT = n('Místicos!L12');
-  const conjuros = todos ? conjurosDe(todos) : [];
+  const conjuros = [...(todos ? conjurosDe(todos) : []), ...conjurosGremio(ctx.f)];
   const vias = [...new Set(conjuros.map((c) => c.v))];
   const busca = q.trim().toLowerCase();
   const lista = conjuros.filter((c) => (busca ? c.n.toLowerCase().includes(busca)
@@ -711,7 +759,7 @@ function Magia({ ctx }: { ctx: Ctx }) {
               <button type="button" class="juego-estrella" aria-pressed={s.favC.includes(c.n)} aria-label={`Favorito ${c.n}`} onClick={() => favC(c.n)}>★</button>
               <div class="grow">
                 <h3>{c.n}</h3>
-                <span class="juego-via">{c.v} {c.l}</span> <span class="muted small">· {[c.t?.trim(), c.a].filter(Boolean).join(' · ')}{c.sel ? ' · seleccionado' : ''}</span>
+                <span class="juego-via">{c.v} {c.l}</span>{c.gremio && <> <span class="chip" title="Contenido propio del gremio">GREMIO</span></>} <span class="muted small">· {[c.t?.trim(), c.a].filter(Boolean).join(' · ')}{c.sel ? ' · seleccionado' : ''}</span>
               </div>
             </div>
             <p class="muted small">{c.g[0][3]}</p>
@@ -738,6 +786,28 @@ function Magia({ ctx }: { ctx: Ctx }) {
   );
 }
 
+/** Reservas de ki por característica (ki sin unificar): lo actual de cada una, con su acumulación por asalto. Solo sesión: no toca la ficha. */
+function ReservasKi({ ctx }: { ctx: Ctx }) {
+  const { res, kcCur, cur, max, ponerKc } = ctx;
+  return (
+    <div class="juego-recurso juego-reservas" data-r="ki">
+      <div class="row between"><strong>Ki por característica</strong><span class="muted small">total {cur.ki} / {max.ki}</span></div>
+      {res!.filter((r) => r.max > 0 || kcCur[r.c] !== 0).map((r) => (
+        <div class="juego-reserva" key={r.c} data-car={r.c}>
+          <span class="juego-reserva-n">{r.c}</span>
+          <button type="button" class="btn" aria-label={`Restar 1 de ki de ${r.c}`} onClick={() => ponerKc(r.c, kcCur[r.c] - 1)}>−</button>
+          <label class="juego-val"><span class="sr-only">Ki actual de {r.c}</span>
+            <input type="number" inputMode="numeric" value={kcCur[r.c]} aria-label={`Ki actual de ${r.c}`} onChange={(e) => ponerKc(r.c, Number(e.currentTarget.value) || 0)} />
+            <span class="muted">/ {r.max}</span></label>
+          <button type="button" class="btn" aria-label={`Sumar 1 de ki a ${r.c}`} onClick={() => ponerKc(r.c, kcCur[r.c] + 1)}>+</button>
+          <span class="muted small">acumula {r.acu}/asalto</span>
+          {kcCur[r.c] < 0 && <span class="aviso" role="status">Por debajo de 0</span>}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 // Técnicas de Ki: bloques de "Creación de Técnicas" (como la sección Técnicas de Ki)
 const BASES = [12, 46, 80, 114, 148, 183, 217, 251, 285, 319];
 const t = (col: string, fila: number) => `Creación de Técnicas!${col}${fila}`;
@@ -748,9 +818,8 @@ function Ki({ ctx }: { ctx: Ctx }) {
   return (
     <>
       <Panel t="Ki" color="var(--ki)" pill={`${txt('Ki!I10') === 'Sí' ? 'unificado · ' : ''}acumula ${txt('Ki!D24') || 0}/asalto`}>
-        <RecursoFila ctx={ctx} k="ki" />
+        {ctx.res ? <ReservasKi ctx={ctx} /> : <RecursoFila ctx={ctx} k="ki" />}
         {ctx.cur.ki < 0 && <p class="aviso" role="status">Ki por debajo de 0 ({ctx.cur.ki}).</p>}
-        <p class="nota">Reservas de ki por característica (con el ki sin unificar) y conjuros o poderes propios del gremio <Proximamente /></p>
       </Panel>
       <Panel t="Técnicas">
         {tecnicas.length ? tecnicas.map(({ b, nombre }) => {
@@ -765,7 +834,7 @@ function Ki({ ctx }: { ctx: Ctx }) {
               {efectos.length > 0 && <p class="small">{efectos.join(' · ')}</p>}
               {desc && <p class="muted small">{desc}</p>}
               <p class="muted small">Coste {coste || '—'} = <strong class="juego-txt">{total} ki</strong>{acu > 0 ? ` · ${Math.ceil(total / acu)} ${Math.ceil(total / acu) === 1 ? 'asalto' : 'asaltos'} acumulando (${acu}/asalto)` : ''}{mant.length ? ` · mantener ${mant.join(', ')}` : ''}</p>
-              <button type="button" class="btn" onClick={() => ctx.gastar('ki', total, nombre)}>Usar (−{total} ki)</button>
+              <button type="button" class="btn" onClick={() => ctx.gastarKi(coste, nombre)}>Usar (−{total} ki)</button>
             </article>
           );
         }) : <div class="juego-vacio">Sin técnicas de ki.</div>}
@@ -793,6 +862,35 @@ function Psi({ ctx }: { ctx: Ctx }) {
           <p class="muted small">{txt(p('V', r + 1))}{txt(p('AA', r)) ? ` · ${txt(p('AA', r))} CVs potenciados` : ''}{txt(p('AB', r)) ? ` · bono ${txt(p('AB', r))}` : ''}</p>
         </article>
       )) : <div class="juego-vacio">Sin poderes psíquicos.</div>}
+      <PoderesGremio f={ctx.f} />
     </Panel>
+  );
+}
+
+const DIFICULTADES = ['Rutinario', 'Fácil', 'Medio', 'Difícil', 'Muy difícil', 'Absurdo', 'Casi imposible', 'Imposible', 'Inhumano', 'Zen'];
+/** Poderes de las disciplinas de gremio que tiene el personaje, con su efecto en la dificultad elegida. */
+function PoderesGremio({ f }: { f: Ficha }) {
+  const [dif, setDif] = useState(2);
+  const b = biblioteca.value;
+  const discs = (f.propio ?? []).filter((e) => e.tipo === 'disciplina').map((e) => b.disciplinas.find((d) => d.n === e.n)).filter((d) => d !== undefined);
+  if (!discs.length) return null;
+  return (
+    <div class="juego-gremio">
+      <label class="field"><span class="lbl">Dificultad de los poderes de gremio</span>
+        <select value={dif} onChange={(e) => setDif(Number(e.currentTarget.value))}>{DIFICULTADES.map((d, i) => <option key={d} value={i}>{d}</option>)}</select>
+      </label>
+      {discs.map((d) => (
+        <div key={d.n} class="stack-sm">
+          <h3 class="juego-grp">{d.n} <span class="chip" title="Contenido propio del gremio">GREMIO</span> <span class="muted small">{d.mod}</span></h3>
+          {d.poderes.length ? d.poderes.map((pd) => (
+            <article class="juego-tecnica juego-poder-psi" key={pd.n}>
+              <div class="row between"><h3>{pd.n}</h3><span class="chip">Nivel {pd.l}</span></div>
+              <p class="small">{pd.f[dif] || 'Sin efecto en esta dificultad'}</p>
+              <p class="muted small">{pd.a}{pd.m === 'Sí' ? ' · mantenido' : ''}</p>
+            </article>
+          )) : <div class="juego-vacio">Esta disciplina aún no tiene poderes.</div>}
+        </div>
+      ))}
+    </div>
   );
 }

@@ -243,3 +243,9 @@
 .comp .tabla-reglas thead th { border-top: 0; font-size: 12px; font-weight: 700; letter-spacing: .04em; color: var(--muted); white-space: nowrap; }
 .comp .tabla-reglas tbody th { font-weight: 700; white-space: nowrap; }
 .comp .tabla-reglas td.num { font-weight: 700; text-align: right; }
+
+/* Ars Magnus del gremio */
+.comp .layout[hidden] { display: none; }
+.comp .tabs-extra { padding: 8px 16px 0; }
+.comp .ars-gremio { display: flex; flex-direction: column; gap: 8px; padding: 12px 16px; max-width: 760px; }
+.comp .tarjeta-ars { background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--gold); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; }

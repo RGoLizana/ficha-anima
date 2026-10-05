@@ -62,4 +62,28 @@ describe('Exportar Excel', () => {
     fireEvent.click(document.querySelector('.exportar-excel button.btn')!);
     await waitFor(() => expect(descargas).toHaveLength(2), { timeout: 30_000 });
   }, T);
+
+  it('avisa de lo que el Excel no puede llevar de gremio: categoría propia sustituida y consumos', async () => {
+    const { zipSync, strToU8 } = await import('fflate');
+    const { categoriaDesde } = await import('../src/gremio/categorias');
+    const descargas: string[] = [];
+    vi.stubGlobal('URL', Object.assign(URL, { createObjectURL: () => 'blob:x', revokeObjectURL: () => {} }));
+    vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function (this: HTMLAnchorElement) { descargas.push(this.download); });
+    const base = read('ref/fichas/lock.json');
+    const f = store.importar(JSON.stringify({ ...base, entradas: { ...base.entradas, 'PDs!O7': 'Caballero rúnico' }, categorias: [categoriaDesde('Guerrero', 'Caballero rúnico')],
+      propio: [{ tipo: 'via', n: 'Ars Gnosis', nivel: 22, cv: 0, cm: 0, pd: 0, cat: 1 }] }));
+    render(<FichaView id={f.id} seccion="principal" />);
+    await waitFor(() => expect(document.querySelector('.exportar-excel')).toBeTruthy(), { timeout: 20_000 });
+    const hojas = ['Principal', 'General', 'Tablas'];
+    const libro = zipSync({
+      'xl/workbook.xml': strToU8(`<workbook><sheets>${hojas.map((h, i) => `<sheet name="${h}" sheetId="${i + 1}" r:id="rId${i + 1}"/>`).join('')}</sheets></workbook>`),
+      'xl/_rels/workbook.xml.rels': strToU8(`<Relationships>${hojas.map((_, i) => `<Relationship Id="rId${i + 1}" Target="worksheets/sheet${i + 1}.xml"/>`).join('')}</Relationships>`),
+      ...Object.fromEntries(hojas.map((_, i) => [`xl/worksheets/sheet${i + 1}.xml`, strToU8('<worksheet><sheetData/></worksheet>')])),
+    });
+    subir(new File([libro], 'base.xlsm'));
+    await waitFor(() => expect(descargas).toHaveLength(1), { timeout: 30_000 });
+    const aviso = document.querySelector('.exportar-excel [role=alert]')!.textContent!;
+    expect(aviso).toMatch(/«Novel» se sustituye por «Caballero rúnico»/);
+    expect(aviso).toMatch(/no cuenta lo que consumen \(nivel de vía 22\)/);
+  }, T);
 });

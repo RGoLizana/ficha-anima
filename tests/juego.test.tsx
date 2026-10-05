@@ -63,7 +63,7 @@ describe('Modo juego', () => {
     const texto = document.body.textContent!;
     expect(texto).toContain('Lock');
     expect(texto).toContain('Hechicero');
-    for (const t of ['Medicina', 'Ocultismo', 'Desarmado', 'Baile espectral', '12 ki', 'Aseamiento', 'Próximamente']) expect(texto).toContain(t);
+    for (const t of ['Medicina', 'Ocultismo', 'Desarmado', 'Baile espectral', '12 ki', 'Aseamiento']) expect(texto).toContain(t);
     expect(texto).toContain('30 PV / día');
   }, T);
 
@@ -246,5 +246,49 @@ describe('regeneración diaria', () => {
     fireEvent.input(pct, { target: { value: '50' } });
     await waitFor(() => expect(calc.querySelector('.calc-final strong')!.textContent).toBe('55'));
     expect(JSON.stringify(store.buscar(f.id)!.entradas)).toBe(antes);
+  }, T);
+
+  it('ki sin unificar: una reserva por característica y las técnicas gastan de cada una', async () => {
+    const base = read('ref/fichas/lock.json') as { entradas: Record<string, Entrada> };
+    const f = store.importar(JSON.stringify({ ...base, entradas: { ...base.entradas, 'Ki!I10': 'No', 'PDs!M30': 50, 'PDs!M31': 50, 'PDs!M34': 50, 'PDs!M35': 50 } }));
+    render(<Juego id={f.id} />);
+    await esperar();
+    const filas = () => [...document.querySelectorAll('.juego-ki-panel .juego-reserva, .juego-reserva')];
+    await waitFor(() => expect(filas().length).toBeGreaterThan(0));
+    const antes = JSON.stringify(store.buscar(f.id)!.entradas);
+    const fila = (c: string) => document.querySelector(`.juego-reserva[data-car="${c}"]`) as HTMLElement | null;
+    const valor = (c: string) => Number((fila(c)!.querySelector('input') as HTMLInputElement).value);
+    const cars = filas().map((x) => x.getAttribute('data-car')!);
+    const c0 = cars[0], v0 = valor(c0);
+    fireEvent.click(fila(c0)!.querySelectorAll('button')[1]);                    // + 1
+    await waitFor(() => expect(valor(c0)).toBe(v0 + 1));
+    expect(store.buscar(f.id)!.sesion!.kc![c0]).toBe(v0 + 1);
+    // la técnica de Lock (AGI 3, CON 3, POD 3, VOL 3) gasta de cada reserva lo suyo
+    const antesCar = Object.fromEntries(['AGI', 'CON', 'POD', 'VOL'].map((c) => [c, fila(c) ? valor(c) : null]));
+    fireEvent.click([...document.querySelectorAll('button')].find((b) => /^Usar \(−12 ki\)/.test(b.textContent!))!);
+    await waitFor(() => { for (const c of ['AGI', 'CON', 'POD', 'VOL']) if (fila(c)) expect(valor(c)).toBe(antesCar[c]! - 3); });
+    expect(JSON.stringify(store.buscar(f.id)!.entradas)).toBe(antes);            // la ficha no cambia
+  }, T);
+
+  it('conjuros de las vías de gremio y poderes de las disciplinas de gremio salen en el modo juego', async () => {
+    const { guardarBiblioteca } = await import('../src/gremio/almacen');
+    const { BIBLIOTECA_VACIA } = await import('../src/gremio/modelo');
+    const { conjuroNuevo, poderNuevo } = await import('../src/gremio/modelo');
+    guardarBiblioteca({ ...BIBLIOTECA_VACIA,
+      vias: [{ n: 'Ars Gnosis', tipo: 'Vía mayor', nota: '', conjuros: [{ ...conjuroNuevo(), n: 'Chispa de gremio', l: 4, g: [[6, 40, 'No', 'Base'], [8, 80, 10, 'Int'], [10, 120, 10, 'Av'], [12, 200, 15, 'Arc']] }, { ...conjuroNuevo(), n: 'Demasiado alto', l: 90 }] }],
+      disciplinas: [{ n: 'Resonancia', mod: 'Sin modificador', poderes: [{ ...poderNuevo(), n: 'Eco de gremio', f: ['rutinario', 'facil', 'medio-efecto', 'dificil', '', '', '', '', '', ''] }] }] });
+    try {
+      const f = store.importar(JSON.stringify({ ...read('ref/fichas/lock.json'), propio: [{ tipo: 'via', n: 'Ars Gnosis', nivel: 10, cv: 0, cm: 0, pd: 0, cat: 1 }, { tipo: 'disciplina', n: 'Resonancia', nivel: 0, cv: 1, cm: 0, pd: 0, cat: 1 }] }));
+      render(<Juego id={f.id} />);
+      await esperar();
+      await waitFor(() => expect(document.body.textContent).toContain('Chispa de gremio'));
+      expect(document.body.textContent).not.toContain('Demasiado alto');                 // por encima del nivel de vía que consume
+      const art = [...document.querySelectorAll('.juego-conjuro')].find((a) => a.textContent!.includes('Chispa de gremio'))!;
+      expect(art.textContent).toContain('GREMIO');
+      expect(document.body.textContent).toContain('Eco de gremio');
+      expect(document.body.textContent).toContain('medio-efecto');                       // dificultad Medio por defecto
+      fireEvent.change(document.querySelector('.juego-gremio select')!, { target: { value: '1' } });
+      await waitFor(() => expect(document.body.textContent).toContain('facil'));
+    } finally { guardarBiblioteca(BIBLIOTECA_VACIA); }
   }, T);
 });

@@ -11,7 +11,7 @@ import { Proximamente, txt } from './campos';
 export function Imprimir({ id }: { id: string }) {
   const f = buscar(id);
   useEffect(() => { if (f) void abrir(id, entradasMotor(f)); }, [id]);
-  const [op, setOp] = useState({ pagNotas: true, idiomas: true, notas: true });
+  const [op, setOp] = useState({ pagNotas: true, idiomas: true, notas: true, retrato: true });
   if (!f) return <main class="container stack"><h1 class="title">Ficha no encontrada</h1><a href="#/">Volver a la lista</a></main>;
 
   const listo = abierta.value === id && Object.keys(valores.value).length > 0;
@@ -27,10 +27,12 @@ export function Imprimir({ id }: { id: string }) {
       <header class="topbar no-print">
         <a class="btn" href={`#/ficha/${id}/principal`}>← Volver a la ficha</a>
         <div class="grow muted small">Hoja A4 igual que la del Excel. En el diálogo elige “Guardar como PDF”, A4, sin márgenes ni encabezados.</div>
-        {([['pagNotas', 'Página de notas'], ['idiomas', 'Idiomas en notas'], ['notas', 'Notas de cada sección']] as const).map(([k, t]) => (
-          <label class="check" key={k}><input type="checkbox" checked={op[k]} onChange={(e) => setOp({ ...op, [k]: e.currentTarget.checked })} /> {t}</label>
+        {([['pagNotas', 'Página de notas'], ['idiomas', 'Idiomas en notas'], ['notas', 'Notas de cada sección'], ['retrato', 'Imagen del personaje en la hoja']] as const).map(([k, t]) => (
+          <label class="check" key={k} title={k === 'retrato' && !f.retrato ? 'Añade una imagen al personaje (pulsa su icono en la ficha)' : undefined}>
+            <input type="checkbox" checked={op[k] && (k !== 'retrato' || Boolean(f.retrato))} disabled={k === 'retrato' && !f.retrato} onChange={(e) => setOp({ ...op, [k]: e.currentTarget.checked })} /> {t}
+          </label>
         ))}
-        {['Página de Sheele', 'Página de Equipo', 'Imagen del personaje en la hoja', 'PDF de grimorio (apaisado)'].map((t) => (
+        {['Página de Sheele', 'Página de Equipo', 'PDF de grimorio (apaisado)'].map((t) => (
           <label class="check pronto" key={t} title="Todavía no está disponible"><input type="checkbox" disabled /> {t} <Proximamente /></label>
         ))}
         <button class="btn primary" disabled={!listo} onClick={() => { const t = document.title; document.title = nombre; print(); document.title = t; }}>
@@ -40,7 +42,7 @@ export function Imprimir({ id }: { id: string }) {
       {!listo && <p class="muted no-print">Preparando los cálculos de la ficha…</p>}
       {listo && (
         <div class="pdf-hojas">
-          <div class="pdf-hoja"><PaginaPdf pagina="resumen" valores={datos} logo={logo} /></div>
+          <div class="pdf-hoja"><PaginaPdf pagina="resumen" valores={datos} logo={logo} retrato={op.retrato ? f.retrato : undefined} /></div>
           {conNotas && <div class="pdf-hoja"><PaginaPdf pagina="notas" valores={datos} logo={logo} /></div>}
         </div>
       )}
