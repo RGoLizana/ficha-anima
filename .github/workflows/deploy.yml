@@ -1,10 +1,9 @@
 name: Deploy
 
-# Manual (Actions > Deploy > Run workflow). Para publicar en cada push a main, cambia por:
-#   on:
-#     push:
-#       branches: [main]
+# Se publica solo en cada push a main (tras pasar los tests y compilar) y también a mano (Actions > Deploy > Run workflow).
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 permissions:

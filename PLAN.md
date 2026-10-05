@@ -301,3 +301,4 @@ escribía sobre una fórmula (PDs!Z188).
   aviso al exportar a Excel de lo que el Excel no puede llevar (consumos de gremio, categorías propias).
   No hecho a propósito: meter la imagen dentro del .xlsm (habría que escribir partes de dibujo del libro sin poder abrirlo en Excel para comprobarlo) y
   leer fichas de gremio con otra disposición de hojas (solo se avisa, como se decidió).
+- **Despliegue automático:** `.github/workflows/deploy.yml` publica en GitHub Pages en cada push a main (corre los tests y compila antes; si algo falla no publica). Sigue pudiéndose lanzar a mano.
