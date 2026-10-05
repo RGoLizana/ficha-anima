@@ -307,3 +307,4 @@ escribía sobre una fórmula (PDs!Z188).
   Sheele, Elan, Notas); en Desarrollo las secundarias van tras combate y solo se ven las que tienen PD (interruptor para el resto); los paneles que suelen estar
   vacíos (`Panel plegable`) arrancan cerrados y se abren solos si hay datos escritos (los valores por defecto no cuentan); Principal pone las características antes
   que el estado actual; la lista de personajes enseña categoría, raza y nivel sin abrir la ficha.
+- **Personalización por áreas:** cinco tarjetas con icono (Campaña y personaje, Armas y armaduras, Ki y legados, Magia y mentalismo, Géminis/Elan/notas) que muestran solo los paneles de su área y cuántos tienen datos; el primer área con datos se abre sola.

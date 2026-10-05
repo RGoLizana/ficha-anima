@@ -85,4 +85,22 @@ describe('usabilidad', () => {
     expect(document.body.textContent).not.toContain('Sin abrir');
     void modoTecnicas;
   });
+
+  it('Personalización se reparte en áreas con tarjetas: solo se ve el área elegida y el resto sigue en la página', async () => {
+    const f = lock();
+    render(<FichaView id={f.id} seccion="personalizacion" />);
+    await waitFor(() => expect(document.querySelector('.areas')).toBeTruthy(), { timeout: 20_000 });
+    const tarjetas = [...document.querySelectorAll<HTMLButtonElement>('.area-tarjeta')];
+    expect(tarjetas.map((t) => t.querySelector('.area-nombre')!.textContent)).toEqual(['Campaña y personaje', 'Armas y armaduras', 'Ki y legados', 'Magia y mentalismo', 'Géminis, Elan y notas']);
+    const visibles = () => [...document.querySelectorAll<HTMLElement>('.personalizado details.plegable')].filter((d) => !d.hidden).map((d) => d.dataset.area);
+    const todos = document.querySelectorAll('.personalizado details.plegable').length;
+    expect(todos).toBeGreaterThan(15);                                                   // todos los paneles siguen ahí
+    const activa = tarjetas.find((t) => t.getAttribute('aria-selected') === 'true')!;
+    expect(new Set(visibles()).size).toBe(1);                                            // pero solo se ve un área
+    const otra = tarjetas.find((t) => t !== activa)!;
+    fireEvent.click(otra);
+    await waitFor(() => expect(otra.getAttribute('aria-selected')).toBe('true'));
+    expect(new Set(visibles()).size).toBe(1);
+    expect(visibles()[0]).not.toBe(activa.id.replace('area-', ''));
+  }, T);
 });

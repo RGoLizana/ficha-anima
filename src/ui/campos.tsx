@@ -86,27 +86,31 @@ export function Dato({ clave, label, sub, big }: { clave: string; label: string;
   );
 }
 
+/** ¿Tiene algo escrito el jugador en las casillas de este elemento? (los valores por defecto de la plantilla no cuentan). null si no tiene casillas. */
+export function tieneDatos(el: HTMLElement, f: Ficha | undefined): boolean | null {
+  const claves = [...el.querySelectorAll<HTMLElement>('[data-clave]')].map((e) => e.getAttribute('data-clave')!);
+  if (!f || !claves.length) return null;
+  return claves.some((k) => f.entradas[k] !== undefined && f.entradas[k] !== '' && f.entradas[k] !== DEFECTOS[k]);
+}
+
 /** Panel de una sección. Con `plegable` es un desplegable que arranca cerrado si no tiene nada escrito (así la sección no se llena de bloques vacíos)
  *  y abierto si ya tiene datos; luego lo que el jugador abra o cierre se respeta. Todo su contenido sigue en la página. */
-export function Panel({ title, children, extra, plegable }: { title: string; children: ComponentChildren; extra?: ComponentChildren; plegable?: boolean }) {
+export function Panel({ title, children, extra, plegable, area, oculto }: { title: string; children: ComponentChildren; extra?: ComponentChildren; plegable?: boolean; area?: string; oculto?: boolean }) {
   const ref = useRef<HTMLDetailsElement>(null);
   useEffect(() => {
     const d = ref.current;
     if (!d) return;
     // «vacío» = ninguna de sus casillas tiene nada escrito en la ficha (los valores por defecto que muestran no cuentan)
-    const claves = [...d.querySelectorAll<HTMLElement>('[data-clave]')].map((e) => e.getAttribute('data-clave')!);
     const f = abierta.value ? buscar(abierta.value) : undefined;
-    if (f && claves.length) {
-      if (!claves.some((k) => f.entradas[k] !== undefined && f.entradas[k] !== '' && f.entradas[k] !== DEFECTOS[k])) d.open = false;
-      return;
-    }
+    const datos = tieneDatos(d, f);
+    if (datos !== null) { if (!datos) d.open = false; return; }
     const campos = [...d.querySelectorAll<HTMLInputElement>('input:not([type=checkbox]):not([type=file]):not([type=search]):not([type=hidden]),select,textarea')];
     const marcado = [...d.querySelectorAll<HTMLInputElement>('input[type=checkbox]')].some((c) => c.checked);
     if (campos.length && !marcado && !campos.some((c) => c.value !== '' && c.value !== '—')) d.open = false;
   }, []);
   if (plegable) {
     return (
-      <details class="panel plegable" ref={ref} open>
+      <details class="panel plegable" ref={ref} open data-area={area} hidden={oculto}>
         <summary class="row between wrap">
           <h2 class="panel-title">{title}</h2>
           {extra}

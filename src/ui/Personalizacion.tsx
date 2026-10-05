@@ -1,7 +1,11 @@
+import { useEffect, useState } from 'preact/hooks';
+import { signal } from '@preact/signals';
 import type { ComponentChildren, JSX } from 'preact';
 import type { Ficha } from '../model/ficha';
 import { formulaLista } from '../engine';
-import { Avisos, Campo, Panel, txt, v } from './campos';
+import { abierta } from '../engine';
+import { buscar } from '../store';
+import { Avisos, Campo, Panel, tieneDatos, txt, v } from './campos';
 
 // Hoja "Personalización" del Excel: contenido que no está en las reglas de Anima
 const p = (c: string) => `Personalización!${c}`;
@@ -19,8 +23,53 @@ function visibles(f: Ficha, filas: number[], cols: string[]) {
 }
 
 const Marca = () => <span class="chip">Personalizado</span>;
+
+/** Áreas de la hoja: cada una agrupa sus paneles (todos siguen en la página; solo se ve el del área elegida). */
+const AREAS = [
+  { id: 'campana', icono: '🌍', t: 'Campaña y personaje', d: 'Ajustes de campaña, razas, ventajas, lenguas y poderes de criatura',
+    paneles: ['Ajustes de campaña', 'Ventajas en secundarias', 'Raíces culturales personalizadas', 'Lenguas personalizadas', 'Ventajas personalizadas', 'Habilidades esenciales personalizadas', 'Poderes de criatura personalizados', 'Razas y estados especiales'] },
+  { id: 'combate', icono: '⚔️', t: 'Armas y armaduras', d: 'Armas, armaduras, modificadores y tablas de armas propias',
+    paneles: ['Armas personalizadas', 'Modificadores especiales de armas', 'Armaduras personalizadas', 'Tablas de armas personalizadas'] },
+  { id: 'ki', icono: '🥋', t: 'Ki y legados', d: 'Efectos y desventajas de técnicas, legados de sangre y Ars Magnus',
+    paneles: ['Técnicas de Ki: efectos personalizados', 'Desventajas de técnicas de Ki', 'Legados de sangre personalizados', 'Ars Magnus personalizados', 'Opciones de legados y Ars Magnus'] },
+  { id: 'magia', icono: '🔮', t: 'Magia y mentalismo', d: 'Invocaciones, conjuros especializados y patrones mentales',
+    paneles: ['Invocaciones personalizadas', 'Conjuros especializados', 'Patrones mentales personalizados'] },
+  { id: 'otros', icono: '🎭', t: 'Géminis, Elan y notas', d: 'Marionetas de Géminis, Elan propio y notas',
+    paneles: ['Géminis: marionetas', 'Elan personalizado', 'Notas de personalización'] },
+] as const;
+const AREA_DE = Object.fromEntries(AREAS.flatMap((a) => a.paneles.map((t) => [t, a.id]))) as Record<string, string>;
+const areaActiva = signal<string>('campana');
+let eligio = false;                                  // hasta que el jugador elige, se abre el primer área con datos
+
 const PanelP = ({ title, children }: { title: string; children: ComponentChildren }) =>
-  <Panel title={title} extra={<Marca />} plegable>{children}</Panel>;
+  <Panel title={title} extra={<Marca />} plegable area={AREA_DE[title]} oculto={AREA_DE[title] !== areaActiva.value}>{children}</Panel>;
+
+/** Selector visual de áreas: una tarjeta por área, con cuántos paneles tienen datos. */
+function Areas({ f }: { f: Ficha }) {
+  const [cuenta, setCuenta] = useState<Record<string, number>>({});
+  useEffect(() => {
+    const fi = abierta.value ? buscar(abierta.value) : f;
+    const c: Record<string, number> = {};
+    document.querySelectorAll<HTMLElement>('.personalizado details.plegable').forEach((d) => {
+      if (tieneDatos(d, fi)) c[d.dataset.area ?? ''] = (c[d.dataset.area ?? ''] ?? 0) + 1;
+    });
+    setCuenta(c);
+    if (!eligio) { const primera = AREAS.find((a) => c[a.id]); if (primera) areaActiva.value = primera.id; }
+  }, [f.entradas]);
+  return (
+    <div class="areas" role="tablist" aria-label="Áreas de personalización">
+      {AREAS.map((a) => (
+        <button type="button" role="tab" key={a.id} id={`area-${a.id}`} aria-selected={areaActiva.value === a.id} aria-controls="area-panel"
+          class="area-tarjeta" onClick={() => { eligio = true; areaActiva.value = a.id; }}>
+          <span class="area-icono" aria-hidden="true">{a.icono}</span>
+          <span class="area-nombre">{a.t}</span>
+          <span class="area-desc">{a.d}</span>
+          {cuenta[a.id] > 0 && <span class="area-n" title="Paneles con datos">{cuenta[a.id]} con datos</span>}
+        </button>
+      ))}
+    </div>
+  );
+}
 
 export function Personalizacion({ f }: { f: Ficha }) {
   // casilla de la hoja; sin tipo, Campo decide (desplegable si el Excel tiene lista)
@@ -32,6 +81,7 @@ export function Personalizacion({ f }: { f: Ficha }) {
   return (
     <div class="stack personalizado">
       <p class="extra-note">Contenido fuera de las reglas de Anima: todo lo que añadas aquí queda marcado como personalizado.</p>
+      <Areas f={f} />
 
       <PanelP title="Ajustes de campaña">
         <div class="grid-fields">

@@ -485,3 +485,15 @@ details.juego-panel[open] > summary { border-bottom: 1px solid var(--line); }
 
 .cat-row .cambio-pd { grid-column: 1 / -1; }
 .cambio-pd > summary { cursor: pointer; min-height: 32px; display: flex; align-items: center; }
+
+/* Personalización: tarjetas de área */
+.areas { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+.area-tarjeta { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; text-align: left; min-height: 120px; padding: 14px; border-radius: 14px;
+  border: 1px solid var(--line-2); background: var(--surface); color: var(--text); font: inherit; cursor: pointer; position: relative; }
+.area-tarjeta:hover { border-color: var(--gold); }
+.area-tarjeta[aria-selected="true"] { border: 2px solid var(--gold); background: var(--surface-2); padding: 13px; box-shadow: 0 0 0 3px rgba(212, 169, 79, .15); }
+.area-icono { font-size: 28px; line-height: 1; }
+.area-nombre { font: 700 16px var(--display); }
+.area-desc { font-size: 13px; color: var(--muted); line-height: 1.3; }
+.area-n { position: absolute; top: 10px; right: 10px; font-size: 12px; font-weight: 700; color: var(--on-gold); background: var(--gold); border-radius: 999px; padding: 2px 8px; }
+.personalizado details.plegable[hidden] { display: none; }
