@@ -28,20 +28,21 @@ import { Personalizacion } from './Personalizacion';
 
 // Secciones de la ficha y el paso del plan en que se implementan
 const SECCIONES = [
+  // orden pensado por lo que más se rellena en las fichas reales: personaje, PD, ventajas, combate y magia/ki; lo raro (Sheele, Elan) al final
   { id: 'principal', t: 'Principal', paso: 2 },
-  { id: 'trasfondo', t: 'Trasfondo', paso: 2 },
   { id: 'desarrollo', t: 'Desarrollo (PD)', paso: 3 },
-  { id: 'ventajas', t: 'Ventajas y poderes', paso: 3 },
   { id: 'combate', t: 'Combate', paso: 4 },
+  { id: 'ventajas', t: 'Ventajas y poderes', paso: 3 },
+  { id: 'trasfondo', t: 'Trasfondo', paso: 2 },
   { id: 'ki', t: 'Ki', paso: 5 },
   { id: 'tecnicas', t: 'Técnicas de Ki', paso: 5 },
   { id: 'magia', t: 'Magia', paso: 6 },
   { id: 'metamagia', t: 'Metamagia', paso: 6 },
-  { id: 'grimorios', t: 'Grimorios de magia', paso: 6 },
   { id: 'psiquica', t: 'Psíquica', paso: 7 },
+  { id: 'grimorios', t: 'Grimorios de magia', paso: 6 },
+  { id: 'equipo', t: 'Equipo', paso: 8 },
   { id: 'sheele', t: 'Sheele', paso: 8 },
   { id: 'elan', t: 'Elan', paso: 8 },
-  { id: 'equipo', t: 'Equipo', paso: 8 },
   { id: 'notas', t: 'Notas', paso: 1 },
   // aparte: contenido extra que no está en las reglas de Anima
   { id: 'personalizacion', t: 'Personalización', paso: 8, extra: true },

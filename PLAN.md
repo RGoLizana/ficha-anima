@@ -302,3 +302,8 @@ escribía sobre una fórmula (PDs!Z188).
   No hecho a propósito: meter la imagen dentro del .xlsm (habría que escribir partes de dibujo del libro sin poder abrirlo en Excel para comprobarlo) y
   leer fichas de gremio con otra disposición de hojas (solo se avisa, como se decidió).
 - **Despliegue automático:** `.github/workflows/deploy.yml` publica en GitHub Pages en cada push a main (corre los tests y compila antes; si algo falla no publica). Sigue pudiéndose lanzar a mano.
+- **Revisión de usabilidad** (según lo que se rellena en 118 fichas reales de ~10 versiones): secundarias (85 % de las fichas), combate (67 %), ki y magia (~33 % cada una),
+  sheele/elan/psíquica (<12 %). Menú reordenado (Principal, Desarrollo, Combate, Ventajas, Trasfondo, Ki, Técnicas, Magia, Metamagia, Psíquica, Grimorios, Equipo,
+  Sheele, Elan, Notas); en Desarrollo las secundarias van tras combate y solo se ven las que tienen PD (interruptor para el resto); los paneles que suelen estar
+  vacíos (`Panel plegable`) arrancan cerrados y se abren solos si hay datos escritos (los valores por defecto no cuentan); Principal pone las características antes
+  que el estado actual; la lista de personajes enseña categoría, raza y nivel sin abrir la ficha.

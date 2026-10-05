@@ -50,7 +50,7 @@ export function Psiquica({ f }: { f: Ficha }) {
       </Panel>
 
       <div class="cols-2">
-        <Panel title="Disciplinas afines" extra={<span class="muted small">{txt(p('F', 24))}</span>}>
+        <Panel title="Disciplinas afines" plegable extra={<span class="muted small">{txt(p('F', 24))}</span>}>
           {visibles(f, impares(25, 35), ['C']).map((r) => (
             <div class="compra" key={r}>
               <Campo f={f} clave={p('C', r)} label="Disciplina" class="grow" />
@@ -64,7 +64,7 @@ export function Psiquica({ f }: { f: Ficha }) {
         </Panel>
       </div>
 
-      <Panel title="Poderes psíquicos" extra={<span class="muted small">CVs gastados en cada poder</span>}>
+      <Panel title="Poderes psíquicos" plegable extra={<span class="muted small">CVs gastados en cada poder</span>}>
         {visibles(f, impares(11, 63), ['V', 'AA']).map((r) => (
           <div class="compra" key={r}>
             <Campo f={f} clave={p('V', r)} label="Poder" class="grow" />
@@ -76,7 +76,7 @@ export function Psiquica({ f }: { f: Ficha }) {
         <Avisos claves={['PDs!V120']} />
       </Panel>
 
-      <Panel title="Poderes innatos" extra={<span class="muted small">{txt(p('AD', 16))}</span>}>
+      <Panel title="Poderes innatos" plegable extra={<span class="muted small">{txt(p('AD', 16))}</span>}>
         <div class="compra">
           <Campo f={f} clave={p('AD', 11)} label="Poder a potenciar" class="grow" />
           <Campo f={f} clave={p('AO', 12)} label="Característica" />
@@ -93,7 +93,7 @@ export function Psiquica({ f }: { f: Ficha }) {
         <AvisoDe clave={p('C', 22)} re={/innatos/} />
       </Panel>
 
-      <Panel title="Dificultades y notas">
+      <Panel title="Dificultades y notas" plegable>
         <div class="grid-fields">
           <Campo f={f} clave={p('J', 63)} label="Dificultad personalizada" />
         </div>

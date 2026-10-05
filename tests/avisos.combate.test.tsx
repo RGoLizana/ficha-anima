@@ -43,7 +43,7 @@ async function abrir(cambios: Record<string, Entrada>) {
   render(<FichaView id={f.id} seccion="combate" />);
   await waitFor(() => expect(document.querySelector('.banner')).toBeNull(), { timeout: 20_000 });
 }
-const panel = (titulo: string) => [...document.querySelectorAll('section.panel')].find((s) => s.querySelector('h2')?.textContent === titulo)!;
+const panel = (titulo: string) => [...document.querySelectorAll('section.panel, details.panel')].find((s) => s.querySelector('h2')?.textContent === titulo)!;
 const avisos = (el: Element) => [...el.querySelectorAll('[role=status].aviso')].map((p) => p.textContent);
 
 describe('avisos de Combate bajo su categoría', () => {

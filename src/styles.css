@@ -413,7 +413,7 @@ details.juego-panel[open] > summary { border-bottom: 1px solid var(--line); }
   background: var(--surface-2); font-size: 13px; line-height: 1.2; }
 .ki-nodo > .check { display: flex; gap: 8px; }
 .ki-nodo > .check > span { display: flex; flex-direction: column; min-width: 0; }
-.ki-nodo > .field select { min-height: 32px; font-size: 13px; }
+.ki-nodo > .field select { min-height: 40px; font-size: 13px; }
 .ki-nombre { font-weight: 600; color: var(--text); overflow-wrap: anywhere; }
 .ki-pie { display: flex; flex-wrap: wrap; gap: 0 6px; color: var(--muted); font-size: 11px; font-weight: 400; }
 .ki-nodo.ki-raiz > * { border-style: dashed; border-color: var(--gold); }
@@ -459,7 +459,7 @@ details.juego-panel[open] > summary { border-bottom: 1px solid var(--line); }
 
 /* imagen del personaje en la pestaña Principal */
 .personaje-cab { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
-.personaje-cab .grid-fields { flex: 1 1 360px; }
+.personaje-cab .grid-fields { flex: 1 1 360px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
 .avatar.xl { width: 168px; height: 168px; border-radius: 14px; border-width: 2px; font-size: 56px; overflow: hidden; }
 .avatar.xl img { width: 100%; height: 100%; object-fit: cover; }
 .avatar-vacio { font: 600 14px var(--body); color: var(--muted); text-align: center; padding: 8px; }
@@ -471,3 +471,17 @@ details.juego-panel[open] > summary { border-bottom: 1px solid var(--line); }
 .juego-reserva { display: grid; grid-template-columns: 44px 44px minmax(90px, 1fr) 44px; gap: 8px; align-items: center; }
 .juego-reserva .small { grid-column: 1 / -1; padding-left: 52px; }
 .juego-reserva-n { font-weight: 700; color: var(--ki); }
+
+/* paneles plegables: los vacíos arrancan cerrados */
+.panel.plegable { padding: 0; }
+.panel.plegable > summary { padding: 16px 20px; cursor: pointer; list-style: none; min-height: 56px; align-items: center; }
+.panel.plegable > summary::-webkit-details-marker { display: none; }
+/* la flecha va dentro del título para que no se parta de él al envolver */
+.panel.plegable > summary .panel-title::before { content: '▸'; display: inline-block; color: var(--gold); margin-right: 8px; transition: transform .15s; }
+.panel.plegable[open] > summary .panel-title::before { transform: rotate(90deg); }
+.panel.plegable > summary .panel-title { flex: 1 1 auto; }
+.panel.plegable[open] > summary { border-bottom: 1px solid var(--line); }
+.panel.plegable > .pbody-plegable { padding: 16px 20px 20px; }
+
+.cat-row .cambio-pd { grid-column: 1 / -1; }
+.cambio-pd > summary { cursor: pointer; min-height: 32px; display: flex; align-items: center; }

@@ -38,7 +38,7 @@ export function Combate({ f }: { f: Ficha }) {
         <div class="armas">{visibles(false).map((s) => <ArmaCard key={s.n} f={f} s={s} />)}</div>
         <Avisos claves={['PDs!Z29+PDs!AA29']} />
       </Panel>
-      <Panel title="Armas de proyectiles">
+      <Panel title="Armas de proyectiles" plegable>
         <div class="armas">{visibles(true).map((s) => <ArmaCard key={s.n} f={f} s={s} />)}</div>
       </Panel>
 
@@ -56,7 +56,7 @@ export function Combate({ f }: { f: Ficha }) {
 
       <Armaduras f={f} />
 
-      <Panel title="Combate con armas adicionales" extra={<span class="muted small">Combina armas en mano hábil y torpe</span>}>
+      <Panel title="Combate con armas adicionales" plegable extra={<span class="muted small">Combina armas en mano hábil y torpe</span>}>
         {[22, 23, 24, 25].filter((r, i) => i === 0 || f.entradas[c('R', r - 1)] || f.entradas[c('U', r - 1)]).map((r) => (
           <div class="grid-fields" key={r}>
             <Campo f={f} clave={c('R', r)} label="Arma en mano hábil" />
@@ -66,7 +66,7 @@ export function Combate({ f }: { f: Ficha }) {
       </Panel>
 
       <div class="cols-2">
-        <Panel title="Modificadores">
+        <Panel title="Modificadores" plegable>
           <div class="grid-fields">
             <div class="stack-sm">
               <Campo f={f} clave={c('AD', 14)} label="A toda acción (cansancio, dolor…)" tipo="numero" />
@@ -84,7 +84,7 @@ export function Combate({ f }: { f: Ficha }) {
 
       <Descripciones />
 
-      <Panel title="Notas de combate">
+      <Panel title="Notas de combate" plegable>
         <Campo f={f} clave={c('C', 67)} label="Notas del equipo de combate" tipo="area" />
         <Campo f={f} clave={c('AB', 67)} label="Notas de capacidades de combate" tipo="area" />
       </Panel>

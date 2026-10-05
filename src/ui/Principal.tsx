@@ -30,30 +30,19 @@ export function Principal({ f }: { f: Ficha }) {
             <div class="grid-fields cat-row" key={r}>
               <CampoCategoria f={f} clave={`PDs!O${r}`} label={i === 0 ? 'Categoría' : `Cambio de categoría ${i}`} />
               <Campo f={f} clave={`PDs!S${r}`} label="Niveles" tipo="numero" class="narrow" />
-              <Campo f={f} clave={`PDs!Z${r}`} label="Cambio: PD de la antigua" tipo="numero" class="narrow" />
-              <Campo f={f} clave={`PDs!AA${r}`} label="Cambio: PD de la nueva" tipo="numero" class="narrow" />
+              <details class="cambio-pd">
+                <summary class="muted small">PD del cambio de categoría</summary>
+                <div class="grid-fields">
+                  <Campo f={f} clave={`PDs!Z${r}`} label="PD de la antigua" tipo="numero" class="narrow" />
+                  <Campo f={f} clave={`PDs!AA${r}`} label="PD de la nueva" tipo="numero" class="narrow" />
+                </div>
+              </details>
             </div>
           ))}
         </div>
         <p class="muted small">
           Clase: <strong>{txt('Principal!K7') || '—'}</strong> · Tamaño: <strong>{txt('Principal!K6')} {txt('Principal!L6')}</strong>
         </p>
-      </Panel>
-
-      <Panel title="Estado actual y valores especiales">
-        <div class="grid-fields">
-          <Campo f={f} clave="Principal!P11" label="PV actuales" tipo="numero" />
-          <Campo f={f} clave="Principal!P16" label="Cansancio actual" tipo="numero" />
-          <Campo f={f} clave="Principal!J18" label="Tipo de movimiento" />
-          <Campo f={f} clave="Principal!L18" label="Movimiento especial" tipo="numero" />
-          <Campo f={f} clave="Principal!L13" label="Regeneración especial" tipo="numero" />
-          <Campo f={f} clave="Principal!O18" label="Cansancio especial" tipo="numero" />
-          <Campo f={f} clave="Principal!D30" label="Turno especial" tipo="numero" />
-          <Campo f={f} clave="Principal!Y13" label="Acumulación de daño" />
-          <Campo f={f} clave="Principal!Y14" label="Creado con magia" />
-          <Campo f={f} clave="Principal!J77" label="Puntos de destino usados" tipo="numero" />
-        </div>
-        <Avisos claves={['Principal!N14']} />
       </Panel>
 
       <Caracteristicas f={f} />
@@ -85,7 +74,23 @@ export function Principal({ f }: { f: Ficha }) {
         <Secundarias />
       </Panel>
 
-      <Panel title="Notas de la ficha">
+      <Panel title="Estado actual y valores especiales" plegable>
+        <div class="grid-fields">
+          <Campo f={f} clave="Principal!P11" label="PV actuales" tipo="numero" />
+          <Campo f={f} clave="Principal!P16" label="Cansancio actual" tipo="numero" />
+          <Campo f={f} clave="Principal!J18" label="Tipo de movimiento" />
+          <Campo f={f} clave="Principal!L18" label="Movimiento especial" tipo="numero" />
+          <Campo f={f} clave="Principal!L13" label="Regeneración especial" tipo="numero" />
+          <Campo f={f} clave="Principal!O18" label="Cansancio especial" tipo="numero" />
+          <Campo f={f} clave="Principal!D30" label="Turno especial" tipo="numero" />
+          <Campo f={f} clave="Principal!Y13" label="Acumulación de daño" />
+          <Campo f={f} clave="Principal!Y14" label="Creado con magia" />
+          <Campo f={f} clave="Principal!J77" label="Puntos de destino usados" tipo="numero" />
+        </div>
+        <Avisos claves={['Principal!N14']} />
+      </Panel>
+
+      <Panel title="Notas de la ficha" plegable>
         <Campo f={f} clave="Principal!G68" label="Notas (salen en la página de notas del PDF)" tipo="area" />
       </Panel>
     </>

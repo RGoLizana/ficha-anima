@@ -29,7 +29,7 @@ export function Equipo({ f }: { f: Ficha }) {
         </div>
       </Panel>
 
-      <Panel title="Equipo variado">
+      <Panel title="Equipo variado" plegable>
         {visibles(f, rango(11, 30), ['AF', 'AJ', 'AL']).map((r) => (
           <div class="compra" key={r}>
             <Campo f={f} clave={g('AF', r)} label="Objeto" class="grow" />
@@ -40,7 +40,7 @@ export function Equipo({ f }: { f: Ficha }) {
       </Panel>
 
       <div class="cols-2">
-        <Panel title="Equipo de combate">
+        <Panel title="Equipo de combate" plegable>
           {visibles(f, rango(16, 23), ['X', 'AB', 'AD']).map((r) => (
             <div class="compra" key={r}>
               <Campo f={f} clave={g('X', r)} label="Objeto" class="grow" />
@@ -49,7 +49,7 @@ export function Equipo({ f }: { f: Ficha }) {
             </div>
           ))}
         </Panel>
-        <Panel title="Vestimenta / complementos">
+        <Panel title="Vestimenta / complementos" plegable>
           {visibles(f, rango(26, 32), ['X', 'AD']).map((r) => (
             <div class="compra" key={r}>
               <Campo f={f} clave={g('X', r)} label="Prenda" class="grow" />
@@ -59,7 +59,7 @@ export function Equipo({ f }: { f: Ficha }) {
         </Panel>
       </div>
 
-      <Panel title="Artefactos">
+      <Panel title="Artefactos" plegable>
         {visibles(f, [35, 37, 39, 41, 43], ['X', 'AA']).map((r) => (
           <div class="compra" key={r}>
             <Campo f={f} clave={g('X', r)} label="Artefacto" class="grow" />
@@ -69,16 +69,16 @@ export function Equipo({ f }: { f: Ficha }) {
       </Panel>
 
       <div class="cols-2">
-        <Panel title="Títulos y posesiones">
+        <Panel title="Títulos y posesiones" plegable>
           {visibles(f, rango(47, 55), ['X']).map((r) => <Campo key={r} f={f} clave={g('X', r)} label="Título o posesión" />)}
         </Panel>
-        <Panel title="Contactos">
+        <Panel title="Contactos" plegable>
           {visibles(f, rango(47, 55), ['AF']).map((r) => <Campo key={r} f={f} clave={g('AF', r)} label="Contacto" />)}
         </Panel>
       </div>
 
       <div class="cols-2">
-        <Panel title="Dinero">
+        <Panel title="Dinero" plegable>
           <div class="grid-fields">
             <Campo f={f} clave={g('Y', 59)} label="Oro" tipo="numero" />
             <Campo f={f} clave={g('Y', 61)} label="Plata" tipo="numero" />
@@ -86,7 +86,7 @@ export function Equipo({ f }: { f: Ficha }) {
             <Campo f={f} clave={g('AB', 59)} label="Joyas y otros" />
           </div>
         </Panel>
-        <Panel title="Fama y reconocimiento" extra={<span class="muted small">Total {txt(g('AF', 58)) || 0} · {txt(g('AK', 57))}</span>}>
+        <Panel title="Fama y reconocimiento" plegable extra={<span class="muted small">Total {txt(g('AF', 58)) || 0} · {txt(g('AK', 57))}</span>}>
           <div class="grid-fields">
             <Campo f={f} clave={g('AI', 58)} label="Audacia" tipo="numero" />
             <Campo f={f} clave={g('AL', 58)} label="Cobardía" tipo="numero" />
@@ -98,7 +98,7 @@ export function Equipo({ f }: { f: Ficha }) {
         </Panel>
       </div>
 
-      <Panel title="Salud mental" extra={<span class="muted small">Umbral de locura {txt(g('AI', 63))} / {txt(g('AJ', 63))}</span>}>
+      <Panel title="Salud mental" plegable extra={<span class="muted small">Umbral de locura {txt(g('AI', 63))} / {txt(g('AJ', 63))}</span>}>
         <div class="grid-fields">
           <Campo f={f} clave={g('AK', 63)} label="Salud mental actual" tipo="numero" />
           <Campo f={f} clave={g('AF', 64)} label="Trastornos" />

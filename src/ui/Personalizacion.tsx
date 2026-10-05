@@ -20,7 +20,7 @@ function visibles(f: Ficha, filas: number[], cols: string[]) {
 
 const Marca = () => <span class="chip">Personalizado</span>;
 const PanelP = ({ title, children }: { title: string; children: ComponentChildren }) =>
-  <Panel title={title} extra={<Marca />}>{children}</Panel>;
+  <Panel title={title} extra={<Marca />} plegable>{children}</Panel>;
 
 export function Personalizacion({ f }: { f: Ficha }) {
   // casilla de la hoja; sin tipo, Campo decide (desplegable si el Excel tiene lista)

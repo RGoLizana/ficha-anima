@@ -42,7 +42,7 @@ async function abrirFicha(n: NombreFicha, seccion: string) {
   await waitFor(() => expect(document.querySelector('.banner')).toBeNull(), { timeout: 20_000 });
 }
 const poner = (k: string, v: Entrada | null) => { valores.value = { ...valores.value, ...motor().poner(k, v) }; };
-const panel = (titulo: string) => [...document.querySelectorAll('section.panel')].find((s) => s.querySelector('.panel-title')?.textContent === titulo)!;
+const panel = (titulo: string) => [...document.querySelectorAll('section.panel, details.panel')].find((s) => s.querySelector('.panel-title')?.textContent === titulo)!;
 const avisoEn = (titulo: string, texto: string) => [...panel(titulo).querySelectorAll('[role=status]')].some((p) => p.textContent!.includes(texto));
 const avisoEnTodo = (texto: string) => [...document.querySelectorAll('[role=status]')].some((p) => p.textContent!.includes(texto));
 

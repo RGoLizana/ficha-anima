@@ -53,7 +53,7 @@ export function Ventajas({ f }: { f: Ficha }) {
         </div>
       </Panel>
 
-      <Panel title="Habilidades esenciales" extra={<span class="muted small">Gnosis {txt('Principal!AB13')}</span>}>
+      <Panel title="Habilidades esenciales" plegable extra={<span class="muted small">Gnosis {txt('Principal!AB13')}</span>}>
         {rango(12, 23).filter((r, i) => i === 0 || f.entradas[`Principal!AD${r - 1}`]).map((r) => (
           <div class="compra" key={r}>
             <Campo f={f} clave={`Principal!AD${r}`} label="Habilidad" class="grow" />
@@ -65,7 +65,7 @@ export function Ventajas({ f }: { f: Ficha }) {
         ))}
       </Panel>
 
-      <Panel title="Poderes de criatura" extra={<span class="muted small">PD totales: <strong>{txt('Principal!AJ40')}</strong></span>}>
+      <Panel title="Poderes de criatura" plegable extra={<span class="muted small">PD totales: <strong>{txt('Principal!AJ40')}</strong></span>}>
         <p class="muted small">Pon el mismo nombre a varias líneas para agrupar sus efectos en un único poder.</p>
         {rango(42, 69).filter((r, i) => i === 0 || f.entradas[`Principal!AB${r - 1}`]).map((r) => (
           <div class="compra" key={r}>

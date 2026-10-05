@@ -3,7 +3,14 @@ import { fichas, crear, duplicar, borrar, importar, importarExcel, exportar } fr
 import { ir } from '../router';
 import { Icon } from './Icon';
 import { Avatar } from './Avatar';
-import { nombreDe } from '../model/ficha';
+import { nombreDe, type Ficha } from '../model/ficha';
+
+/** Lo que se sabe de una ficha aunque no se haya abierto (sin calcular): categoría, raza y nivel salen de lo escrito; lo guardado al abrirla manda. */
+const datosDe = (f: Ficha) => ({
+  categoria: f.resumen?.categoria || String(f.entradas['PDs!O7'] ?? ''),
+  raza: f.resumen?.raza || String(f.entradas['General!F23'] ?? ''),
+  nivel: f.resumen?.nivel || String(['S7', 'S9', 'S11', 'S13', 'S15'].reduce((t, c) => t + (Number(f.entradas[`PDs!${c}`]) || 0), 0) || ''),
+});
 
 const filtro = signal('');
 const error = signal('');
@@ -28,7 +35,7 @@ async function onImport(e: Event) {
 
 export function Lista() {
   const q = filtro.value.trim().toLowerCase();
-  const lista = fichas.value.filter((f) => `${nombreDe(f)} ${f.resumen?.categoria ?? ''}`.toLowerCase().includes(q));
+  const lista = fichas.value.filter((f) => `${nombreDe(f)} ${datosDe(f).categoria}`.toLowerCase().includes(q));
   const n = fichas.value.length;
 
   return (
@@ -68,10 +75,10 @@ export function Lista() {
                 <div class="grow">
                   <h2 class="card-title">{nombreDe(f) || 'Sin nombre'}</h2>
                   <div class="muted small">
-                    {[f.resumen?.raza, f.resumen?.nivel && `Nivel ${f.resumen.nivel}`].filter(Boolean).join(' · ') || 'Sin abrir todavía'}
+                    {[datosDe(f).raza, datosDe(f).nivel && `Nivel ${datosDe(f).nivel}`].filter(Boolean).join(' · ') || 'Sin datos todavía'}
                   </div>
                 </div>
-                {f.resumen?.categoria && <span class="chip">{f.resumen.categoria}</span>}
+                {datosDe(f).categoria && <span class="chip">{datosDe(f).categoria}</span>}
               </div>
               {f.resumen?.stats && (
                 <div class="stats">

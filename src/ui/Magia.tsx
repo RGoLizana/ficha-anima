@@ -57,14 +57,14 @@ export function Magia({ f }: { f: Ficha }) {
       </Panel>
 
       <div class="cols-2">
-        <Panel title="Zeón" extra={<span class="muted small">Total <strong>{txt(m('K', 18)) || 0}</strong></span>}>
+        <Panel title="Zeón" plegable extra={<span class="muted small">Total <strong>{txt(m('K', 18)) || 0}</strong></span>}>
           <div class="grid-fields">
             <Campo f={f} clave={m('M', 18)} label="Zeón actual" tipo="numero" />
             <Campo f={f} clave={m('L', 20)} label="Contenedor" tipo="numero" />
             <Campo f={f} clave={m('L', 21)} label="Amplificador" tipo="numero" />
           </div>
         </Panel>
-        <Panel title="Convocatoria">
+        <Panel title="Convocatoria" plegable>
           <table class="tabla">
             <thead><tr><th scope="col" class="left">Habilidad</th><th scope="col">Especial</th><th scope="col">Total</th></tr></thead>
             <tbody>
@@ -109,7 +109,7 @@ export function Magia({ f }: { f: Ficha }) {
         })}
       </Panel>
 
-      <Panel title="Conjuros activos, criaturas atadas e invocaciones" extra={<span class="muted small">Coste zeónico al día: <strong>{txt(m('H', 61)) || txt(m('G', 61)) || 0}</strong></span>}>
+      <Panel title="Conjuros activos, criaturas atadas e invocaciones" plegable extra={<span class="muted small">Coste zeónico al día: <strong>{txt(m('H', 61)) || txt(m('G', 61)) || 0}</strong></span>}>
         {visibles(f, rango(33, 60), ['C', 'H', 'J']).map((r) => (
           <div class="compra" key={r}>
             <Campo f={f} clave={m('C', r)} label="Conjuro activo / criatura atada" class="grow" />
@@ -121,7 +121,7 @@ export function Magia({ f }: { f: Ficha }) {
         <Avisos claves={[m('J', 61)]} />
       </Panel>
 
-      <Panel title="Ofudas preparados">
+      <Panel title="Ofudas preparados" plegable>
         {visibles(f, rango(62, 72), ['AP', 'AR', 'AV']).map((r) => (
           <div class="compra" key={r}>
             <Campo f={f} clave={m('AP', r)} label="Vía" />
@@ -136,7 +136,7 @@ export function Magia({ f }: { f: Ficha }) {
 
       <Habilidades />
 
-      <Panel title="Notas de magia">
+      <Panel title="Notas de magia" plegable>
         <Campo f={f} clave={m('C', 64)} label="Notas (salen en la página de notas del PDF)" tipo="area" />
       </Panel>
     </>

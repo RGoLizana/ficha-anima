@@ -43,6 +43,13 @@ export function Desarrollo({ f }: { f: Ficha }) {
         limites={[...limiteCat(86), ['Ataque + defensa juntos', `máx. ${pct(50)}`], ['Cada una (ataque, parada, esquiva)', `máx. ${pct(25)}`], ['Ataque frente a defensa', 'no más de 50 puntos de diferencia']]}
         maximos={{ 25: `máx. ${pct(25)}`, 26: `máx. ${pct(25)}`, 27: `máx. ${pct(25)}` }}
         avisos={<Avisos claves={['PDs!Z29+PDs!AA29']} />} />
+      {/* por uso en fichas reales: tras combate, lo que más se reparte son las secundarias */}
+      <Bloque f={f} n={n} cats={cats} titulo="Habilidades secundarias" filas={rango(129, 179)} cols={SEC} grupo ocultable
+        extra={avanzado ? [['I', 'Especialidad', 'texto'], ['W', 'Bono nat.'], ['X', 'Hab. nat.'], ['Y', 'Novel']] : []}
+        cabecera={<label class="check"><input type="checkbox" checked={avanzado} onChange={(e) => setAvanzado(e.currentTarget.checked)} />Especialidad, bonos naturales y novel</label>} />
+      <SecundariasPropias f={f} n={n} />
+      <Bloque f={f} n={n} cats={cats} titulo="Puntos de vida" filas={[188]} cols={SEC} total="Z" esp={null}
+        extra={[['X', 'Bono nat.']]} />
       <Compras f={f} n={n} titulo="Tablas de armas" filas={rango(43, 48)} extra="Y" />
       <Compras f={f} n={n} titulo="Tablas de estilos" filas={rango(49, 58)} />
       <Compras f={f} n={n} titulo="Artes marciales" filas={rango(59, 77)} grado="J" avisos={<Si clave="PDs!V86" re={/^(?!.*(Conocimiento Marcial|Ars Magnus))/} />} />
@@ -62,14 +69,8 @@ export function Desarrollo({ f }: { f: Ficha }) {
         avisos={<Avisos claves={['PDs!V120']} />} />
       <Compras f={f} n={n} titulo="Tablas psíquicas" filas={[113]} />
       <Compras f={f} n={n} titulo="Patrones mentales" filas={rango(114, 119)} />
-      <Bloque f={f} n={n} cats={cats} titulo="Puntos de vida" filas={[188]} cols={SEC} total="Z" esp={null}
-        extra={[['X', 'Bono nat.']]} />
-      <Bloque f={f} n={n} cats={cats} titulo="Habilidades secundarias" filas={rango(129, 179)} cols={SEC} grupo
-        extra={avanzado ? [['I', 'Especialidad', 'texto'], ['W', 'Bono nat.'], ['X', 'Hab. nat.'], ['Y', 'Novel']] : []}
-        cabecera={<label class="check"><input type="checkbox" checked={avanzado} onChange={(e) => setAvanzado(e.currentTarget.checked)} />Especialidad, bonos naturales y novel</label>} />
-      <SecundariasPropias f={f} n={n} />
 
-      <Panel title="Notas de PD">
+      <Panel title="Notas de PD" plegable>
         <Campo f={f} clave="PDs!D197" label="Notas (salen en la página de notas del PDF)" tipo="area" />
       </Panel>
 
@@ -121,16 +122,27 @@ function Barra({ v: x, max }: { v: number; max: number }) {
 
 type Cols = { pd: string[]; coste: string[] };
 
-export function Bloque({ f, n, cats, titulo, filas, cols, grupo, total = 'AA', esp = 'Z', extra = [], cabecera, avisos, limites, maximos }: {
+export function Bloque({ f, n, cats, titulo, filas, cols, grupo, total = 'AA', esp = 'Z', extra = [], cabecera, avisos, limites, maximos, ocultable }: {
   f: Ficha; n: number; cats: string[]; titulo: string; filas: number[]; cols: Cols; grupo?: boolean;
   total?: string; esp?: string | null; extra?: string[][]; cabecera?: preact.ComponentChildren; avisos?: preact.ComponentChildren;
   /** Máximos del bloque que se ven encima de la tabla: [qué, cuánto]. */
   limites?: [string, string][];
   /** Máximo propio de una fila, junto a su casilla: {fila: texto}. */
   maximos?: Record<number, string>;
+  /** Lista larga y fija (las secundarias): con PD repartidos, muestra solo las que tienen algo y un interruptor para ver todas. */
+  ocultable?: boolean;
 }) {
+  const tiene = (r: number) => [...Array.from({ length: n }, (_, i) => `PDs!${cols.pd[i]}${r}`), ...(esp ? [`PDs!${esp}${r}`] : []), ...extra.map(([c]) => `PDs!${c}${r}`)]
+    .some((k) => f.entradas[k] !== undefined && f.entradas[k] !== '');
+  const hayDatos = filas.some(tiene);
+  const [todas, setTodas] = useState(!hayDatos);                  // sin nada repartido se ve la lista entera
+  const oculta = (r: number) => Boolean(ocultable) && !todas && !tiene(r);
+  const sinPd = filas.filter((r) => !tiene(r)).length;
   return (
-    <Panel title={titulo} extra={cabecera}>
+    <Panel title={titulo} extra={cabecera} plegable>
+      {ocultable && hayDatos && (
+        <label class="check"><input type="checkbox" checked={todas} onChange={(e) => setTodas(e.currentTarget.checked)} /> Mostrar también las {sinPd} sin PD</label>
+      )}
       {limites && limites.length > 0 && (
         <dl class="limites" aria-label={`Máximos de ${titulo}`}>
           {limites.map(([t, v]) => <div key={t}><dt>{t}</dt><dd>{v}</dd></div>)}
@@ -148,13 +160,15 @@ export function Bloque({ f, n, cats, titulo, filas, cols, grupo, total = 'AA', e
             </tr>
           </thead>
           <tbody>
-            {filas.map((r) => {
+            {filas.map((r, idx) => {
               const g = grupo ? txt(`PDs!D${r}`) : '';
+              const finGrupo = g ? filas.findIndex((x, j) => j > idx && grupo && txt(`PDs!D${x}`)) : -1;
+              const verGrupo = !ocultable || todas || filas.slice(idx, finGrupo < 0 ? undefined : finGrupo).some((x) => !oculta(x));
               const nombre = txt(`PDs!E${r}`);
               return (
                 <Fragment key={r}>
-                {g && <tr class="grupo-cab"><th colSpan={n + extra.length + (esp ? 1 : 0) + 2} scope="colgroup">{GRUPO[g] ?? g}</th></tr>}
-                <tr>
+                {g && <tr class="grupo-cab" hidden={!verGrupo}><th colSpan={n + extra.length + (esp ? 1 : 0) + 2} scope="colgroup">{GRUPO[g] ?? g}</th></tr>}
+                <tr hidden={oculta(r)}>
                   <th scope="row" class="left">{nombre}{maximos?.[r] && <span class="limite-fila">{maximos[r]}</span>}</th>
                   {Array.from({ length: n }, (_, i) => (
                     <td key={i}>
@@ -186,7 +200,7 @@ export function Compras({ f, n, titulo, filas, extra, grado, avisos }: {
   const llenas = filas.filter((r) => f.entradas[`PDs!E${r}`]);
   const visibles = filas.slice(0, Math.min(filas.length, llenas.length + 1));
   return (
-    <Panel title={titulo}>
+    <Panel title={titulo} plegable>
       {visibles.map((r) => (
         <div class="compra" key={r}>
           <Campo f={f} clave={`PDs!E${r}`} label="Elección" class="grow" />
@@ -213,7 +227,7 @@ function SecundariasPropias({ f, n }: { f: Ficha; n: number }) {
   const ultima = FILAS_PROPIAS.reduce((m, r, i) => (llena(r) ? i : m), -1);
   const visibles = FILAS_PROPIAS.slice(0, Math.min(FILAS_PROPIAS.length, ultima + 2));
   return (
-    <Panel title="Habilidades secundarias propias" extra={<span class="muted small">Las que no están en la lista del juego</span>}>
+    <Panel title="Habilidades secundarias propias" plegable extra={<span class="muted small">Las que no están en la lista del juego</span>}>
       {visibles.map((r) => (
         <div class="compra" key={r}>
           <Campo f={f} clave={`PDs!D${r}`} label="Tipo" />

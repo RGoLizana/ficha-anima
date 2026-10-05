@@ -30,7 +30,7 @@ export function Sheele({ f }: { f: Ficha }) {
       </Panel>
 
       <div class="cols-2">
-        <Panel title="Características">
+        <Panel title="Características" plegable>
           <table class="tabla">
             <thead><tr><th scope="col" class="left">Car.</th><th scope="col">Base</th><th scope="col">Temp</th><th scope="col">Total</th><th scope="col">Bono</th></tr></thead>
             <tbody>
@@ -62,7 +62,7 @@ export function Sheele({ f }: { f: Ficha }) {
         </Panel>
       </div>
 
-      <Panel title="Mejoras de Sheele" extra={<span class="muted small">Mejoras por nivel {txt(s('S', 8))}</span>}>
+      <Panel title="Mejoras de Sheele" plegable extra={<span class="muted small">Mejoras por nivel {txt(s('S', 8))}</span>}>
         {visibles(f, rango(24, 35), ['C', 'F']).map((r) => (
           <div class="compra" key={r}>
             <Campo f={f} clave={s('C', r)} label="Mejora" class="grow" />
@@ -79,7 +79,7 @@ export function Sheele({ f }: { f: Ficha }) {
         <p class="muted small">Potenciación mística: zeón máximo {txt(s('J', 36))} · {txt(s('J', 38))}</p>
       </Panel>
 
-      <Panel title="Habilidades secundarias" extra={<span class="muted small">Cada punto de mejora suma +10; el total no pasa del de su dueño si hay límite</span>}>
+      <Panel title="Habilidades secundarias" plegable extra={<span class="muted small">Cada punto de mejora suma +10; el total no pasa del de su dueño si hay límite</span>}>
         {GRUPOS.map(([titulo, a, b]) => (
           <section key={titulo}>
             <h3>{titulo}</h3>
@@ -109,7 +109,7 @@ export function Sheele({ f }: { f: Ficha }) {
         ))}
       </Panel>
 
-      <Panel title="Notas de Sheele">
+      <Panel title="Notas de Sheele" plegable>
         <Campo f={f} clave={s('C', 92)} label="Notas (salen en la página de notas del PDF)" tipo="area" />
       </Panel>
     </>

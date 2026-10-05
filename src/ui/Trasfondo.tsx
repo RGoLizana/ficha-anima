@@ -28,7 +28,7 @@ export function Trasfondo({ f }: { f: Ficha }) {
         <Campo f={f} clave="General!C46" label="Sueños y objetivos" tipo="area" />
         <Campo f={f} clave="General!C56" label="Resumen de su historia" tipo="area" />
       </Panel>
-      <Panel title="Posesiones y contactos">
+      <Panel title="Posesiones y contactos" plegable>
         <div class="grid-fields">
           <Campo f={f} clave="General!Y59" label="Oro" tipo="numero" />
           <Campo f={f} clave="General!Y61" label="Plata" tipo="numero" />

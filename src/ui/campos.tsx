@@ -1,8 +1,12 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import type { ComponentChildren } from 'preact';
-import { editar } from '../store';
-import { formulaLista, opciones, valores, type Valor } from '../engine';
+import { buscar, editar } from '../store';
+import { abierta, formulaLista, opciones, valores, type Valor } from '../engine';
 import type { Ficha } from '../model/ficha';
+import mapa from '../data/migracion.json';
+
+/** Valor por defecto de cada casilla de entrada en la plantilla 8.7.0 (escribirlo no cuenta como «tener datos»). */
+const DEFECTOS = (mapa as unknown as { defectos: Record<string, unknown> }).defectos;
 
 /** Valor calculado de una celda, tal como lo muestra el Excel. */
 export const v = (clave: string): Valor => valores.value[clave] ?? null;
@@ -82,7 +86,35 @@ export function Dato({ clave, label, sub, big }: { clave: string; label: string;
   );
 }
 
-export function Panel({ title, children, extra }: { title: string; children: ComponentChildren; extra?: ComponentChildren }) {
+/** Panel de una sección. Con `plegable` es un desplegable que arranca cerrado si no tiene nada escrito (así la sección no se llena de bloques vacíos)
+ *  y abierto si ya tiene datos; luego lo que el jugador abra o cierre se respeta. Todo su contenido sigue en la página. */
+export function Panel({ title, children, extra, plegable }: { title: string; children: ComponentChildren; extra?: ComponentChildren; plegable?: boolean }) {
+  const ref = useRef<HTMLDetailsElement>(null);
+  useEffect(() => {
+    const d = ref.current;
+    if (!d) return;
+    // «vacío» = ninguna de sus casillas tiene nada escrito en la ficha (los valores por defecto que muestran no cuentan)
+    const claves = [...d.querySelectorAll<HTMLElement>('[data-clave]')].map((e) => e.getAttribute('data-clave')!);
+    const f = abierta.value ? buscar(abierta.value) : undefined;
+    if (f && claves.length) {
+      if (!claves.some((k) => f.entradas[k] !== undefined && f.entradas[k] !== '' && f.entradas[k] !== DEFECTOS[k])) d.open = false;
+      return;
+    }
+    const campos = [...d.querySelectorAll<HTMLInputElement>('input:not([type=checkbox]):not([type=file]):not([type=search]):not([type=hidden]),select,textarea')];
+    const marcado = [...d.querySelectorAll<HTMLInputElement>('input[type=checkbox]')].some((c) => c.checked);
+    if (campos.length && !marcado && !campos.some((c) => c.value !== '' && c.value !== '—')) d.open = false;
+  }, []);
+  if (plegable) {
+    return (
+      <details class="panel plegable" ref={ref} open>
+        <summary class="row between wrap">
+          <h2 class="panel-title">{title}</h2>
+          {extra}
+        </summary>
+        <div class="stack pbody-plegable">{children}</div>
+      </details>
+    );
+  }
   return (
     <section class="panel stack">
       <div class="row between wrap">

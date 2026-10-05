@@ -12,7 +12,7 @@ function visibles(f: Ficha, col: string) {
 
 function Entidad({ f, n, c, nivel }: { f: Ficha; n: number; c: string; nivel: string }) {
   return (
-    <Panel title={`Elan ${n}`}>
+    <Panel title={`Elan ${n}`} plegable>
       <div class="grid-fields">
         <Campo f={f} clave={e(c, 11)} label="Entidad" />
         <Campo f={f} clave={e(nivel, 11)} label="Elan" tipo="numero" />

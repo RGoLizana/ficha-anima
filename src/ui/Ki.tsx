@@ -126,17 +126,17 @@ export function Ki({ f }: { f: Ficha }) {
         <p class="muted small">Detección total <strong>{txt(k('F', 35))}</strong> · Ocultación total <strong>{txt(k('F', 36))}</strong></p>
       </Panel>
 
-      <Panel title="Némesis, Vacío y Anulación">
+      <Panel title="Némesis, Vacío y Anulación" plegable>
         <Arbol f={f} a={ARBOL_NEMESIS} nombre="habilidades del Némesis" />
       </Panel>
 
       <div class="cols-2">
-        <Panel title="Sellos Dragón">
+        <Panel title="Sellos Dragón" plegable>
           <div class="habs">
             {rango(28, 37).map((r) => <Compra key={r} f={f} clave={k('H', r)} />)}
           </div>
         </Panel>
-        <Panel title="Sellos de invocación">
+        <Panel title="Sellos de invocación" plegable>
           <div class="table-wrap">
             <table class="tabla">
               <thead><tr><th scope="col" class="left">Elemento</th><th scope="col">Menor</th><th scope="col">Mayor</th></tr></thead>
@@ -155,14 +155,14 @@ export function Ki({ f }: { f: Ficha }) {
       </div>
 
       {Number(txt(k('Q', 37))) > 0 && (
-        <Panel title="Ataque elemental">
+        <Panel title="Ataque elemental" plegable>
           <div class="grid-fields">
             {['Y', 'AA', 'AC', 'AE', 'AG', 'AI'].map((c, i) => <Campo key={c} f={f} clave={k(c, 22)} label={`Elemento ${i + 1}`} />)}
           </div>
         </Panel>
       )}
 
-      <Panel title="Pactos de sangre" extra={<span class="muted small">Criaturas invocables</span>}>
+      <Panel title="Pactos de sangre" plegable extra={<span class="muted small">Criaturas invocables</span>}>
         {rango(12, 20).filter((r, i) => i === 0 || f.entradas[k('AA', r - 1)] || f.entradas[k('AD', r - 1)]).map((r) => (
           <div class="compra" key={r}>
             <Campo f={f} clave={k('AA', r)} label="Criatura" class="grow" />
@@ -173,7 +173,7 @@ export function Ki({ f }: { f: Ficha }) {
 
       <TecnicasDominio f={f} />
 
-      <Panel title="Notas de Ki">
+      <Panel title="Notas de Ki" plegable>
         <Campo f={f} clave={k('C', 67)} label="Notas (salen en la página de notas del PDF)" tipo="area" />
       </Panel>
     </>

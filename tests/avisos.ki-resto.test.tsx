@@ -47,7 +47,7 @@ const opcionesDe = (clave: string) => [...(celda(clave)?.options ?? [])].map((o)
 const texto = () => document.querySelector('.content')!.textContent!;
 
 
-const panelDe = (titulo: string) => [...document.querySelectorAll('section.panel')].find((p) => p.querySelector('.panel-title')?.textContent === titulo)!;
+const panelDe = (titulo: string) => [...document.querySelectorAll('section.panel, details.panel')].find((p) => p.querySelector('.panel-title')?.textContent === titulo)!;
 const avisosEn = (p: Element) => [...p.querySelectorAll('[role=status]')].map((a) => a.textContent);
 
 describe('avisos bajo su panel', () => {
