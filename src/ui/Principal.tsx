@@ -1,5 +1,6 @@
 import type { Ficha } from '../model/ficha';
 import { Avisos, Campo, Panel, txt, v } from './campos';
+import { CampoCategoria } from './CategoriasGremio';
 
 const CARACT = [11, 12, 13, 14, 15, 16, 17, 18];
 const RESIST = [57, 58, 59, 60, 61, 62];
@@ -21,7 +22,7 @@ export function Principal({ f }: { f: Ficha }) {
         <div class="stack-sm">
           {cats.map((r, i) => (
             <div class="grid-fields cat-row" key={r}>
-              <Campo f={f} clave={`PDs!O${r}`} label={i === 0 ? 'Categoría' : `Cambio de categoría ${i}`} />
+              <CampoCategoria f={f} clave={`PDs!O${r}`} label={i === 0 ? 'Categoría' : `Cambio de categoría ${i}`} />
               <Campo f={f} clave={`PDs!S${r}`} label="Niveles" tipo="numero" class="narrow" />
               <Campo f={f} clave={`PDs!Z${r}`} label="Cambio: PD de la antigua" tipo="numero" class="narrow" />
               <Campo f={f} clave={`PDs!AA${r}`} label="Cambio: PD de la nueva" tipo="numero" class="narrow" />

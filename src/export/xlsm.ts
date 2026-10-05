@@ -62,8 +62,9 @@ export function reescribirHoja(xml: string, destino: Map<string, Entrada | undef
   return xml.slice(0, inicio) + cuerpo + xml.slice(cierra);
 }
 
-/** Libro de Excel con la ficha escrita sobre la plantilla base. Lanza Error si la base no es una ficha de Anima. */
-export function escribirFicha(base: Uint8Array, entradas: Entradas): Uint8Array {
+/** Libro de Excel con la ficha escrita sobre la plantilla base. Lanza Error si la base no es una ficha de Anima.
+ *  `extras`: celdas de otras hojas que no son entradas de la ficha (las categorías de gremio van en «Tablas»); solo se escriben constantes. */
+export function escribirFicha(base: Uint8Array, entradas: Entradas, extras: Entradas = {}): Uint8Array {
   let zip: Record<string, Uint8Array>;
   try { zip = unzipSync(base); } catch { throw new Error('la plantilla base no es un archivo Excel (.xlsm/.xlsx)'); }
   const leer = (p: string) => (zip[p] ? strFromU8(zip[p]) : '');
@@ -86,6 +87,17 @@ export function escribirFicha(base: Uint8Array, entradas: Entradas): Uint8Array 
       destino.set(c, entradas[k] ?? M.defectos[k]);     // lo que la ficha no define vuelve al valor de la plantilla
     }
     zip[ruta] = strToU8(reescribirHoja(strFromU8(zip[ruta]), destino));
+  }
+
+  const porHoja = new Map<string, Map<string, Entrada>>();
+  for (const [k, v] of Object.entries(extras)) {
+    const i = k.lastIndexOf('!'), hoja = k.slice(0, i);
+    if (!porHoja.has(hoja)) porHoja.set(hoja, new Map());
+    porHoja.get(hoja)!.set(k.slice(i + 1), v);
+  }
+  for (const [hoja, destino] of porHoja) {
+    const ruta = rutas[hoja];
+    if (ruta && zip[ruta]) zip[ruta] = strToU8(reescribirHoja(strFromU8(zip[ruta]), destino));
   }
 
   // Excel recalcula al abrir; se quita calcChain (apunta a celdas que han cambiado) para que no pida reparar el libro

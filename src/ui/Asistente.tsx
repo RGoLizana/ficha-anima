@@ -5,6 +5,7 @@ import { nombreDe, entradasMotor } from '../model/ficha';
 import { Icon } from './Icon';
 import { Avisos, Campo, Dato, Panel, txt } from './campos';
 import { Caracteristicas } from './Principal';
+import { CampoCategoria } from './CategoriasGremio';
 import { Bloque, PRIM, ResumenCategoria, SEC } from './Desarrollo';
 import { Lista as Filas } from './Ventajas';
 
@@ -71,7 +72,7 @@ export function Asistente({ id }: { id: string }) {
             <div class="grid-fields">
               <Campo f={f} clave="General!F22" label="Nombre" />
               <Campo f={f} clave="General!F23" label="Raza" />
-              <Campo f={f} clave="PDs!O7" label="Categoría" />
+              <CampoCategoria f={f} clave="PDs!O7" label="Categoría" />
               <Campo f={f} clave="PDs!S7" label="Nivel" tipo="numero" />
               <Campo f={f} clave="General!F24" label="Sexo" />
               <Campo f={f} clave="General!F26" label="Edad" />

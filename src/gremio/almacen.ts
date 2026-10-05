@@ -29,6 +29,8 @@ export function importarBiblioteca(texto: string, unir = false): Biblioteca {
     vias: [...actual.vias.filter((v) => !nueva.vias.some((x) => x.n.toLowerCase() === v.n.toLowerCase())), ...nueva.vias],
     disciplinas: [...actual.disciplinas.filter((v) => !nueva.disciplinas.some((x) => x.n.toLowerCase() === v.n.toLowerCase())), ...nueva.disciplinas],
     arsMagnus: [...actual.arsMagnus.filter((v) => !nueva.arsMagnus.some((x) => x.n.toLowerCase() === v.n.toLowerCase())), ...nueva.arsMagnus],
+    categorias: [...actual.categorias.filter((v) => !nueva.categorias.some((x) => x.n.toLowerCase() === v.n.toLowerCase())), ...nueva.categorias],
+    ocultas: [...new Set([...actual.ocultas, ...nueva.ocultas])],
   };
   guardarBiblioteca(r);
   return r;

@@ -288,3 +288,9 @@ escribía sobre una fórmula (PDs!Z188).
   `tests/tecnicas.test.ts` comprueba que coincide con el motor en todos los efectos y desventajas. Efectos/desventajas personalizados: solo en experto.
 - **Menú personalizable:** «Personalizar menú» oculta pestañas por personaje (`ficha.ocultas`), p. ej. Psíquica en un mago.
 - Importador: la casilla `Sheele!S23` de las 8.4.x («En 'Resumen'») ya no avisa; la 8.7.0 no tiene ese interruptor.
+- **Categorías de gremio** (hecho, entrega 1; plan completo en `PLAN-categorias.md`): en la sección Gremio se crean categorías propias copiando una
+  oficial, se modifican las oficiales (por columnas de `Tablas!D202:CG223`) y se ocultan oficiales en los desplegables. Cada ficha guarda una copia
+  de las que usa (`ficha.categorias`). Una propia ocupa, solo en esa ficha, la fila de una oficial que no tiene (de la 223 hacia arriba) como
+  entradas del motor (`src/gremio/categorias.ts`, `entradasMotor`): no se toca ninguna fórmula y sin categorías no se escribe nada. El selector de
+  categoría de Principal y del asistente las ofrece marcadas «gremio». El Excel exportado lleva esas celdas en `Tablas` con un aviso de qué oficial
+  sustituyen. Importar desde Excel NO trae categorías propias. Pendiente (entrega 2): compendio y avisos de categoría desconocida al importar.

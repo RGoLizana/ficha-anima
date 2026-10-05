@@ -45,6 +45,14 @@ export async function abrir(id: string, entradas: Entradas) {
   if (abierta.value === id) valores.value = v;
 }
 
+/** Vuelve a cargar la ficha abierta con estas entradas aunque ya estuviera cargada (cuando cambia qué categoría de gremio ocupa cada fila). */
+export async function recargar(id: string, entradas: Entradas) {
+  if (abierta.value !== id) return;
+  await listo;
+  const v = await llamar<Record<string, Valor>>({ tipo: 'cargar', entradas });
+  if (abierta.value === id) valores.value = v;
+}
+
 /** Cambia una entrada de la ficha abierta y actualiza los valores calculados. */
 export async function poner(clave: string, valor: Entrada | null) {
   await listo;

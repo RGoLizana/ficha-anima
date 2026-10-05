@@ -1,6 +1,8 @@
 // Contenido propio de un gremio: vías/subvías, disciplinas psíquicas y Ars Magnus que no están en las tablas del Excel.
 // Se guarda en una biblioteca compartible (JSON, global en este navegador). Cada ficha elige qué tiene (`Elegido`) y cada
 // elemento elegido solo CONSUME: nivel de vía, CV, CM y PD. No se tocan las tablas de la plantilla.
+import { parseCategorias, type CategoriaGremio } from './categorias';
+
 export interface ConjuroPropio {
   n: string; l: number; t: string; a: string; d: 'Sí' | 'No';
   g: [number | null, number | null, number | string | null, string][];   // 4 grados: [INT, zeón, mantenimiento, efecto]
@@ -17,8 +19,10 @@ export interface Biblioteca {
   vias: ViaPropia[];
   disciplinas: DisciplinaPropia[];
   arsMagnus: ArsPropio[];
+  categorias: CategoriaGremio[];   // categorías propias y oficiales modificadas
+  ocultas: string[];               // oficiales que no se ofrecen en los desplegables (las fichas que ya las tienen no cambian)
 }
-export const BIBLIOTECA_VACIA: Biblioteca = { version: 1, nombre: '', vias: [], disciplinas: [], arsMagnus: [] };
+export const BIBLIOTECA_VACIA: Biblioteca = { version: 1, nombre: '', vias: [], disciplinas: [], arsMagnus: [], categorias: [], ocultas: [] };
 
 export type TipoElegido = 'via' | 'disciplina' | 'ars';
 /** Un elemento propio que tiene un personaje y lo que consume. */
@@ -46,7 +50,7 @@ export const poderNuevo = (): PoderPropio => ({ n: '', l: 1, m: 'No', a: 'Activa
 /** Valida un JSON de biblioteca: lo que no encaja se descarta; un archivo que no es una biblioteca lanza Error. */
 export function parseBiblioteca(datos: unknown): Biblioteca {
   const o = obj(datos);
-  if (!('vias' in o || 'disciplinas' in o || 'arsMagnus' in o)) throw new Error('no es una biblioteca de gremio (faltan vias, disciplinas o arsMagnus)');
+  if (!('vias' in o || 'disciplinas' in o || 'arsMagnus' in o || 'categorias' in o)) throw new Error('no es una biblioteca de gremio (faltan vias, disciplinas, arsMagnus o categorias)');
   const conjuro = (c: unknown): ConjuroPropio => {
     const x = obj(c), g = lista(x.g).slice(0, 4).map((r) => { const q = lista(r); return [q[0] == null ? null : num(q[0]), q[1] == null ? null : num(q[1]), typeof q[2] === 'number' ? q[2] : str(q[2]) || 'No', str(q[3])] as ConjuroPropio['g'][number]; });
     while (g.length < 4) g.push([null, null, 'No', '']);
@@ -63,7 +67,10 @@ export function parseBiblioteca(datos: unknown): Biblioteca {
     return { n: str(x.n), tipo, nota: str(x.nota), conjuros: lista(x.conjuros).map(conjuro).filter((c) => c.n) }; }));
   const disciplinas = unico(lista(o.disciplinas).map((d) => { const x = obj(d); return { n: str(x.n), mod: str(x.mod) || 'Sin modificador', poderes: lista(x.poderes).map(poder).filter((p) => p.n) }; }));
   const arsMagnus = unico(lista(o.arsMagnus).map((a) => { const x = obj(a); return { n: str(x.n), pd: num(x.pd), cm: num(x.cm), e: str(x.e) }; }));
-  return { version: 1, nombre: str(o.nombre), vias, disciplinas, arsMagnus };
+  const vistas = new Set<string>();
+  const categorias = parseCategorias(o.categorias).filter((c) => !vistas.has(c.n.toLowerCase()) && vistas.add(c.n.toLowerCase()));
+  const ocultas = [...new Set(lista(o.ocultas).map(str).filter(Boolean))];
+  return { version: 1, nombre: str(o.nombre), vias, disciplinas, arsMagnus, categorias, ocultas };
 }
 
 /** Lo que un personaje gasta con sus elementos propios (se suma a los totales de la ficha). */

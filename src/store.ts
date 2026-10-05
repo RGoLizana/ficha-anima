@@ -1,7 +1,8 @@
 import { signal, effect } from '@preact/signals';
-import { nueva, parse, nombreDe, NOMBRE, type Ficha, type Resumen, type Sesion } from './model/ficha';
+import { nueva, parse, nombreDe, NOMBRE, entradasMotor, type Ficha, type Resumen, type Sesion } from './model/ficha';
+import { CASILLAS_CATEGORIA, type CategoriaGremio } from './gremio/categorias';
 import { entradasConsumo, type Elegido } from './gremio/modelo';
-import { abierta, poner, type Entrada } from './engine';
+import { abierta, poner, recargar, type Entrada } from './engine';
 
 const KEY = 'anima.fichas';
 
@@ -52,7 +53,22 @@ export function editar(id: string, clave: string, valor: Entrada | null) {
     if (valor === null || valor === '') delete entradas[clave]; else entradas[clave] = valor;
     return { ...f, entradas, actualizada: new Date().toISOString() };
   });
-  if (abierta.value === id) void poner(clave, valor);
+  // con categorías de gremio, cambiar de categoría puede cambiar qué fila de «Tablas» ocupa cada una: se carga la ficha entera
+  if (abierta.value === id) { if (CASILLAS_CATEGORIA.includes(clave) && buscar(id)?.categorias?.length) void recargar(id, entradasMotor(buscar(id)!)); else void poner(clave, valor); }
+}
+
+/** Guarda la copia de las categorías de gremio que usa el personaje y recalcula. */
+export function guardarCategorias(id: string, categorias: CategoriaGremio[]) {
+  cambiar(id, (f) => { const { categorias: _viejas, ...resto } = f; return { ...resto, ...(categorias.length ? { categorias } : {}), actualizada: new Date().toISOString() }; });
+  const f = buscar(id);
+  if (f && abierta.value === id) void recargar(id, entradasMotor(f));
+}
+
+/** Elige la categoría de una casilla de PDs; si es una de gremio que la ficha aún no tiene, se copia a la ficha en el mismo paso. */
+export function elegirCategoria(id: string, clave: string, nombre: string, copia?: CategoriaGremio) {
+  const f = buscar(id);
+  if (copia && f && !(f.categorias ?? []).some((c) => !c.oficial && c.n === copia.n)) guardarCategorias(id, [...(f.categorias ?? []), copia]);
+  editar(id, clave, nombre || null);
 }
 
 /** Varias celdas de una vez (una sola actualización de la ficha); null o '' vacía la celda. Solo escribe las que cambian. */

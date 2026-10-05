@@ -17,6 +17,7 @@ vi.mock('../src/engine', () => ({
     abierta.value = id; motor().cargar(entradas); valores.value = motor().hojas(HOJAS_VISIBLES);
   },
   async poner(clave: string, v: Entrada | null) { valores.value = { ...valores.value, ...motor().poner(clave, v) }; },
+  async recargar(id: string, entradas: Record<string, Entrada>) { if (abierta.value !== id) return; motor().cargar(entradas); valores.value = motor().hojas(HOJAS_VISIBLES); },
   async opciones() { return []; },
 }));
 
@@ -24,7 +25,9 @@ const store = await import('../src/store');
 const { FichaView } = await import('../src/ui/FichaView');
 const { guardarBiblioteca, biblioteca } = await import('../src/gremio/almacen');
 const { BIBLIOTECA_VACIA } = await import('../src/gremio/modelo');
+const { categoriaDesde } = await import('../src/gremio/categorias');
 
+const categoriaDesdeLib = () => categoriaDesde('Guerrero', 'Caballero rúnico');
 const T = 120_000;
 beforeAll(() => { motor(); }, T);
 afterEach(() => { cleanup(); abierta.value = null; valores.value = {}; store.fichas.value = []; guardarBiblioteca(BIBLIOTECA_VACIA); localStorage.clear(); });
@@ -149,4 +152,60 @@ describe('Gremio', () => {
     expect(valor('PDs!K194')).toBe(pd + 30);
     expect(store.buscar(f.id)!.entradas['Ki!E29']).toBeUndefined();
   }, T);
+
+  describe('categorías', () => {
+    const porEtiqueta = (t: string, ambito: ParentNode = document) => [...ambito.querySelectorAll('label.field')].find((l) => l.textContent!.startsWith(t))!.querySelector('input, select') as HTMLInputElement;
+
+    it('crear una propia copiando una oficial, rechazar nombres prohibidos y ocultar una oficial', async () => {
+      const f = await abrir();
+      fireEvent.input(porEtiqueta('Nueva categoría'), { target: { value: 'Mago*' } });
+      fireEvent.click(boton('Crear'));
+      await waitFor(() => expect(document.body.textContent).toContain('comodines'));
+      expect(biblioteca.value.categorias).toHaveLength(0);
+      fireEvent.input(porEtiqueta('Nueva categoría'), { target: { value: 'Caballero rúnico' } });
+      fireEvent.change(porEtiqueta('Copiar de'), { target: { value: 'Guerrero' } });
+      fireEvent.click(boton('Crear'));
+      await waitFor(() => expect(biblioteca.value.categorias).toHaveLength(1));
+      expect(biblioteca.value.categorias[0]).toMatchObject({ n: 'Caballero rúnico', oficial: false, base: 'Guerrero' });
+      expect(biblioteca.value.categorias[0].v.E).toBe(5);                                      // copia de los valores de Guerrero
+      const casillaNovel = [...document.querySelectorAll<HTMLInputElement>('details input[type=checkbox]')].find((c) => c.parentElement!.textContent!.trim() === 'Novel')!;
+      fireEvent.click(casillaNovel);
+      await waitFor(() => expect(biblioteca.value.ocultas).toEqual(['Novel']));
+      expect(store.buscar(f.id)!.categorias).toBeUndefined();
+    }, T);
+
+    it('elegirla en Principal copia la categoría a la ficha y el motor calcula con ella; una oculta no se ofrece', async () => {
+      const c = categoriaDesdeLib();
+      guardarBiblioteca({ ...BIBLIOTECA_VACIA, categorias: [c], ocultas: ['Novel'] });
+      const f = store.importar(JSON.stringify(read('ref/fichas/lock.json')));
+      render(<FichaView id={f.id} seccion="principal" />);
+      await waitFor(() => expect(document.querySelector('[data-clave="PDs!O7"] select')).toBeTruthy(), { timeout: 20_000 });
+      const sel = document.querySelector('[data-clave="PDs!O7"] select') as HTMLSelectElement;
+      const opciones = [...sel.options].map((o) => o.value);
+      expect(opciones).toContain('Caballero rúnico');
+      expect(opciones).toContain('Hechicero');
+      expect(opciones).not.toContain('Novel');
+      fireEvent.change(sel, { target: { value: 'Caballero rúnico' } });
+      await waitFor(() => expect(store.buscar(f.id)!.categorias?.map((x) => x.n)).toEqual(['Caballero rúnico']));
+      expect(store.buscar(f.id)!.entradas['PDs!O7']).toBe('Caballero rúnico');
+      await waitFor(() => expect(motor().valor('Tablas!D223')).toBe('Caballero rúnico'));
+      expect(store.buscar(f.id)!.entradas['Tablas!D223']).toBeUndefined();               // nada de Tablas se guarda en las entradas
+      fireEvent.change(sel, { target: { value: 'Hechicero' } });
+      await waitFor(() => expect(motor().valor('Tablas!D223')).toBe('Novel'));                // sin usarla la fila vuelve a ser la oficial…
+      expect(store.buscar(f.id)!.categorias).toHaveLength(1);                                  // …y la copia sigue en la ficha
+    }, T);
+
+    it('«Actualizar desde la biblioteca» trae los cambios y una oficial modificada se adopta por ficha', async () => {
+      const c = categoriaDesdeLib();
+      guardarBiblioteca({ ...BIBLIOTECA_VACIA, categorias: [c] });
+      const f = store.importar(JSON.stringify({ ...read('ref/fichas/lock.json'), categorias: [c] }));
+      render(<FichaView id={f.id} seccion="gremio" />);
+      await waitFor(() => expect(document.querySelector('.personalizado')).toBeTruthy(), { timeout: 20_000 });
+      expect(boton('Actualizar desde la biblioteca')).toBeUndefined();
+      guardarBiblioteca({ ...biblioteca.value, categorias: [{ ...c, v: { ...c.v, E: 9 } }] });
+      await waitFor(() => expect(boton('Actualizar desde la biblioteca')).toBeTruthy());
+      fireEvent.click(boton('Actualizar desde la biblioteca'));
+      await waitFor(() => expect(store.buscar(f.id)!.categorias![0].v.E).toBe(9));
+    }, T);
+  });
 });

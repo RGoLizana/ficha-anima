@@ -2,6 +2,7 @@ import { useEffect, useState } from 'preact/hooks';
 import type { Ficha } from '../model/ficha';
 import { nombreDe } from '../model/ficha';
 import { borrarBase, descargar, guardarBase, leerBase } from '../export/base';
+import { categoriasUsadas, entradasCategorias, sustituciones } from '../gremio/categorias';
 import { txt } from './campos';
 
 /** Exporta la ficha a un .xlsm escribiéndola sobre la plantilla base (que el usuario aporta una vez). */
@@ -16,10 +17,12 @@ export function ExportarExcel({ f }: { f: Ficha }) {
       const [{ escribirFicha }, { leerFicha }] = await Promise.all([import('../export/xlsm'), import('../import/xlsm')]);
       const origen = datos ? { nombre: nombreBase!, datos } : await leerBase();
       if (!origen) { setBase(null); return; }
-      const libro = escribirFicha(origen.datos, f.entradas);
+      const libro = escribirFicha(origen.datos, f.entradas, entradasCategorias(f.categorias, categoriasUsadas(f.entradas)));
+      const cambios = sustituciones(f.categorias, categoriasUsadas(f.entradas));
+      if (cambios.length) setMensaje(`En este Excel, ${cambios.map((c) => `«${c.oficial}» se sustituye por «${c.propia}»`).join(' y ')}.`);
       if (datos) {
         const v = leerFicha(libro).version;                    // la base debe ser una ficha de Anima 8.7.0
-        if (v !== '8.7.0') setMensaje(`La plantilla base es la versión ${v || 'desconocida'}; se espera la 8.7.0 (se exporta igualmente).`);
+        if (v !== '8.7.0') setMensaje((m) => `${m ? m + ' ' : ''}La plantilla base es la versión ${v || 'desconocida'}; se espera la 8.7.0 (se exporta igualmente).`);
         await guardarBase(origen.nombre, origen.datos);
         setBase(origen.nombre);
       }

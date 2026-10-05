@@ -6,6 +6,7 @@ import { biblioteca, errorBiblioteca, exportarBiblioteca, guardarBiblioteca, imp
 import { consumo, conjuroNuevo, poderNuevo, type Biblioteca, type Elegido, type TipoElegido, type ViaPropia } from '../gremio/modelo';
 import { descargar } from '../export/base';
 import { Avisos, Panel, txt } from './campos';
+import { CategoriasGremio } from './CategoriasGremio';
 
 // Contenido propio de un gremio: vías/subvías, disciplinas psíquicas y Ars Magnus. La biblioteca es compartible (.json) y global en el
 // navegador; cada personaje elige lo que tiene y cada elemento solo consume nivel de vía, CV, CM y PD (no se tocan las tablas del Excel).
@@ -16,6 +17,7 @@ const EJEMPLO: Biblioteca = {
   vias: [{ n: 'Ars Ejemplo', tipo: 'Subvía', nota: 'Subvía de ejemplo', conjuros: [{ ...conjuroNuevo(), n: 'Chispa de ejemplo', l: 4, e: 'Descripción del conjuro', g: [[6, 40, 'No', 'Efecto base'], [8, 80, 10, 'Intermedio'], [10, 120, 10, 'Avanzado'], [12, 200, 15, 'Arcano']] }] }],
   disciplinas: [{ n: 'Resonancia', mod: 'Sin modificador', poderes: [{ ...poderNuevo(), n: 'Eco de ejemplo', f: ['Fatiga 2', 'Fatiga 1', '10 m', '50 m', '100 m', '500 m', '1 km', '5 km', '10 km', 'Sin límite'] }] }],
   arsMagnus: [{ n: 'Sello de ejemplo', pd: 30, cm: 20, e: 'Descripción del Ars Magnus' }],
+  categorias: [], ocultas: [],
 };
 
 function Campo({ label, children, clase }: { label: string; children: ComponentChildren; clase?: string }) {
@@ -176,7 +178,7 @@ export function Gremio({ f }: { f: Ficha }) {
     <div class="personalizado">
       <p class="extra-note">Contenido propio de tu gremio: no está en las reglas de Anima. Cada elemento que tenga el personaje solo consume nivel de vía, CV, CM y PD; no se añaden a las tablas del Excel.</p>
 
-      <Panel title="Biblioteca del gremio" extra={<span class="muted small">{b.vias.length} vías · {b.disciplinas.length} disciplinas · {b.arsMagnus.length} Ars Magnus</span>}>
+      <Panel title="Biblioteca del gremio" extra={<span class="muted small">{b.vias.length} vías · {b.disciplinas.length} disciplinas · {b.arsMagnus.length} Ars Magnus · {b.categorias.length} categorías</span>}>
         <div class="grid-fields"><T label="Nombre del gremio" v={b.nombre} set={(nombre) => guardar({ nombre })} clase="grow" /></div>
         <div class="row wrap">
           <label class="btn">Importar .json<input type="file" accept=".json,application/json" hidden aria-label="Importar biblioteca de gremio" onChange={importar} /></label>
@@ -207,6 +209,8 @@ export function Gremio({ f }: { f: Ficha }) {
           </details>
         ))}
       </Panel>
+
+      <CategoriasGremio f={f} />
 
       <Panel title="En este personaje" extra={<span class="muted small">Consume: nivel de vía {total.nivel} · CV {total.cv} · CM {total.cm} · PD {total.pd.reduce((a, c) => a + c, 0)}</span>}>
         <div class="salidas">

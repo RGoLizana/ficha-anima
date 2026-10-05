@@ -2,6 +2,7 @@
 // Todo lo demás lo calcula el motor de fórmulas (src/engine) con la plantilla 8.7.0.
 import type { Entrada, Entradas } from '../engine/libro';
 import { entradasConsumo, parseElegidos, type Elegido } from '../gremio/modelo';
+import { categoriasUsadas, entradasCategorias, parseCategorias, type CategoriaGremio } from '../gremio/categorias';
 
 export const VERSION = 2;
 export const NOMBRE = 'General!F22';
@@ -27,6 +28,8 @@ export interface Ficha {
   propio?: Elegido[];
   /** Imagen del personaje (data URL JPEG ya reducida): sale en los iconos de las fichas y en la página principal. */
   retrato?: string;
+  /** Copia de las categorías de gremio (propias o modificadas) que usa el personaje: así calcula igual en cualquier navegador. */
+  categorias?: CategoriaGremio[];
   /** Pestañas del menú que el jugador ha ocultado en este personaje (p. ej. «psiquica» en un mago). Solo afecta al menú. */
   ocultas?: string[];
 }
@@ -69,7 +72,7 @@ export function parseSesion(d: unknown): Sesion | undefined {
 }
 
 /** Lo que se carga en el motor: las entradas del Excel más lo que consumen los elementos propios del gremio. */
-export const entradasMotor = (f: Ficha): Entradas => ({ ...f.entradas, ...entradasConsumo(f.propio ?? []) });
+export const entradasMotor = (f: Ficha): Entradas => ({ ...f.entradas, ...entradasConsumo(f.propio ?? []), ...entradasCategorias(f.categorias, categoriasUsadas(f.entradas)) });
 
 export const nombreDe = (f: Ficha) => String(f.entradas[NOMBRE] ?? '');
 
@@ -100,6 +103,7 @@ export function parse(data: unknown): Ficha {
   const sesion = parseSesion(d.sesion);
   const propio = parseElegidos(d.propio);
   const retrato = typeof d.retrato === 'string' && /^data:image\/(jpeg|png|webp);base64,/.test(d.retrato) && d.retrato.length < 400_000 ? d.retrato : undefined;
+  const categorias = parseCategorias(d.categorias);
   const ocultas = Array.isArray(d.ocultas) ? [...new Set(d.ocultas.filter((x): x is string => typeof x === 'string' && /^[a-z]{2,20}$/.test(x)))] : [];
   return {
     version: VERSION,
@@ -111,6 +115,7 @@ export function parse(data: unknown): Ficha {
     ...(sesion ? { sesion } : {}),
     ...(propio.length ? { propio } : {}),
     ...(retrato ? { retrato } : {}),
+    ...(categorias.length ? { categorias } : {}),
     ...(ocultas.length ? { ocultas } : {}),
   };
 }
