@@ -57,6 +57,32 @@ describe('archivos que no son una ficha', () => {
   });
 });
 
+describe('categorías en el Excel importado', () => {
+  const libro = (o7: string, o9?: string) => {
+    const celda = (r: string, t: string) => `<c r="${r}" t="inlineStr"><is><t>${t}</t></is></c>`;
+    return zipSync({
+      'xl/workbook.xml': strToU8('<workbook><sheets><sheet name="Principal" sheetId="1" r:id="rId1"/><sheet name="General" sheetId="2" r:id="rId2"/><sheet name="PDs" sheetId="3" r:id="rId3"/></sheets></workbook>'),
+      'xl/_rels/workbook.xml.rels': strToU8('<Relationships><Relationship Id="rId1" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Target="worksheets/sheet2.xml"/><Relationship Id="rId3" Target="worksheets/sheet3.xml"/></Relationships>'),
+      'xl/worksheets/sheet1.xml': strToU8('<worksheet><sheetData/></worksheet>'),
+      'xl/worksheets/sheet2.xml': strToU8('<worksheet><sheetData/></worksheet>'),
+      'xl/worksheets/sheet3.xml': strToU8(`<worksheet><sheetData><row r="7">${celda('O7', o7)}</row>${o9 ? `<row r="9">${celda('O9', o9)}</row>` : ''}</sheetData></worksheet>`),
+    });
+  };
+
+  it('una categoría que no es oficial no se importa: la casilla queda vacía y se avisa', () => {
+    const r = leerFicha(libro('Caballero rúnico', 'Hechicero'));
+    expect(r.entradas['PDs!O7']).toBeUndefined();
+    expect(r.entradas['PDs!O9']).toBe('Hechicero');
+    expect(r.avisos.join(' ')).toMatch(/«Caballero rúnico» no es oficial y no se importa/);
+  });
+
+  it('las oficiales se importan igual, sin avisos de categoría', () => {
+    const r = leerFicha(libro('Guerrero Acróbata'));
+    expect(r.entradas['PDs!O7']).toBe('Guerrero Acróbata');
+    expect(r.avisos.join(' ')).not.toMatch(/no es oficial/);
+  });
+});
+
 // Originales en versiones anteriores (solo en el equipo del autor; ver tools/migrate.py FICHAS)
 const ORIGINALES = {
   sesshomaru: String.raw`D:\Escritorio\dissidia\aa-Sesshomaru\Sesshomaru 4.xlsm`, // 8.5.0

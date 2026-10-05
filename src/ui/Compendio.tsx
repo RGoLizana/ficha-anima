@@ -5,6 +5,7 @@ import { buscar } from '../store';
 import { nombreDe, entradasMotor } from '../model/ficha';
 import { txt } from './campos';
 import { biblioteca } from '../gremio/almacen';
+import { OFICIALES } from '../gremio/categorias';
 import type { Biblioteca } from '../gremio/modelo';
 import '../compendio.css';
 
@@ -420,6 +421,17 @@ export function Compendio({ id }: { id?: string }) {
       <tbody>{filas.map((f, i) => <tr key={i}>{f.map((c, j) => (j ? <td key={j} class={typeof c === 'number' ? 'num' : ''}>{c}</td> : <th scope="row" key={j}>{c}</th>))}</tr>)}</tbody>
     </table></div>
   );
+  /** Costes de convocatoria por categoría: las oficiales del Excel (con los valores de gremio si están modificadas) y las propias del gremio. */
+  const filasCategorias = (): ComponentChildren[][] => {
+    const COLS = ['AA', 'AB', 'AC', 'AD'];                         // Convocar, Dominar, Atar, Desconvocar en Tablas
+    const marca = <span class="flag" title="Contenido propio del gremio">GREMIO</span>;
+    const oficiales = C.pd.filas.map((p, i) => {
+      const mod = B.categorias.find((c) => c.oficial && OFICIALES[i]?.n === c.n);
+      return mod ? [<>{p.cat} {marca}</>, ...COLS.map((c, k) => Number(mod.v[c] ?? p.c[k]))] : [p.cat, ...p.c];
+    });
+    const propias = B.categorias.filter((c) => !c.oficial).map((c) => [<>{c.n} {marca}</>, ...COLS.map((k) => Number(c.v[k] ?? 0))]);
+    return [...oficiales, ...propias];
+  };
   const lista = (rs: Regla[]) => <ul class="reglas-lista">{rs.map((r) => <li key={r.t}><b>{r.t}.</b> {r.e}</li>)}</ul>;
   const signo = (v: number) => (v > 0 ? `+${v}` : String(v).replace('-', '−'));
   const Reglas = () => {
@@ -428,7 +440,7 @@ export function Compendio({ id }: { id?: string }) {
     if (g === 'Costes en PD') {
       cuerpo = <section class="regla">
         <p>Coste en PD de cada punto de las habilidades de convocatoria según la categoría del personaje.</p>
-        {tabla('Coste en PD por categoría', ['Categoría', ...C.pd.cols], C.pd.filas.map((p) => [p.cat, ...p.c]))}{Fuente(C.pd.fuente)}
+        {tabla('Coste en PD por categoría', ['Categoría', ...C.pd.cols], filasCategorias())}{Fuente(C.pd.fuente)}
       </section>;
     } else if (g === 'Encarnación y manifestación') {
       cuerpo = <section class="regla">

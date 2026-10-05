@@ -293,4 +293,4 @@ escribía sobre una fórmula (PDs!Z188).
   de las que usa (`ficha.categorias`). Una propia ocupa, solo en esa ficha, la fila de una oficial que no tiene (de la 223 hacia arriba) como
   entradas del motor (`src/gremio/categorias.ts`, `entradasMotor`): no se toca ninguna fórmula y sin categorías no se escribe nada. El selector de
   categoría de Principal y del asistente las ofrece marcadas «gremio». El Excel exportado lleva esas celdas en `Tablas` con un aviso de qué oficial
-  sustituyen. Importar desde Excel NO trae categorías propias. Pendiente (entrega 2): compendio y avisos de categoría desconocida al importar.
+  sustituyen. Importar desde Excel NO trae categorías propias. Entrega 2 (hecha): el compendio (Convocatoria → Costes en PD) muestra las propias y las oficiales modificadas con la marca GREMIO, y al importar un Excel una categoría no oficial se deja vacía con aviso.

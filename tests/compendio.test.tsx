@@ -113,6 +113,28 @@ describe('Compendio', () => {
     expect(r().textContent).toContain('Fuente: Excel');
   }, T);
 
+  it('convocatoria: las categorías de gremio salen en Costes en PD (propias añadidas, oficiales modificadas marcadas)', async () => {
+    const { guardarBiblioteca } = await import('../src/gremio/almacen');
+    const { BIBLIOTECA_VACIA } = await import('../src/gremio/modelo');
+    const { categoriaDesde } = await import('../src/gremio/categorias');
+    const propia = categoriaDesde('Hechicero', 'Caballero rúnico');
+    const mod = categoriaDesde('Guerrero', '', true);
+    mod.v.AA = 1;                                                                  // Convocar cuesta 1 en vez de 3
+    guardarBiblioteca({ ...BIBLIOTECA_VACIA, categorias: [propia, mod] });
+    try {
+      await abrirCompendio();
+      fireEvent.click(document.getElementById('tab-conv')!);
+      fireEvent.click(boton('Costes en PD', document.querySelector('.explorador')!));
+      const filas = [...document.querySelectorAll('.ctx.reglas tbody tr')];
+      expect(filas).toHaveLength(23);
+      expect(filas[0].textContent).toContain('GREMIO');
+      expect(filas[0].textContent).toMatch(/Guerrero.*GREMIO\s*1\s*3\s*3\s*3/);
+      expect(filas[22].textContent).toContain('Caballero rúnico');
+      expect(filas[22].textContent).toContain('GREMIO');
+      expect(filas[1].textContent).not.toContain('GREMIO');
+    } finally { guardarBiblioteca(BIBLIOTECA_VACIA); }
+  }, T);
+
   it('convocatoria: favoritos y comparar funcionan con invocaciones', async () => {
     await abrirCompendio();
     fireEvent.click(document.getElementById('tab-conv')!);

@@ -4,6 +4,7 @@
 import { unzipSync, strFromU8 } from 'fflate';
 import mapa from '../data/migracion.json';
 import type { Entrada, Entradas } from '../engine/libro';
+import { CASILLAS_CATEGORIA, oficialDe } from '../gremio/categorias';
 
 interface Version { filas: Record<string, number[][]>; mover: Record<string, number[][]> }
 const M = mapa as unknown as {
@@ -126,6 +127,14 @@ export function leerFicha(datos: Uint8Array): Importada {
   }
   if (desplazadas.length) avisos.push(`La disposición de ${desplazadas.join(', ')} no es la de la ${ACTUAL} base (¿ficha de gremio con filas o columnas añadidas?): los datos de esas hojas pueden haberse leído desplazados.`);
   if (saltadas.length) avisos.push(`${saltadas.length} celdas no se pudieron importar: ${saltadas.join(', ')}`);
+  // las categorías propias de un gremio no se importan: si la ficha usa una que no es oficial, la casilla queda vacía y se avisa
+  for (const casilla of CASILLAS_CATEGORIA) {
+    const n = entradas[casilla];
+    if (typeof n === 'string' && n.trim() && !oficialDe(n)) {
+      delete entradas[casilla];
+      avisos.push(`La categoría «${n.trim()}» no es oficial y no se importa: elige una categoría (${casilla}).`);
+    }
+  }
   return { entradas, version, avisos };
 }
 
