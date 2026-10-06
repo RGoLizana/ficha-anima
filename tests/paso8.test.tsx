@@ -159,12 +159,14 @@ describe('Grimorios informativos (todas las vías / disciplinas a la vez)', () =
   it('Ayane: muestra los poderes de todas sus disciplinas afines, marcando los aprendidos', async () => {
     abrirFicha('ayane', 'psiquica');
     await esperarListo();
-    await desplegarTodo();
-    await waitFor(() => expect(nombres().length).toBeGreaterThan(20), { timeout: 20_000 });
-    expect(nombres()).toEqual(expect.arrayContaining(['Crear fuego', 'Impacto telequinético']));
-    const imp = [...document.querySelectorAll('.arma.info')].find((a) => a.querySelector('.arma-titulo')!.textContent === 'Impacto telequinético')!;
-    expect(imp.classList.contains('sin-aprender')).toBe(false);
-    expect(imp.textContent).toContain('Aprendido');
+    const todas = await waitFor(() => [...document.querySelectorAll<HTMLButtonElement>('.psi-chip')].find((b) => b.textContent!.startsWith('Todas'))!, { timeout: 20_000 });
+    fireEvent.click(todas);
+    const cartas = () => [...document.querySelectorAll('[data-area="disciplinas"] .psi-carta')];
+    await waitFor(() => expect(cartas().length).toBeGreaterThan(20), { timeout: 20_000 });
+    expect(cartas().map((c) => c.querySelector('strong')!.textContent)).toEqual(expect.arrayContaining(['Crear fuego', 'Impacto telequinético']));
+    const imp = cartas().find((a) => a.querySelector('strong')!.textContent === 'Impacto telequinético')!;
+    expect(imp.classList.contains('mio')).toBe(true);
+    expect(imp.textContent).toContain('lo tienes');
   }, T);
 });
 

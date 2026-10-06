@@ -547,7 +547,7 @@ describe('Grimorios de magia y de vía', () => {
     await waitFor(() => expect(document.querySelector('.content')!.textContent).toContain('Crear oscuridad'));
     const titulos = [...document.querySelectorAll('.conjuro .arma-titulo')].map((t) => t.textContent);
     expect(titulos).toEqual(expect.arrayContaining(['Crear oscuridad', 'Ojos del otro lado', 'Sombra', 'Noche', 'Holocausto de oscuridad']));
-    expect(document.querySelector('.content')!.textContent).toContain('Conjuros de nivel 2-10');
+    expect(document.querySelector('.content')!.textContent).toContain('Conjuros de nivel 2-20');
   }, T);
 });
 
@@ -584,7 +584,7 @@ describe('Psíquica', () => {
     fireEvent.change(celda('Psíquicos!AA11'), { target: { value: '' } });
     await waitFor(() => expect(document.querySelector('.aviso')).toBeNull());
     fireEvent.change(celda('Psíquicos!M13'), { target: { value: '-1' } });
-    await waitFor(() => expect(document.querySelector('.aviso')?.textContent).toContain('Exceso de innatos activos'));
+    await waitFor(() => expect([...document.querySelectorAll('.aviso')].map((a) => a.textContent).join(' ')).toContain('Exceso de innatos activos'));
   }, T);
 
   it('Grimorio Psíquica: disciplinas elegidas con sus poderes y dificultades', async () => {

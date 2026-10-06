@@ -120,7 +120,7 @@ export function Panel({ title, children, extra, plegable, area, oculto }: { titl
     );
   }
   return (
-    <section class="panel stack">
+    <section class="panel stack" data-area={area} hidden={oculto}>
       <div class="row between wrap">
         <h2 class="panel-title">{title}</h2>
         {extra}

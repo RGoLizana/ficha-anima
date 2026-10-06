@@ -32,22 +32,23 @@ function Poder({ b, mas }: { b: number; mas: number }) {
   );
 }
 
-export function GrimorioPsiquica({ f }: { f: Ficha }) {
+/** Las 4 disciplinas del grimorio en PDF; la vista previa de cada una va plegada (son decenas de tarjetas). */
+export function GrimorioPsiquica({ f, oculto }: { f: Ficha; oculto?: boolean }) {
   return (
-    <Panel title="Grimorio de psíquica" extra={<span class="muted small">Elige hasta 4 disciplinas para el grimorio (PDF)</span>}>
+    <Panel title="Grimorio de psíquica" area="construccion" oculto={oculto} extra={<span class="muted small">Elige hasta 4 disciplinas para el grimorio (PDF)</span>}>
       <div class="grid-fields">
         {DISCIPLINAS.map(([c], i) => <Campo key={c} f={f} clave={`${H}!${c}6`} label={`Disciplina ${i + 1}`} />)}
       </div>
-      {DISCIPLINAS.map(([c, mas]) => !valido(txt(`${H}!${c}6`)) ? null : (
-        <div key={c}>
-          <h3>{txt(`${H}!${c}6`)}</h3>
-          <div class="armas">
-            {BANDAS.flatMap((b) => [0, 8, 16].map((m) => ({ b, mas: mas + m })))
-              .filter(({ b, mas: m }) => valido(txt(`${H}!${col('C', m)}${b}`)))
-              .map(({ b, mas: m }) => <Poder key={`${b}-${m}`} b={b} mas={m} />)}
-          </div>
-        </div>
-      ))}
+      {DISCIPLINAS.map(([c, mas]) => {
+        if (!valido(txt(`${H}!${c}6`))) return null;
+        const poderes = BANDAS.flatMap((b) => [0, 8, 16].map((m) => ({ b, mas: mas + m }))).filter(({ b, mas: m }) => valido(txt(`${H}!${col('C', m)}${b}`)));
+        return (
+          <details key={c} class="psi-resto">
+            <summary>Vista previa del PDF: {txt(`${H}!${c}6`)} ({poderes.length} poderes)</summary>
+            <div class="armas">{poderes.map(({ b, mas: m }) => <Poder key={`${b}-${m}`} b={b} mas={m} />)}</div>
+          </details>
+        );
+      })}
     </Panel>
   );
 }

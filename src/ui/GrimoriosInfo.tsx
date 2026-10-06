@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'preact/hooks';
+import { signal } from '@preact/signals';
 import type { ComponentChildren } from 'preact';
 import { Panel, Proximamente, txt } from './campos';
 import COLORES from '../data/vias-colores.json';
+import { nivelDe } from '../psiquica/mantenidos';
 
 // Grimorios informativos: todas las vías del mago (o disciplinas del psíquico) a la vez, sin elegir una sola como en
 // la hoja "Grimorio de Vía" del Excel. Los datos salen de las tablas del Excel (tools/export_grimorios.py).
@@ -156,38 +158,132 @@ export function GrimorioVias() {
   );
 }
 
-function PoderCarta({ p, aprendido }: { p: Poder; aprendido: boolean }) {
+// ---- Psíquica: una dificultad elegida cada vez (por defecto, la que alcanza el potencial del personaje) ----
+const difElegida = signal<number | null>(null);
+/** Índice en DIFICULTADES de la dificultad que da el potencial (Psíquicos!H11), con los umbrales del Excel. */
+const difDePotencial = () => Math.max(0, nivelDe(Number(txt('Psíquicos!H11')) || 0) - 1);
+export const difPsi = () => difElegida.value ?? difDePotencial();
+
+export function SelectorDificultad() {
+  const d = difPsi();
   return (
-    <article class={'arma info' + (aprendido ? '' : ' sin-aprender')}>
-      <h3 class="arma-titulo">{p.n}</h3>
-      <p class="small muted">Nivel <strong>{p.l}</strong> · {aprendido ? 'Aprendido' : 'No aprendido'} · Mantenido: {p.m} · {p.a}</p>
-      <table class="tabla grados">
-        <thead><tr><th scope="col" class="left">Dificultad</th><th scope="col" class="left">Efecto</th></tr></thead>
-        <tbody>{DIFICULTADES.map((d, i) => <tr key={d}><th scope="row" class="left">{d}</th><td class="left small">{p.f[i]}</td></tr>)}</tbody>
-      </table>
+    <label class="field psi-dif">
+      <span>Dificultad alcanzada</span>
+      <select value={d} onChange={(e) => { difElegida.value = Number(e.currentTarget.value); }}>
+        {DIFICULTADES.map((x, i) => <option key={x} value={i}>{x}{i === difDePotencial() ? ' (tu potencial)' : ''}</option>)}
+      </select>
+    </label>
+  );
+}
+
+/** Efecto en la dificultad elegida y, a petición, la tabla de las 10 (solo se pinta al abrirla). */
+function PoderPsi({ p, dif, mio, extra }: { p: Poder; dif: number; mio?: boolean; extra?: ComponentChildren }) {
+  const [todas, setTodas] = useState(false);
+  return (
+    <article class={'psi-carta' + (mio ? ' mio' : '')}>
+      <div class="row between wrap"><strong>{p.n}</strong><span class="chip">Nv {p.l}</span></div>
+      <span class="muted small">{p.d}{p.a ? ` · ${p.a}` : ''}{p.m === 'Sí' ? ' · mantenible' : ''}{mio ? ' · lo tienes' : ''}</span>
+      {extra}
+      <p class={'psi-efecto' + (/^fatiga/i.test(p.f[dif] ?? '') ? ' fallo' : '')}><b>{DIFICULTADES[dif]}:</b> {p.f[dif] || '—'}</p>
+      {p.f.length > 0 && <button type="button" class="btn psi-mas" aria-expanded={todas} onClick={() => setTodas(!todas)}>{todas ? 'Ocultar dificultades' : 'Ver las 10 dificultades'}</button>}
+      {todas && (
+        <table class="tabla grados">
+          <tbody>{DIFICULTADES.map((d, i) => <tr key={d} class={i === dif ? 'psi-sel' : ''}><th scope="row" class="left">{d}</th><td class="left small">{p.f[i]}</td></tr>)}</tbody>
+        </table>
+      )}
     </article>
   );
 }
 
-/** Todas las disciplinas afines del psíquico con sus poderes; los ya elegidos en Psíquica salen destacados. */
-export function GrimorioDisciplinas() {
+const disciplinasAfines = () => [25, 27, 29, 31, 33, 35].map((r) => txt(`Psíquicos!C${r}`)).filter(Boolean);
+/** Poderes dominados de la ficha (Psíquicos V11…V63): disciplina en V de la fila siguiente, nivel en Z, CV en AA y bono en AB. */
+export const misPoderes = () => rango(0, 26).map((i) => 11 + 2 * i).filter((r) => txt(`Psíquicos!V${r}`)).map((r) => ({
+  r, n: txt(`Psíquicos!V${r}`), d: txt(`Psíquicos!V${r + 1}`), l: txt(`Psíquicos!Z${r + 1}`), cv: txt(`Psíquicos!AA${r}`), bono: txt(`Psíquicos!AB${r}`),
+}));
+
+/** Lo que el personaje tiene, agrupado por disciplina, con el efecto en la dificultad elegida; el resto de la disciplina, plegado. */
+export function MisPoderes({ oculto, innatos }: { oculto?: boolean; innatos: Set<string> }) {
   const datos = useDatos();
-  const ab = useAbiertas();
-  const disciplinas = [25, 27, 29, 31, 33, 35].map((r) => txt(`Psíquicos!C${r}`)).filter(Boolean);
-  const aprendidos = new Set(rango(17, 43).map((r) => txt(`Psíquicos!AS${r}`)).filter(Boolean));
+  const mios = misPoderes();
+  const dif = difPsi();
+  const grupos = unicos([...mios.map((x) => x.d), ...disciplinasAfines()]);
   return (
-    <Panel title="Todas mis disciplinas" extra={<span class="muted small">Informativo: los poderes de cada disciplina afín (en gris, los no aprendidos)</span>}>
-      {!disciplinas.length && <p class="muted">Elige disciplinas afines arriba para verlas aquí.</p>}
-      {disciplinas.length > 0 && !datos && <p class="muted">Cargando poderes…</p>}
-      {datos && disciplinas.length > 0 && <Botones claves={disciplinas} ab={ab} />}
-      {datos && disciplinas.map((d) => {
-        const poderes = datos.poderes.filter((p) => p.d === d).sort((a, b) => a.l - b.l);
+    <Panel title="Mis poderes" area="poderes" oculto={oculto} extra={<span class="muted small">{mios.length} dominados · {grupos.length} disciplinas</span>}>
+      <SelectorDificultad />
+      {!mios.length && <p class="muted">Aún no tienes poderes: elígelos en «Construcción».</p>}
+      {!datos && mios.length > 0 && <p class="muted">Cargando poderes…</p>}
+      {datos && grupos.map((d) => {
+        const lista = mios.filter((x) => x.d === d);
+        const resto = datos.poderes.filter((p) => p.d === d && !lista.some((x) => x.n === p.n)).sort((a, b) => a.l - b.l);
         return (
-          <Desplegable key={d} k={d} abierto={ab.abiertas.has(d)} alternar={ab.alternar} titulo={d} resumen={`${poderes.filter((p) => aprendidos.has(p.n)).length} aprendidos · ${poderes.length} poderes`}>
-            <div class="armas">{poderes.map((p) => <PoderCarta key={p.n} p={p} aprendido={aprendidos.has(p.n)} />)}</div>
-          </Desplegable>
+          <section key={d} class="psi-grupo" aria-label={d}>
+            <h3 class="psi-grupo-t">{d} <span class="muted small">{lista.length} de {lista.length + resto.length}</span></h3>
+            {lista.length > 0 && (
+              <div class="psi-cartas">
+                {lista.map((x) => {
+                  const p = datos.poderes.find((q) => q.n === x.n) ?? { n: x.n, d, l: Number(x.l) || 0, m: '', a: '', f: [] };
+                  const innato = innatos.has(x.n);
+                  return <PoderPsi key={x.r} p={p} dif={dif} mio extra={(x.cv || innato) && (
+                    <span class="small">{x.cv ? `${x.cv} CV potenciados (+${x.bono})` : ''} {innato && <span class="chip">Innato</span>}</span>
+                  )} />;
+                })}
+              </div>
+            )}
+            {resto.length > 0 && (
+              <details class="psi-resto">
+                <summary>Otros {resto.length} poderes de {d}</summary>
+                <ul class="psi-lista">{resto.map((p) => <li key={p.n}>Nv {p.l} · {p.n}</li>)}</ul>
+              </details>
+            )}
+          </section>
         );
       })}
     </Panel>
   );
 }
+
+const norm = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+
+/** Grimorio informativo de las disciplinas afines: una disciplina cada vez, buscador por nombre o efecto y filtro de nivel. */
+export function GrimorioDisciplinas({ oculto }: { oculto?: boolean }) {
+  const datos = useDatos();
+  const disciplinas = disciplinasAfines();
+  const [sel, setSel] = useState('');
+  const [q, setQ] = useState('');
+  const [nivel, setNivel] = useState('');
+  const aprendidos = new Set(misPoderes().map((x) => x.n));
+  const disc = disciplinas.includes(sel) || sel === '*' ? sel : disciplinas[0] ?? '';
+  const dif = difPsi();
+  const cuenta = (d: string) => datos?.poderes.filter((p) => (d === '*' ? disciplinas.includes(p.d) : p.d === d)).length ?? '';
+  const lista = !datos ? [] : datos.poderes
+    .filter((p) => (disc === '*' ? disciplinas.includes(p.d) : p.d === disc) && (!nivel || p.l === Number(nivel))
+      && (!q.trim() || norm(p.n + ' ' + p.f.join(' ')).includes(norm(q.trim()))))
+    .sort((a, b) => a.l - b.l || a.n.localeCompare(b.n, 'es'));
+  return (
+    <Panel title="Todas mis disciplinas" area="disciplinas" oculto={oculto} extra={<span class="muted small">Informativo: los poderes de tus disciplinas afines</span>}>
+      {!disciplinas.length && <p class="muted">Elige disciplinas afines en «Construcción» para verlas aquí.</p>}
+      {disciplinas.length > 0 && (
+        <>
+          <div class="psi-chips" role="group" aria-label="Disciplina">
+            {[...disciplinas, '*'].map((d) => (
+              <button type="button" key={d} class="psi-chip" aria-pressed={disc === d} onClick={() => setSel(d)}>
+                {d === '*' ? 'Todas' : d} <small>{cuenta(d)}</small>
+              </button>
+            ))}
+          </div>
+          <div class="psi-filtros">
+            <label class="field grow"><span>Buscar poder o efecto</span><input type="search" value={q} placeholder="p. ej. escudo, fuego, RP…" onInput={(e) => setQ(e.currentTarget.value)} /></label>
+            <label class="field"><span>Nivel</span>
+              <select value={nivel} onChange={(e) => setNivel(e.currentTarget.value)}><option value="">Todos</option>{[1, 2, 3].map((l) => <option key={l} value={l}>{l}</option>)}</select>
+            </label>
+            <SelectorDificultad />
+          </div>
+          {!datos && <p class="muted">Cargando poderes…</p>}
+          {datos && <p class="muted small" role="status">{lista.length} poderes{q.trim() ? ` con «${q.trim()}»` : ''}</p>}
+          <div class="psi-cartas">{lista.map((p) => <PoderPsi key={p.n} p={p} dif={dif} mio={aprendidos.has(p.n)} />)}</div>
+        </>
+      )}
+    </Panel>
+  );
+}
+

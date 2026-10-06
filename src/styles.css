@@ -551,3 +551,47 @@ details.juego-panel[open] > summary { border-bottom: 1px solid var(--line); }
 .juego-mant-dia { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
 .juego-ctrl-cr .btn { min-height: 44px; }
 .juego-criatura .juego-ctrl { grid-template-columns: repeat(2, 56px) minmax(0, 1fr) repeat(2, 56px); }
+
+/* Psíquica: pestañas, tarjetas compactas y ancho de lectura limitado (acento único --psi: el Excel no colorea disciplinas) */
+.psiquica { max-width: 1100px; width: 100%; margin-inline: auto; --psi-suave: color-mix(in srgb, var(--psi) 14%, var(--surface)); }
+.psiquica [hidden] { display: none !important; }
+.psi-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+.psi-tab { min-height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--surface); color: var(--text); font: inherit; font-weight: 600; cursor: pointer; }
+.psi-tab:hover { border-color: var(--psi); }
+.psi-tab[aria-selected="true"] { border: 2px solid var(--psi); background: var(--psi-suave); color: var(--psi); padding: 0 17px; }
+.psi-tab small { color: var(--muted); font-weight: 700; }
+.psi-cartas { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
+.psi-carta { display: flex; flex-direction: column; gap: 6px; padding: 10px 12px; border: 1px solid var(--line-2); border-left: 4px solid var(--line-2); border-radius: 10px; background: var(--surface); min-width: 0; }
+.psi-carta.mio, .psiquica details.plegable .psi-carta:not(.libre) { border-left-color: var(--psi); }
+.psi-carta.mio { background: var(--psi-suave); }
+.psi-carta.libre { border-style: dashed; }
+.psi-carta .row { gap: 8px; align-items: flex-end; }
+.psi-efecto { margin: 0; }
+.psi-efecto.fallo { color: var(--danger); }
+.psi-mas { align-self: flex-start; min-height: 44px; }
+.psi-sel th, .psi-sel td { color: var(--psi); font-weight: 700; }
+.psi-pasos { display: flex; align-items: flex-end; gap: 4px; }
+.psi-pasos .btn { min-width: 44px; min-height: 44px; padding: 0; font-size: 18px; }
+.psi-pasos .field.mini input { min-height: 44px; text-align: center; }
+.psi-grupo { display: flex; flex-direction: column; gap: 8px; }
+.psi-grupo-t { font: 700 16px var(--display); color: var(--psi); border-bottom: 1px solid var(--line); padding-bottom: 4px; }
+.psi-resto > summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; color: var(--muted); }
+.psi-lista { margin: 0; padding-left: 18px; columns: 2 220px; color: var(--muted); font-size: 14px; }
+.psi-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.psi-chip { min-height: 44px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--surface); color: var(--text); font: inherit; cursor: pointer; }
+.psi-chip[aria-pressed="true"] { border-color: var(--psi); background: var(--psi-suave); color: var(--psi); font-weight: 700; }
+.psi-filtros { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
+.psi-filtros .grow { flex: 1 1 220px; }
+.psi-filtros select, .psi-filtros input, .psi-dif select { min-height: 44px; }
+.psi-dif { max-width: 260px; }
+.psi-vistazo { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.psi-vistazo p { margin: 4px 0 0; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.chip.psi-acento { color: var(--psi); }
+.psi-pasos { align-items: center; }
+.psi-pasos .field label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.psi-pasos-t { font-size: 13px; color: var(--muted); margin-right: 4px; }
+@media (max-width: 600px) {
+  .psi-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .psi-tab, .psi-tab[aria-selected="true"] { padding: 0 4px; font-size: 14px; border-radius: 10px; }
+}
+.psi-pasos .btn { display: inline-flex; align-items: center; justify-content: center; }

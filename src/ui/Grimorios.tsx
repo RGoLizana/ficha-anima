@@ -79,15 +79,19 @@ export function GrimorioVia({ f }: { f: Ficha }) {
         <p class="muted small">Muestra todos los conjuros de la vía por niveles (2 a 100), con sus grados.</p>
       </Panel>
       {!hayVia && <p class="muted">Elige una vía (y subvía) para ver sus conjuros.</p>}
-      {hayVia && PAGINAS_VIA.map((p) => (
-        <Panel key={p} title={txt(`Grimorio de Vía!C${p - 1}`) || `Conjuros ${p}`}>
-          <div class="armas">
-            {[0, 1, 2, 3, 4].flatMap((i) => [0, 19].map((mas) => ({ b: p + 11 * i, mas }))).map(({ b, mas }) => (
-              conConjuro(b, mas) ? <Conjuro key={`${b}-${mas}`} hoja="Grimorio de Vía" b={b} mas={mas} /> : null
-            ))}
-          </div>
-        </Panel>
-      ))}
+      {hayVia && PAGINAS_VIA.map((p) => {
+        // la hoja pone los niveles en dos columnas (2-10 a la izquierda, 12-20 a la derecha): en orden de nivel van primero los de una y luego los de la otra
+        const casillas = [0, 19].flatMap((mas) => [0, 1, 2, 3, 4].map((i) => ({ b: p + 11 * i, mas }))).filter(({ b, mas }) => conConjuro(b, mas));
+        const niveles = casillas.map(({ b, mas }) => Number(txt(`Grimorio de Vía!${col('I', mas)}${b}`))).filter((n) => Number.isFinite(n) && n > 0);
+        const rango = niveles.length ? `${Math.min(...niveles)}-${Math.max(...niveles)}` : '';
+        return (
+          <Panel key={p} title={rango ? `Conjuros de nivel ${rango}` : txt(`Grimorio de Vía!C${p - 1}`) || `Conjuros ${p}`}>
+            <div class="armas">
+              {casillas.map(({ b, mas }) => <Conjuro key={`${b}-${mas}`} hoja="Grimorio de Vía" b={b} mas={mas} />)}
+            </div>
+          </Panel>
+        );
+      })}
     </>
   );
 }

@@ -125,4 +125,15 @@ describe('usabilidad', () => {
     expect(avisos).toContain('Mikael en Elan 1 y en Elan 2');                              // salta al duplicar la entidad…
     expect(avisos).toContain('Don repetido: Luz de esperanza');                            // …y el don
   }, T);
+
+  it('Grimorio de vía: los conjuros salen por orden de nivel (no intercalando las dos columnas de la hoja)', async () => {
+    const f = lock({ 'Grimorio de Vía!J6': 'Fuego', 'Grimorio de Vía!J7': 'Pecado' });
+    render(<FichaView id={f.id} seccion="grimorios" />);
+    await waitFor(() => expect([...document.querySelectorAll('.panel-title')].some((h) => /^Conjuros de nivel/.test(h.textContent!))).toBe(true), { timeout: 30_000 });
+    const panel = [...document.querySelectorAll('.panel')].find((p) => /^Conjuros de nivel/.test(p.querySelector('.panel-title')?.textContent ?? ''))!;
+    const niveles = [...panel.querySelectorAll('article')].map((a) => Number(/Nivel\s*(\d+)/.exec(a.textContent!)![1]));
+    expect(niveles.length).toBeGreaterThan(5);
+    expect(niveles).toEqual([...niveles].sort((a, b) => a - b));
+    expect(panel.querySelector('.panel-title')!.textContent).toBe(`Conjuros de nivel ${niveles[0]}-${niveles.at(-1)}`);
+  }, T);
 });
