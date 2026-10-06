@@ -30,6 +30,14 @@ export function TarjetaNivel({ f }: { f: Ficha }) {
   const libres = disp - usado - reservado;
   const aviso = txt('PDs!T194');
   const mitad = num('Tablas!G371') > 0;
+  // PDs!Y185:AA187: bonos y habilidades naturales y bonos de Novel asignados frente a los que tocan (el Excel los cuenta; aquí solo se avisa)
+  const partes = (k: string) => txt(k).split('+').map((x) => Number(x) || 0);
+  const pasa = (a: string, b: string) => partes(a).some((x, i) => x > (partes(b)[i] ?? 0));
+  const asignaciones: [string, string, string, boolean][] = [
+    ['Bonos naturales', txt('PDs!Y185'), txt('PDs!AA185'), pasa('PDs!Y185', 'PDs!AA185')],
+    ['Hab. naturales', txt('PDs!Y186'), txt('PDs!AA186'), num('PDs!Y186') > num('PDs!AA186')],
+    ...(num('PDs!AA187') || num('PDs!Y187') ? [['Bonos de Novel', txt('PDs!Y187'), txt('PDs!AA187'), num('PDs!Y187') > num('PDs!AA187')] as [string, string, string, boolean]] : []),
+  ];
   const { propias, todas } = opcionesCategoria(f, destino);
   const destinos = todas.filter((n) => n.toLowerCase() !== cur.n.toLowerCase());
   const coste = destino ? costeCambio(cur.n, destino, f.categorias, mitad) : 0;
@@ -89,6 +97,7 @@ export function TarjetaNivel({ f }: { f: Ficha }) {
       <div class="chips">
         <span class={'chip' + (libres < 0 ? ' mal' : '')}>PD libres <b>{libres}</b></span>
         {p && <span class="chip">Reservados <b>{reservado}</b></span>}
+        {asignaciones.map(([t, y, a, mal]) => <span key={t} class={'chip' + (mal ? ' mal' : '')}>{t} <b>{y} de {a}</b></span>)}
         {aviso && <span class="chip mal" role="status">{aviso} · solo avisa</span>}
       </div>
 
