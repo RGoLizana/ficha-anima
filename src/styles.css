@@ -532,3 +532,22 @@ details.juego-panel[open] > summary { border-bottom: 1px solid var(--line); }
 .criatura-banda { align-items: center; gap: 12px; margin: 0; }
 .chip.familiar { color: var(--gold); }
 .criatura .btn.danger { color: var(--danger); }
+
+/* Modo juego: personalizar vista y criaturas */
+.juego-top { flex-wrap: wrap; }
+.juego-bloque { min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.juego-bloque.editando { outline: 1px dashed var(--line-2); outline-offset: 2px; border-radius: 10px; padding: 4px; }
+.juego-edit { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+.juego-edit-t { flex: 1 1 100px; font-weight: 700; font-size: 13px; }
+.juego-edit .btn { min-height: 44px; min-width: 44px; padding: 0 12px; }
+.juego-ocultos { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 6px; padding: 8px; border: 1px dashed var(--line-2); border-radius: 10px; }
+.juego-ocultos h3 { font: 700 14px var(--display); }
+.juego-edicion, .juego-banda { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 0; border-radius: 0; }
+.juego-edicion span, .juego-banda span { flex: 1 1 200px; }
+.juego-edicion .btn, .juego-banda .btn { min-height: 44px; }
+.juego-hud.editando { position: static; }
+.juego-hud.editando .juego-hud-stats { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+.juego-tabs.cinco { grid-template-columns: repeat(5, 1fr); }
+.juego-mant-dia { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+.juego-ctrl-cr .btn { min-height: 44px; }
+.juego-criatura .juego-ctrl { grid-template-columns: repeat(2, 56px) minmax(0, 1fr) repeat(2, 56px); }

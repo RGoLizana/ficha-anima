@@ -1,5 +1,5 @@
 import { signal, effect } from '@preact/signals';
-import { nueva, parse, nombreDe, nivelDe, NOMBRE, entradasMotor, type Ficha, type Resumen, type Sesion } from './model/ficha';
+import { nueva, parse, nombreDe, nivelDe, NOMBRE, entradasMotor, type Ficha, type Resumen, type Sesion, type VistaJuego } from './model/ficha';
 import { criaturasDe, entradasIniciales, fijarNivel, sincronizar } from './criaturas';
 import { CASILLAS_CATEGORIA, type CategoriaGremio } from './gremio/categorias';
 import { entradasConsumo, type Elegido } from './gremio/modelo';
@@ -109,6 +109,11 @@ export function guardarRetrato(id: string, retrato: string | null) {
 /** Guarda el estado de la partida (Modo juego). No toca `entradas` ni el motor: no cambia ningún cálculo. */
 export function guardarSesion(id: string, sesion: Sesion) {
   cambiar(id, (f) => ({ ...f, sesion }));
+}
+
+/** Guarda qué bloques del modo juego se ven y su orden (vacío = vista por defecto). No toca `entradas` ni el motor. */
+export function guardarVistaJuego(id: string, v: VistaJuego) {
+  cambiar(id, (f) => { const { vistaJuego: _vieja, ...resto } = f; return v.ocultos.length || v.orden.length ? { ...resto, vistaJuego: v } : resto; });
 }
 
 /** Guarda la copia de valores calculados que usa la lista (no cuenta como edición). */

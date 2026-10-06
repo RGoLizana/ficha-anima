@@ -1,12 +1,12 @@
 // Modo juego: una pantalla para jugar la sesión. Lee los valores calculados de la ficha (solo lectura) y guarda el
 // estado de la partida en `ficha.sesion`, aparte de las entradas: nada de aquí cambia la ficha ni sus cálculos.
 // Sin dados (decisión del usuario). Los límites avisan, nunca bloquean.
-import { useEffect, useRef, useState } from 'preact/hooks';
-import { Fragment, type ComponentChildren } from 'preact';
-import { buscar, fichas, guardado, guardarSesion } from '../store';
-import { convocadorDe, criaturasDe } from '../criaturas';
+import { useContext, useEffect, useRef, useState } from 'preact/hooks';
+import { Fragment, createContext, type ComponentChildren } from 'preact';
+import { buscar, fichas, guardado, guardarSesion, guardarVistaJuego } from '../store';
+import { convocadorDe, criaturasDe, nivelTotal, zeonSugerido } from '../criaturas';
 import { abrir, abierta, errorMotor, motor, valores } from '../engine';
-import { nombreDe, type Ficha, type Recurso, type Sesion, entradasMotor } from '../model/ficha';
+import { nombreDe, type Ficha, type Recurso, type Sesion, type VistaJuego, entradasMotor } from '../model/ficha';
 import { Icon } from './Icon';
 import { Avatar } from './Avatar';
 import { txt } from './campos';
@@ -118,14 +118,64 @@ function Cabecera({ f, children }: { f: Ficha; children?: ComponentChildren }) {
         <div class="char-name">{nombre || 'Sin nombre'}</div>
         <div class="muted small">{[txt('Principal!K5'), txt('Principal!O6') && `Nivel ${txt('Principal!O6')}`, txt('General!F23')].filter(Boolean).join(' · ')}</div>
       </div>
-      {convocadorDe(fichas.value, f) && <a class="btn" href={`#/juego/${f.criatura!.padre}`}>← {nombreDe(convocadorDe(fichas.value, f)!) || 'Convocador'}</a>}
       {children}
     </header>
   );
 }
 
+/** Vista por personaje: qué bloques se ven y en qué orden. Cada bloque reordenable tiene un id estable. */
+type Item = { id: string; t: string; el: () => ComponentChildren };
+type VistaCtx = { editando: boolean; v: VistaJuego; guardar: (v: VistaJuego) => void };
+const Vista = createContext<VistaCtx>({ editando: false, v: { ocultos: [], orden: [] }, guardar: () => {} });
+
+/** Pinta los bloques en el orden guardado, sin los ocultos; en modo edición cada uno lleva Subir / Bajar / Ocultar y los ocultos se listan al final. */
+function Orden({ items }: { items: Item[] }) {
+  const { editando, v, guardar } = useContext(Vista);
+  const pos = (i: Item, k: number) => { const p = v.orden.indexOf(i.id); return p < 0 ? 1e6 + k : p; };
+  const todos = items.map((i, k) => [i, k] as const).sort((a, b) => pos(...a) - pos(...b)).map((x) => x[0]);
+  const vis = todos.filter((i) => !v.ocultos.includes(i.id));
+  const oc = todos.filter((i) => v.ocultos.includes(i.id));
+  const resto = v.orden.filter((x) => !items.some((i) => i.id === x));
+  const mover = (k: number, d: number) => {
+    const nuevo = [...vis];
+    [nuevo[k], nuevo[k + d]] = [nuevo[k + d], nuevo[k]];
+    guardar({ ocultos: v.ocultos, orden: [...resto, ...[...nuevo, ...oc].map((i) => i.id)] });
+  };
+  const ocultar = (id: string) => guardar({ ...v, ocultos: [...v.ocultos, id] });
+  const mostrar = (id: string) => guardar({ ...v, ocultos: v.ocultos.filter((x) => x !== id) });
+  return (
+    <>
+      {vis.map((i, k) => (
+        <div class={'juego-bloque' + (editando ? ' editando' : '')} key={i.id} data-bloque={i.id}>
+          {editando && (
+            <div class="juego-edit">
+              <span class="juego-edit-t">{i.t}</span>
+              <button type="button" class="btn" disabled={k === 0} aria-label={`Subir ${i.t}`} onClick={() => mover(k, -1)}>↑ Subir</button>
+              <button type="button" class="btn" disabled={k === vis.length - 1} aria-label={`Bajar ${i.t}`} onClick={() => mover(k, 1)}>↓ Bajar</button>
+              <button type="button" class="btn" aria-label={`Ocultar ${i.t}`} onClick={() => ocultar(i.id)}>Ocultar</button>
+            </div>
+          )}
+          {i.el()}
+        </div>
+      ))}
+      {editando && oc.length > 0 && (
+        <section class="juego-ocultos" aria-label="Ocultos">
+          <h3>Ocultos</h3>
+          {oc.map((i) => (
+            <div class="juego-edit" key={i.id}>
+              <span class="juego-edit-t">{i.t}</span>
+              <button type="button" class="btn" aria-label={`Mostrar ${i.t}`} onClick={() => mostrar(i.id)}>Mostrar</button>
+            </div>
+          ))}
+        </section>
+      )}
+    </>
+  );
+}
+
 type Aviso = { t: string; d: string; antes?: Sesion };
 const TABS = [['estado', 'Estado'], ['combate', 'Combate'], ['habil', 'Habilidades'], ['poderes', 'Poderes']] as const;
+const TAB_CRIATURAS = ['criaturas', 'Criaturas'] as const;
 
 function Partida({ f }: { f: Ficha }) {
   const max = maximos();
@@ -158,6 +208,12 @@ function Partida({ f }: { f: Ficha }) {
   useEffect(() => () => { clearTimeout(tAviso.current); clearTimeout(tArmado.current); }, []);
 
   const [tab, setTab] = useState<string>('estado');
+  const [editando, setEditando] = useState(false);
+  const vista = f.vistaJuego ?? { ocultos: [], orden: [] };
+  const hijas = criaturasDe(fichas.value, f.id);
+  const padre = convocadorDe(fichas.value, f);
+  const tabs = hijas.length ? [...TABS, TAB_CRIATURAS] : TABS;
+  const mantCriaturas = hijas.length ? mantenimiento(hijas) : 0;
   const [poder, setPoder] = useState(max.zeon > 0 ? 'magia' : max.ki > 0 ? 'ki' : max.cv > 0 ? 'psi' : 'magia');
 
   const reiniciar = () => {
@@ -203,7 +259,8 @@ function Partida({ f }: { f: Ficha }) {
     avisar('Un día de descanso',
       `${signo(nuevo.r.pv! - cur.pv)} PV · ${signo(nuevo.r.zeon! - cur.zeon)} zeón · ${signo(nuevo.r.ki! - cur.ki)} ki · ${signo(nuevo.r.cv! - cur.cv)} CV · cansancio y acciones al máximo`
       + (negativos ? ` · ${negativos} negativo${negativos > 1 ? 's' : ''} continuo${negativos > 1 ? 's' : ''} reducido${negativos > 1 ? 's' : ''}` : '')
-      + (reg === null ? ' · ⚠ La ficha no indica una regeneración diaria: no se recuperan PV.' : ''), s);
+      + (reg === null ? ' · ⚠ La ficha no indica una regeneración diaria: no se recuperan PV.' : '')
+      + (mantCriaturas > 0 ? ` · Recuerda el mantenimiento de tus criaturas: ${mantCriaturas} zeón (no se ha descontado)` : ''), s);
   };
 
   const nuevoAsalto = () => {
@@ -243,8 +300,11 @@ function Partida({ f }: { f: Ficha }) {
   const conZeon = max.zeon > 0 || cur.zeon !== 0;
 
   return (
+    <Vista.Provider value={{ editando, v: vista, guardar: (v) => guardarVistaJuego(f.id, v) }}>
     <div class="page juego">
       <Cabecera f={f}>
+        <button type="button" class="btn" aria-pressed={editando} onClick={() => setEditando(!editando)}
+          title="Reordena u oculta bloques de este modo juego (solo afecta a este personaje)">Personalizar vista</button>
         <span class={guardado.value ? 'saved' : 'error'} role="status">{guardado.value ? '● Sesión guardada' : '● No se pudo guardar'}</span>
         <button type="button" class={'btn' + (armado ? ' juego-armado' : '')} onClick={reiniciar} aria-pressed={armado}
           aria-label={armado ? 'Confirmar: reiniciar sesión' : 'Reiniciar sesión'} title="Vuelve todos los valores de sesión a los de la ficha">
@@ -252,17 +312,33 @@ function Partida({ f }: { f: Ficha }) {
         </button>
       </Cabecera>
 
-      <section class="juego-hud" aria-label="Lo más usado">
+      {padre && (
+        <div class="banner juego-banda">
+          <span>Criatura de <strong>{nombreDe(padre) || 'su convocador'}</strong></span>
+          <a class="btn" href={`#/juego/${padre.id}`}>Volver al convocador</a>
+        </div>
+      )}
+      {editando && (
+        <div class="banner juego-edicion" role="region" aria-label="Personalizar vista">
+          <span>Sube, baja u oculta los bloques. Lo oculto no se borra y la ficha no cambia.</span>
+          <button type="button" class="btn" onClick={() => guardarVistaJuego(f.id, { ocultos: [], orden: [] })}>Restablecer vista</button>
+          <button type="button" class="btn primary" onClick={() => setEditando(false)}>Listo</button>
+        </div>
+      )}
+
+      <section class={'juego-hud' + (editando ? ' editando' : '')} aria-label="Lo más usado">
         <RecursoFila ctx={ctx} k="pv" hud />
         {conZeon && <RecursoFila ctx={ctx} k="zeon" hud />}
         <div class="juego-hud-stats">
-          <Stat v={txt('Principal!D31')} l="Turno" />
-          <Stat v={txt('Principal!H24')} l="H. Ataque" />
-          <Stat v={txt('Principal!H26')} l={txt('Principal!F26').replace(/:$/, '') || 'H. Defensa'} />
-          {conZeon && <Stat v={txt('Místicos!P12')} l="Proy. mágica" />}
-          <Stat v={`${cur.acc}/${max.acc}`} l="Acciones" />
-          <Stat v={String(s.asalto)} l="Asalto" extra />
-          <Stat v={mod ? signo(mod) : '0'} l="Mod. a toda acción" cls={mod ? 'juego-mod' : ''} extra={!mod} />
+          <Orden items={[
+            { id: 'stat-turno', t: 'Turno', el: () => <Stat v={txt('Principal!D31')} l="Turno" /> },
+            { id: 'stat-ataque', t: 'H. Ataque', el: () => <Stat v={txt('Principal!H24')} l="H. Ataque" /> },
+            { id: 'stat-defensa', t: 'H. Defensa', el: () => <Stat v={txt('Principal!H26')} l={txt('Principal!F26').replace(/:$/, '') || 'H. Defensa'} /> },
+            ...(conZeon ? [{ id: 'stat-proy', t: 'Proy. mágica', el: () => <Stat v={txt('Místicos!P12')} l="Proy. mágica" /> }] : []),
+            { id: 'stat-acciones', t: 'Acciones', el: () => <Stat v={`${cur.acc}/${max.acc}`} l="Acciones" /> },
+            { id: 'stat-asalto', t: 'Asalto', el: () => <Stat v={String(s.asalto)} l="Asalto" extra /> },
+            { id: 'stat-mod', t: 'Mod. a toda acción', el: () => <Stat v={mod ? signo(mod) : '0'} l="Mod. a toda acción" cls={mod ? 'juego-mod' : ''} extra={!mod} /> },
+          ]} />
         </div>
       </section>
 
@@ -289,11 +365,16 @@ function Partida({ f }: { f: Ficha }) {
             <div class={'juego-poder' + (poder === 'ki' ? ' on' : '')}><Ki ctx={ctx} /></div>
             <div class={'juego-poder' + (poder === 'psi' ? ' on' : '')}><Psi ctx={ctx} /></div>
           </div>
+          {hijas.length > 0 && (
+            <div class={'juego-grupo' + (tab === 'criaturas' ? ' on' : '')} id="juego-criaturas" role="tabpanel" aria-labelledby="tab-criaturas">
+              <CriaturasJuego ctx={ctx} hijas={hijas} total={mantCriaturas} />
+            </div>
+          )}
         </div>
       </main>
 
-      <nav class="juego-tabs" role="tablist" aria-label="Secciones del modo juego">
-        {TABS.map(([k, t]) => (
+      <nav class={'juego-tabs' + (tabs.length > 4 ? ' cinco' : '')} role="tablist" aria-label="Secciones del modo juego">
+        {tabs.map(([k, t]) => (
           <button type="button" role="tab" key={k} id={`tab-${k}`} aria-selected={tab === k} aria-controls={`juego-${k}`}
             onClick={() => { setTab(k); scrollTo?.(0, 0); }}>{t}</button>
         ))}
@@ -311,6 +392,7 @@ function Partida({ f }: { f: Ficha }) {
         )}
       </div>
     </div>
+    </Vista.Provider>
   );
 }
 
@@ -402,16 +484,8 @@ function Estado({ ctx, nuevoAsalto, descansar }: { ctx: Ctx; nuevoAsalto: () => 
   const mod = s.efectos.reduce((t, e) => t + e.m, 0);
   const rapido = (signo: number) => { poner('pv', cur.pv + signo * (Number(cant) || 0)); setCant(''); };
   const visibles = (['pv', 'zeon', 'ki', 'cv', 'cans', 'acc'] as Recurso[]).filter((k) => ['pv', 'cans', 'acc'].includes(k) || max[k] > 0 || cur[k] !== 0);
-  return (
-    <>
-      {criaturasDe(fichas.value, ctx.f.id).length > 0 && (
-        <Panel t="Criaturas atadas" pill="solo navegar">
-          <div class="row wrap">
-            {criaturasDe(fichas.value, ctx.f.id).map((c) => <a class="btn" key={c.id} href={`#/juego/${c.id}`}>{nombreDe(c) || 'Sin nombre'}{c.criatura!.familiar ? ' (familiar)' : ''}</a>)}
-          </div>
-        </Panel>
-      )}
-
+  return <Orden items={[
+    { id: 'estado', t: 'Estado actual', el: () => (
       <Panel t="Estado actual" pill="solo sesión">
         {visibles.map((k) => (
           <Fragment key={k}>
@@ -428,12 +502,16 @@ function Estado({ ctx, nuevoAsalto, descansar }: { ctx: Ctx; nuevoAsalto: () => 
           </Fragment>
         ))}
       </Panel>
+    ) },
 
+    { id: 'asalto', t: 'Asalto', el: () => (
       <Panel t="Asalto" pill={`Asalto ${s.asalto}`}>
         <button type="button" class="btn primary" onClick={nuevoAsalto}>Nuevo asalto</button>
         <p class="muted small">Recupera las acciones y resta 1 asalto a cada efecto.</p>
       </Panel>
+    ) },
 
+    { id: 'descanso', t: 'Descanso', el: () => (
       <Panel t="Descanso" pill="un día">
         <button type="button" class="btn primary" onClick={descansar}>Descansar un día</button>
         <p class="muted small">
@@ -442,7 +520,9 @@ function Estado({ ctx, nuevoAsalto, descansar }: { ctx: Ctx; nuevoAsalto: () => 
         </p>
         {reg === null && <p class="nota">La ficha no indica una regeneración diaria de PV ({txt('Principal!K11') || 'vacía'}): al descansar se recuperan 0 PV.</p>}
       </Panel>
+    ) },
 
+    { id: 'efectos', t: 'Efectos y estados', el: () => (
       <Panel t="Efectos y estados" pill={mod ? `Mod. ${signo(mod)} a toda acción` : undefined}>
         {s.efectos.length ? s.efectos.map((e, i) => (
           <div class="juego-fila" key={i}>
@@ -464,7 +544,9 @@ function Estado({ ctx, nuevoAsalto, descansar }: { ctx: Ctx; nuevoAsalto: () => 
           <button class="btn juego-ancho">Añadir efecto</button>
         </form>
       </Panel>
+    ) },
 
+    { id: 'contadores', t: 'Contadores', el: () => (
       <Panel t="Contadores" pill="munición, cargas…" open={s.conts.length > 0}>
         {s.conts.length ? s.conts.map((c, i) => (
           <div class="juego-fila" key={i}>
@@ -479,14 +561,16 @@ function Estado({ ctx, nuevoAsalto, descansar }: { ctx: Ctx; nuevoAsalto: () => 
         )) : <div class="juego-vacio">Sin contadores.</div>}
         <button type="button" class="btn" onClick={() => guardar((x) => { x.conts.push({ n: `Contador ${x.conts.length + 1}`, v: 0 }); })}>Añadir contador</button>
       </Panel>
+    ) },
 
+    { id: 'notas', t: 'Notas rápidas', el: () => (
       <Panel t="Notas rápidas">
         <label class="sr-only" for="juego-notas">Notas rápidas de la sesión</label>
         <textarea id="juego-notas" rows={4} placeholder="PNJ, pistas, iniciativa de los enemigos…" value={s.notas}
           onInput={(e) => guardar((x) => { x.notas = e.currentTarget.value; })} />
       </Panel>
-    </>
-  );
+    ) },
+  ]} />;
 }
 
 // Hoja Combate: ranuras de arma (igual que la sección Combate). 1-6 cuerpo a cuerpo, 7-10 proyectiles.
@@ -537,8 +621,8 @@ function Combate({ conZeon }: { conZeon: boolean }) {
   const desarrollada = txt('Principal!F31');
   const armas = RANURAS.filter((s) => txt(c(LADO[s.lado].arma, s.r)));
   const piezas = [12, 13, 14, 15].map((r) => txt(c('C', r))).filter(Boolean);
-  return (
-    <>
+  return <Orden items={[
+    { id: 'combate', t: 'Combate', el: () => (
       <Panel t="Combate">
         <div class="salidas">
           <Stat v={txt('Principal!D31')} l="Turno" />
@@ -548,32 +632,38 @@ function Combate({ conZeon }: { conZeon: boolean }) {
           <Stat v={txt('Principal!J32')} l="Acciones" />
         </div>
         <div class="juego-duo">
-          <Arma titulo={txt(c('C', 20)) || 'Desarmado'} chip={desarrollada === 'Desarmado' ? 'Arma desarrollada' : undefined}
-            sal={[['Turno', txt(c('H', 21))], ['Ataque', txt(c('I', 21))], [`Defensa ${txt(c('K', 21))}`.trim(), txt(c('J', 21))], ['Daño', txt(c('L', 21))]]}
-            crit={<Criticos fila={23} cols={['C', 'D', 'E', 'F', 'G']} />} />
-          {armas.map((s) => {
-            const L = LADO[s.lado];
-            const nombre = txt(c(L.nombre, s.r - 1)) || txt(c(L.arma, s.r));
-            const v = L.sal.map((k) => txt(c(k, s.r + 1)));
-            return (
-              <Arma key={`${s.r}${s.lado}`} titulo={nombre} chip={desarrollada && nombre.includes(desarrollada) ? 'Arma desarrollada' : undefined}
-                sal={[['Turno', v[0]], ['Ataque', v[1]], [`Defensa ${v[3]}`.trim(), v[2]], ['Daño', v[4]]]}
-                crit={<Criticos fila={s.proyectil ? s.r + 4 : s.r + 3} cols={L.crit} />} />
-            );
-          })}
-          {conZeon && (
-            <Arma titulo="Proyección mágica" cls="juego-magia"
-              sal={[['Turno', txt('Místicos!O12')], ['Ataque', txt('Místicos!P12')], ['Defensa', txt('Místicos!Q12')], ['ACT', txt('Místicos!L12')]]} />
-          )}
-          {n('Psíquicos!H11') > 0 && (
-            <Arma titulo="Proyección psíquica" cls="juego-psi"
-              sal={[['Turno', txt('Psíquicos!O12')], ['Ataque', txt('Psíquicos!P12')], ['Defensa', txt('Psíquicos!Q12')], ['Potencial', txt('Psíquicos!H11')]]} />
-          )}
+          <Orden items={[
+            { id: 'arma-desarrollada', t: txt(c('C', 20)) || 'Desarmado', el: () => (
+              <Arma titulo={txt(c('C', 20)) || 'Desarmado'} chip={desarrollada === 'Desarmado' ? 'Arma desarrollada' : undefined}
+                sal={[['Turno', txt(c('H', 21))], ['Ataque', txt(c('I', 21))], [`Defensa ${txt(c('K', 21))}`.trim(), txt(c('J', 21))], ['Daño', txt(c('L', 21))]]}
+                crit={<Criticos fila={23} cols={['C', 'D', 'E', 'F', 'G']} />} />
+            ) },
+            ...armas.map((s) => {
+              const L = LADO[s.lado];
+              const nombre = txt(c(L.nombre, s.r - 1)) || txt(c(L.arma, s.r));
+              const v = L.sal.map((k) => txt(c(k, s.r + 1)));
+              return { id: `arma-${s.r}${s.lado}`, t: nombre, el: () => (
+                <Arma titulo={nombre} chip={desarrollada && nombre.includes(desarrollada) ? 'Arma desarrollada' : undefined}
+                  sal={[['Turno', v[0]], ['Ataque', v[1]], [`Defensa ${v[3]}`.trim(), v[2]], ['Daño', v[4]]]}
+                  crit={<Criticos fila={s.proyectil ? s.r + 4 : s.r + 3} cols={L.crit} />} />
+              ) };
+            }),
+            ...(conZeon ? [{ id: 'proy-magica', t: 'Proyección mágica', el: () => (
+              <Arma titulo="Proyección mágica" cls="juego-magia"
+                sal={[['Turno', txt('Místicos!O12')], ['Ataque', txt('Místicos!P12')], ['Defensa', txt('Místicos!Q12')], ['ACT', txt('Místicos!L12')]]} />
+            ) }] : []),
+            ...(n('Psíquicos!H11') > 0 ? [{ id: 'proy-psi', t: 'Proyección psíquica', el: () => (
+              <Arma titulo="Proyección psíquica" cls="juego-psi"
+                sal={[['Turno', txt('Psíquicos!O12')], ['Ataque', txt('Psíquicos!P12')], ['Defensa', txt('Psíquicos!Q12')], ['Potencial', txt('Psíquicos!H11')]]} />
+            ) }] : []),
+          ]} />
         </div>
       </Panel>
+    ) },
 
-      <CalculadoraDano />
+    { id: 'calculadora', t: 'Calculadora de daño', el: () => <CalculadoraDano /> },
 
+    { id: 'armadura', t: 'Armadura', el: () => (
       <Panel t="Armadura" pill={piezas.join(' · ') || 'sin armadura'}>
         <table class="tabla">
           <thead><tr>{TIPOS_TA.map((t) => <th scope="col" key={t}>{t}</th>)}</tr></thead>
@@ -581,7 +671,9 @@ function Combate({ conZeon }: { conZeon: boolean }) {
         </table>
         <p class="muted small">Requisito {txt(c('H', 16)) || 0} · Restricción de movimiento {txt(c('E', 16)) || 0} · Pen. a acción física {txt(c('S', 16)) || 0}</p>
       </Panel>
+    ) },
 
+    { id: 'resistencias', t: 'Resistencias y presencia', el: () => (
       <Panel t="Resistencias y presencia">
         <div class="juego-res">
           {[57, 58, 59, 60, 61, 62].map((r) => <Stat key={r} v={txt(`Principal!J${r}`)} l={r === 57 ? 'Pres.' : txt(`Principal!D${r}`)} />)}
@@ -590,8 +682,8 @@ function Combate({ conZeon }: { conZeon: boolean }) {
           Movimiento {txt('Principal!J16')} ({txt('Principal!K17')}) · Regeneración {txt('Principal!J11')} ({txt('Principal!K11')}) · Cansancio {txt('Principal!N16')}
         </p>
       </Panel>
-    </>
-  );
+    ) },
+  ]} />;
 }
 
 const GRUPO: Record<string, string> = { Perc: 'Perceptivas' };
@@ -625,8 +717,8 @@ function Habilidades({ ctx }: { ctx: Ctx }) {
     return filtro === 'Todas' || h.g === filtro;
   });
   const fav = (nombre: string) => guardar((x) => { x.favH = x.favH.includes(nombre) ? x.favH.filter((h) => h !== nombre) : [...x.favH, nombre]; });
-  return (
-    <>
+  return <Orden items={[
+    { id: 'habilidades', t: 'Habilidades', el: () => (
       <Panel t="Habilidades" pill={`${s.favH.length} favoritas`}>
         <input type="search" aria-label="Buscar habilidad" placeholder="Buscar habilidad…" value={q} onInput={(e) => setQ(e.currentTarget.value)} />
         <div class="juego-filtros" role="group" aria-label="Filtrar habilidades">
@@ -646,13 +738,15 @@ function Habilidades({ ctx }: { ctx: Ctx }) {
         </div>
         <label class="check small"><input type="checkbox" checked={ocultar} onChange={(e) => setOcultar(e.currentTarget.checked)} /> Ocultar las no desarrolladas (negativas o «-»)</label>
       </Panel>
+    ) },
+    { id: 'caracteristicas', t: 'Características', el: () => (
       <Panel t="Características" open={false}>
         <div class="juego-caracts">
           {rango(11, 18).map((r) => <Stat key={r} v={txt(`Principal!G${r}`)} l={txt(`Principal!D${r}`)} />)}
         </div>
       </Panel>
-    </>
-  );
+    ) },
+  ]} />;
 }
 
 // Conjuros: datos de los grimorios (como GrimoriosInfo), cargados aparte la primera vez.
@@ -728,8 +822,8 @@ function Magia({ ctx }: { ctx: Ctx }) {
   };
   const favC = (nombre: string) => guardar((x) => { x.favC = x.favC.includes(nombre) ? x.favC.filter((h) => h !== nombre) : [...x.favC, nombre]; });
 
-  return (
-    <>
+  return <Orden items={[
+    { id: 'magia', t: 'Magia', el: () => (
       <Panel t="Magia" color="var(--magia)" pill={`Nivel ${txt('Místicos!E12') || 0}/${txt('Místicos!C12') || 0} · ACT ${ACT}`}>
         <RecursoFila ctx={ctx} k="zeon" />
         <div class="salidas">
@@ -740,7 +834,9 @@ function Magia({ ctx }: { ctx: Ctx }) {
         </div>
         {cur.zeon < 0 && <p class="aviso" role="status">Zeón por debajo de 0 ({cur.zeon}).</p>}
       </Panel>
+    ) },
 
+    { id: 'mantenidos', t: 'Mantenidos', el: () => (
       <Panel t="Mantenidos" pill={s.mant.length ? `${mantTotal} zeón/asalto` : undefined}>
         {s.mant.length ? (
           <>
@@ -755,7 +851,9 @@ function Magia({ ctx }: { ctx: Ctx }) {
           </>
         ) : <div class="juego-vacio">Ningún conjuro mantenido.</div>}
       </Panel>
+    ) },
 
+    { id: 'conjuros', t: 'Conjuros', el: () => (
       <Panel t="Conjuros" pill="toca un grado para lanzarlo">
         <input type="search" aria-label="Buscar conjuro" placeholder="Buscar conjuro…" value={q} onInput={(e) => setQ(e.currentTarget.value)} />
         <div class="juego-filtros" role="group" aria-label="Filtrar conjuros">
@@ -789,12 +887,14 @@ function Magia({ ctx }: { ctx: Ctx }) {
         {todos && !lista.length && <div class="juego-vacio">{conjuros.length ? 'Nada coincide.' : 'Sin conjuros: elige vías o conjuros en la sección Magia.'}</div>}
         <p class="muted small">Borde rojo discontinuo: tu INT ({INT}) no llega al requisito del grado. Avisa, no bloquea.</p>
       </Panel>
+    ) },
 
+    { id: 'libre', t: 'Libre acceso', el: () => (
       <Panel t="Libre acceso" pill={`${libres.length} conjuros`} open={false}>
         {libres.length ? <p class="small">{libres.map(([c, l]) => (l ? `${c} ${l}` : c)).join(' · ')}</p> : <div class="juego-vacio">Sin conjuros de libre acceso.</div>}
       </Panel>
-    </>
-  );
+    ) },
+  ]} />;
 }
 
 /** Reservas de ki por característica (ki sin unificar): lo actual de cada una, con su acumulación por asalto. Solo sesión: no toca la ficha. */
@@ -826,12 +926,14 @@ const t = (col: string, fila: number) => `Creación de Técnicas!${col}${fila}`;
 function Ki({ ctx }: { ctx: Ctx }) {
   const tecnicas = BASES.map((b) => ({ b, nombre: txt(t('D', b)) })).filter((x) => x.nombre && x.nombre !== 'Nombre de la técnica');
   const acu = n('Ki!D24');
-  return (
-    <>
+  return <Orden items={[
+    { id: 'ki', t: 'Ki', el: () => (
       <Panel t="Ki" color="var(--ki)" pill={`${txt('Ki!I10') === 'Sí' ? 'unificado · ' : ''}acumula ${txt('Ki!D24') || 0}/asalto`}>
         {ctx.res ? <ReservasKi ctx={ctx} /> : <RecursoFila ctx={ctx} k="ki" />}
         {ctx.cur.ki < 0 && <p class="aviso" role="status">Ki por debajo de 0 ({ctx.cur.ki}).</p>}
       </Panel>
+    ) },
+    { id: 'tecnicas', t: 'Técnicas', el: () => (
       <Panel t="Técnicas">
         {tecnicas.length ? tecnicas.map(({ b, nombre }) => {
           const coste = txt(t('X', b));
@@ -850,16 +952,16 @@ function Ki({ ctx }: { ctx: Ctx }) {
           );
         }) : <div class="juego-vacio">Sin técnicas de ki.</div>}
       </Panel>
-    </>
-  );
+    ) },
+  ]} />;
 }
 
 const p = (col: string, fila: number) => `Psíquicos!${col}${fila}`;
 
 function Psi({ ctx }: { ctx: Ctx }) {
   const poderes = rango(11, 63, 2).map((r) => ({ r, n: txt(p('V', r)) })).filter((x) => x.n);
-  return (
-    <>
+  return <Orden items={[
+    { id: 'psiquica', t: 'Psíquica', el: () => (
       <Panel t="Psíquica" color="var(--psi)" pill={`potencial ${txt(p('H', 11)) || 0}`}>
         <RecursoFila ctx={ctx} k="cv" />
         {ctx.cur.cv < 0 && <p class="aviso" role="status">CVs por debajo de 0 ({ctx.cur.cv}).</p>}
@@ -876,9 +978,9 @@ function Psi({ ctx }: { ctx: Ctx }) {
         )) : <div class="juego-vacio">Sin poderes psíquicos.</div>}
         <PoderesGremio f={ctx.f} />
       </Panel>
-      <MantenidosPsi ctx={ctx} />
-    </>
-  );
+    ) },
+    { id: 'mantpsi', t: 'Mantenidos psíquicos', el: () => <MantenidosPsi ctx={ctx} /> },
+  ]} />;
 }
 
 /** Innatos activos en la sesión: mantener, subir de nivel con CV libres (−CV de la reserva) y soltar. Avisa, nunca bloquea. */
@@ -955,5 +1057,72 @@ function PoderesGremio({ f }: { f: Ficha }) {
         </div>
       ))}
     </div>
+  );
+}
+
+/** Zeón diario de mantenimiento de las criaturas atadas: manda lo anotado en el Excel (Místicos!H61); si no hay nada, la suma de lo sugerido. */
+function mantenimiento(hijas: Ficha[]) {
+  return n('Místicos!H61') || hijas.reduce((t, h) => t + (zeonSugerido(nivelTotal(h), h.criatura!.familiar) ?? 0), 0);
+}
+
+/** Pestaña «Criaturas» del convocador. El PV de cada criatura vive en SU sesión; sus cifras salen de su `resumen` (el motor solo calcula la ficha abierta). */
+function CriaturasJuego({ ctx, hijas, total }: { ctx: Ctx; hijas: Ficha[]; total: number }) {
+  const anotado = n('Místicos!H61') > 0;
+  return <Orden items={[
+    { id: 'criaturas', t: 'Criaturas', el: () => (
+      <Panel t="Criaturas" pill={`${hijas.length} ${hijas.length === 1 ? 'criatura' : 'criaturas'}`}>
+        <div class="juego-mant-dia">
+          <span>Mantenimiento diario: <strong>{total}</strong> zeón <span class="muted small">({anotado ? 'anotado en tus criaturas atadas' : 'sugerido: no hay nada anotado en Místicos'})</span></span>
+          {total > 0 && <button type="button" class="btn primary" onClick={() => ctx.gastar('zeon', total, 'Mantenimiento del día')}>Pagar mantenimiento del día</button>}
+        </div>
+        {hijas.map((h) => <CriaturaJuego key={h.id} c={h} />)}
+      </Panel>
+    ) },
+  ]} />;
+}
+
+function CriaturaJuego({ c }: { c: Ficha }) {
+  const [cant, setCant] = useState('');
+  const nombre = nombreDe(c) || 'Sin nombre';
+  const v = c.criatura!;
+  const stats = c.resumen?.stats;
+  const dato = (k: string) => stats?.find((x) => x.k === k)?.v;
+  const max = Number(dato('PV'));
+  const s = c.sesion ?? vacia();
+  const cur = s.r.pv ?? max;
+  const poner = (x: number) => guardarSesion(c.id, { ...s, r: { ...s.r, pv: Math.round(x) } });
+  const rapido = (sg: number) => { poner(cur + sg * (Number(cant) || 0)); setCant(''); };
+  return (
+    <article class="juego-tecnica juego-criatura" data-criatura={c.id}>
+      <div class="row between wrap">
+        <h3>{nombre}</h3>
+        <span class="chip">{v.familiar ? 'Familiar' : 'Atada'} · Nivel {nivelTotal(c)}</span>
+      </div>
+      {stats && Number.isFinite(max) && dato('PV') !== '' ? (
+        <>
+          <div class="juego-ctrl juego-ctrl-cr" data-r="pv">
+            {[-10, -1].map((d) => <button type="button" class="btn" key={d} aria-label={`Restar ${-d} PV a ${nombre}`} onClick={() => poner(cur + d)}>{String(d).replace('-', '−')}</button>)}
+            <div class="juego-val"><strong aria-label={`PV de ${nombre}`}>{cur}</strong><span class="muted">/ {max}</span></div>
+            {[1, 10].map((d) => <button type="button" class="btn" key={d} aria-label={`Sumar ${d} PV a ${nombre}`} onClick={() => poner(cur + d)}>+{d}</button>)}
+          </div>
+          <div class="juego-rapido">
+            <input type="number" inputMode="numeric" placeholder="Daño / curación" aria-label={`Daño o curación de ${nombre}`} value={cant} onInput={(e) => setCant(e.currentTarget.value)} />
+            <button type="button" class="btn juego-quitar" onClick={() => rapido(-1)}>Quitar</button>
+            <button type="button" class="btn juego-curar" onClick={() => rapido(1)}>Curar</button>
+          </div>
+          {cur <= 0 && <p class="aviso" role="status">PV a 0 o menos.</p>}
+          <div class="salidas">{['Turno', 'H. Ataque', 'H. Defensa'].map((k) => <Stat key={k} v={String(dato(k) ?? '')} l={k} />)}</div>
+          {v.familiar && cur < max && (
+            <p class="nota" role="status">Familiar dañado (Core p. 199): su amo hace un control de RF contra el doble del daño recibido o sufre −20 a toda acción.</p>
+          )}
+        </>
+      ) : (
+        <p class="nota" role="status">Ábrela una vez para ver sus cifras: <a href={`#/ficha/${c.id}`}>abrir su ficha</a>.</p>
+      )}
+      <div class="row wrap">
+        <a class="btn" href={`#/juego/${c.id}`}>Abrir en modo juego</a>
+        <a class="btn" href={`#/ficha/${c.id}`}>Ficha</a>
+      </div>
+    </article>
   );
 }

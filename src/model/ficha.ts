@@ -41,7 +41,11 @@ export interface Ficha {
   ocultas?: string[];
   /** Si es una criatura atada o familiar de otro personaje (el convocador). */
   criatura?: Vinculo;
+  /** Qué bloques del modo juego se ven y en qué orden (por personaje). Solo afecta a la vista: no toca `entradas`. */
+  vistaJuego?: VistaJuego;
 }
+
+export interface VistaJuego { ocultos: string[]; orden: string[] }
 
 /** Casillas de nivel de cada categoría de PDs (la suma es el nivel del personaje). */
 export const CASILLAS_NIVEL = ['PDs!S7', 'PDs!S9', 'PDs!S11', 'PDs!S13', 'PDs!S15'];
@@ -125,6 +129,9 @@ export function parse(data: unknown): Ficha {
   const retrato = typeof d.retrato === 'string' && /^data:image\/(jpeg|png|webp);base64,/.test(d.retrato) && d.retrato.length < 400_000 ? d.retrato : undefined;
   const categorias = parseCategorias(d.categorias);
   const ocultas = Array.isArray(d.ocultas) ? [...new Set(d.ocultas.filter((x): x is string => typeof x === 'string' && /^[a-z]{2,20}$/.test(x)))] : [];
+  const ids = (x: unknown) => (Array.isArray(x) ? [...new Set(x.filter((t): t is string => typeof t === 'string' && /^[a-z0-9:.-]{1,40}$/i.test(t)))] : []);
+  const vj = typeof d.vistaJuego === 'object' && d.vistaJuego !== null ? (d.vistaJuego as Record<string, unknown>) : undefined;
+  const vistaJuego: VistaJuego | undefined = vj && (ids(vj.ocultos).length || ids(vj.orden).length) ? { ocultos: ids(vj.ocultos), orden: ids(vj.orden) } : undefined;
   const id = typeof d.id === 'string' ? d.id : crypto.randomUUID();
   const v = typeof d.criatura === 'object' && d.criatura !== null ? (d.criatura as Record<string, unknown>) : undefined;
   const criatura: Vinculo | undefined = v && typeof v.padre === 'string' && v.padre && v.padre !== id && num(v.nivelAmo) !== undefined
@@ -142,5 +149,6 @@ export function parse(data: unknown): Ficha {
     ...(categorias.length ? { categorias } : {}),
     ...(ocultas.length ? { ocultas } : {}),
     ...(criatura ? { criatura } : {}),
+    ...(vistaJuego ? { vistaJuego } : {}),
   };
 }
