@@ -5,7 +5,7 @@ import type { Ficha } from '../model/ficha';
 import { aplicarCambio, editar, programarCambio } from '../store';
 import { costeCambio, filasActuales, FILAS, repartir, type Reparto } from '../nivel';
 import { copiaPropia, opcionesCategoria } from './CategoriasGremio';
-import { Barra } from './Desarrollo';
+import { Barra, PRIM } from './Desarrollo';
 import { txt, v } from './campos';
 
 const num = (k: string) => Number(v(k)) || 0;
@@ -38,6 +38,11 @@ export function TarjetaNivel({ f }: { f: Ficha }) {
     ['Hab. naturales', txt('PDs!Y186'), txt('PDs!AA186'), num('PDs!Y186') > num('PDs!AA186')],
     ...(num('PDs!AA187') || num('PDs!Y187') ? [['Bonos de Novel', txt('PDs!Y187'), txt('PDs!AA187'), num('PDs!Y187') > num('PDs!AA187')] as [string, string, string, boolean]] : []),
   ];
+  // Límites de PD en habilidades de combate, místicas y psíquicas (PDs filas 86, 104 y 120): lo gastado frente al límite de cada categoría
+  const limites = ([['Combate', 86], ['Magia', 104], ['Psíquica', 120]] as const).map(([t, r]) => {
+    const por = cats.map((c) => [num(`PDs!${PRIM.pd[c.i]}${r}`), Math.round(num(`PDs!${PRIM.coste[c.i]}${r}`))] as const);
+    return [t, por.reduce((x, [u]) => x + u, 0), por.reduce((x, [, l]) => x + l, 0), por.some(([u, l]) => u > l)] as const;
+  }).filter(([t, u, l]) => t === 'Combate' || u > 0 || l > 0);
   const { propias, todas } = opcionesCategoria(f, destino);
   const destinos = todas.filter((n) => n.toLowerCase() !== cur.n.toLowerCase());
   const coste = destino ? costeCambio(cur.n, destino, f.categorias, mitad) : 0;
@@ -97,6 +102,7 @@ export function TarjetaNivel({ f }: { f: Ficha }) {
       <div class="chips">
         <span class={'chip' + (libres < 0 ? ' mal' : '')}>PD libres <b>{libres}</b></span>
         {p && <span class="chip">Reservados <b>{reservado}</b></span>}
+        {limites.map(([t, u, l, mal]) => <span key={t} class={'chip' + (mal ? ' mal' : '')} title="PD gastados en estas habilidades frente al límite de la categoría">{t} <b>{u} / {l}</b></span>)}
         {asignaciones.map(([t, y, a, mal]) => <span key={t} class={'chip' + (mal ? ' mal' : '')}>{t} <b>{y} de {a}</b></span>)}
         {aviso && <span class="chip mal" role="status">{aviso} · solo avisa</span>}
       </div>
