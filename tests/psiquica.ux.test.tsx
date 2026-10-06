@@ -128,4 +128,21 @@ describe('Psíquica por pestañas', () => {
     expect(p.querySelectorAll('.psi-carta').length).toBe(10);
     expect([...p.querySelectorAll('.psi-grupo-t')].map((h) => h.textContent)).toEqual(['Crioquinesis', 'Piroquinesis', 'Telequinesis', 'Teletransporte']);
   }, T);
+
+  it('un poder ya elegido no se ofrece otra vez en las demás casillas, y un duplicado importado avisa sin borrarse', async () => {
+    const f = await ayane();
+    const elegido = String(store.buscar(f.id)!.entradas['Psíquicos!V11']);
+    tab('Construcción').click();
+    await waitFor(() => expect(panel('Poderes psíquicos').hidden).toBe(false));
+    const selLibre = () => panel('Poderes psíquicos').querySelector('.psi-carta.libre select') as HTMLSelectElement;
+    await waitFor(() => expect(selLibre().options.length).toBeGreaterThan(5));
+    expect([...selLibre().options].map((o) => o.value)).not.toContain(elegido);
+    cleanup(); abierta.value = null; store.fichas.value = [];
+    const base = read('ref/fichas/ayane.json') as { entradas: Record<string, Entrada> };
+    const g = store.importar(JSON.stringify({ ...base, entradas: { ...base.entradas, 'Psíquicos!V13': elegido, 'Psíquicos!V15': elegido } }));
+    render(<FichaView id={g.id} seccion="psiquica" />);
+    await waitFor(() => expect(document.querySelector('.psi-tabs')).toBeTruthy(), { timeout: 20_000 });
+    await waitFor(() => expect(document.body.textContent).toContain(`«${elegido}» está elegido dos veces`), { timeout: 30_000 });
+    expect(store.buscar(g.id)!.entradas['Psíquicos!V13']).toBe(elegido);          // el duplicado no se borra
+  }, T);
 });

@@ -11,6 +11,10 @@ import { MAX_CV, NIVELES, POR_CV, avisos, bonoDe, dominadosMantenibles, efecto, 
 const p = (col: string, fila: number) => `Psíquicos!${col}${fila}`;
 const impares = (a: number, b: number) => Array.from({ length: (b - a) / 2 + 1 }, (_, i) => a + 2 * i);
 
+const elegidas = (f: Ficha, col: string, filas: number[]) => filas.map((r) => String(f.entradas[p(col, r)] ?? '')).filter(Boolean);
+/** Nombres repetidos entre las casillas elegidas (una ficha importada puede traerlos): se avisa, no se borra. */
+const repetidos = (xs: string[]) => [...new Set(xs.filter((x, i) => xs.indexOf(x) !== i))];
+
 /** Solo las filas ocupadas y la primera libre (aunque haya huecos entre ellas): nunca se bloquea añadir otra. */
 function visibles(f: Ficha, filas: number[], cols: string[]) {
   const llena = (r: number) => cols.some((c) => f.entradas[p(c, r)]);
@@ -162,7 +166,7 @@ export function Psiquica({ f }: { f: Ficha }) {
           <div class="psi-cartas">
             {visibles(f, impares(25, 35), ['C']).map((r) => (
               <div class="psi-carta" key={r}>
-                <Campo f={f} clave={p('C', r)} label={f.entradas[p('C', r)] ? 'Disciplina' : '+ Añadir disciplina'} />
+                <Campo f={f} clave={p('C', r)} label={f.entradas[p('C', r)] ? 'Disciplina' : '+ Añadir disciplina'} excluir={elegidas(f, 'C', impares(25, 35))} />
                 {txt(p('F', r)) && <span class="muted small">{txt(p('F', r))}</span>}
               </div>
             ))}
@@ -176,7 +180,7 @@ export function Psiquica({ f }: { f: Ficha }) {
               <div class="psi-cartas">
                 {ocupadas.filter((r) => (txt(p('V', r + 1)) || 'Sin disciplina') === g).map((r) => (
                   <div class="psi-carta" key={r}>
-                    <Campo f={f} clave={p('V', r)} label="Poder" />
+                    <Campo f={f} clave={p('V', r)} label="Poder" excluir={elegidas(f, 'V', impares(11, 63))} />
                     <div class="row between wrap">
                       <span class="muted small">{txt(p('Z', r + 1)) && `Nivel ${txt(p('Z', r + 1))}`}{txt(p('AB', r)) ? ` · bono +${txt(p('AB', r))}` : ''}</span>
                       <Pasos f={f} clave={p('AA', r)} label="CVs" />
@@ -188,9 +192,10 @@ export function Psiquica({ f }: { f: Ficha }) {
           ))}
           {libre && (
             <div class="psi-carta libre">
-              <Campo f={f} clave={p('V', libre)} label="+ Añadir poder" />
+              <Campo f={f} clave={p('V', libre)} label="+ Añadir poder" excluir={elegidas(f, 'V', impares(11, 63))} />
             </div>
           )}
+          {repetidos(elegidas(f, 'V', impares(11, 63))).map((n) => <p class="aviso" role="status" key={n}>«{n}» está elegido dos veces: cuenta doble en CVs. Quita uno.</p>)}
           <ElementosGremio f={f} tipo="disciplina" />
           <Avisos claves={['PDs!V120']} />
         </Panel>
@@ -208,7 +213,7 @@ export function Psiquica({ f }: { f: Ficha }) {
               const usada = ['AD', 'AI', 'AJ'].some((c) => f.entradas[p(c, r)]);
               return (
                 <div class={'psi-carta' + (usada ? '' : ' libre')} key={r}>
-                  <Campo f={f} clave={p('AD', r)} label={usada ? 'Poder innato' : '+ Añadir innato'} />
+                  <Campo f={f} clave={p('AD', r)} label={usada ? 'Poder innato' : '+ Añadir innato'} excluir={elegidas(f, 'AD', impares(17, 61))} />
                   {usada && (
                     <div class="row between wrap">
                       <span class="muted small">{txt(p('AK', r))} {txt(p('AL', r))}</span>
@@ -220,6 +225,7 @@ export function Psiquica({ f }: { f: Ficha }) {
               );
             })}
           </div>
+          {repetidos(elegidas(f, 'AD', impares(17, 61))).map((n) => <p class="aviso" role="status" key={n}>«{n}» está elegido como innato dos veces. Quita uno.</p>)}
           <AvisoDe clave={p('C', 22)} re={/innatos/} />
         </Panel>
 
