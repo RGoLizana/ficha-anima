@@ -3,13 +3,14 @@ import { fichas, crear, duplicar, borrar, importar, importarExcel, exportar } fr
 import { ir } from '../router';
 import { Icon } from './Icon';
 import { Avatar } from './Avatar';
-import { nombreDe, type Ficha } from '../model/ficha';
+import { nivelDe, nombreDe, type Ficha } from '../model/ficha';
+import { convocadorDe, criaturasDe } from '../criaturas';
 
 /** Lo que se sabe de una ficha aunque no se haya abierto (sin calcular): categoría, raza y nivel salen de lo escrito; lo guardado al abrirla manda. */
 const datosDe = (f: Ficha) => ({
   categoria: f.resumen?.categoria || String(f.entradas['PDs!O7'] ?? ''),
   raza: f.resumen?.raza || String(f.entradas['General!F23'] ?? ''),
-  nivel: f.resumen?.nivel || String(['S7', 'S9', 'S11', 'S13', 'S15'].reduce((t, c) => t + (Number(f.entradas[`PDs!${c}`]) || 0), 0) || ''),
+  nivel: f.resumen?.nivel || String(nivelDe(f) || ''),
 });
 
 const filtro = signal('');
@@ -35,7 +36,9 @@ async function onImport(e: Event) {
 
 export function Lista() {
   const q = filtro.value.trim().toLowerCase();
-  const lista = fichas.value.filter((f) => `${nombreDe(f)} ${datosDe(f).categoria}`.toLowerCase().includes(q));
+  const coincide = (f: Ficha) => `${nombreDe(f)} ${datosDe(f).categoria}`.toLowerCase().includes(q);
+  // las criaturas enlazadas cuelgan de su convocador; si la búsqueda encuentra a una, sale su convocador
+  const lista = fichas.value.filter((f) => !convocadorDe(fichas.value, f) && (coincide(f) || criaturasDe(fichas.value, f.id).some(coincide)));
   const n = fichas.value.length;
 
   return (
@@ -78,8 +81,17 @@ export function Lista() {
                     {[datosDe(f).raza, datosDe(f).nivel && `Nivel ${datosDe(f).nivel}`].filter(Boolean).join(' · ') || 'Sin datos todavía'}
                   </div>
                 </div>
+                {f.criatura && <span class="chip">Criatura sin convocador</span>}
                 {datosDe(f).categoria && <span class="chip">{datosDe(f).categoria}</span>}
               </div>
+              {criaturasDe(fichas.value, f.id).length > 0 && (
+                <div class="row wrap small" aria-label="Criaturas">
+                  <span class="chip">{criaturasDe(fichas.value, f.id).length === 1 ? '1 criatura' : `${criaturasDe(fichas.value, f.id).length} criaturas`}</span>
+                  {criaturasDe(fichas.value, f.id).map((c) => (
+                    <a key={c.id} href={`#/ficha/${c.id}`}>{nombreDe(c) || 'Sin nombre'}{c.criatura!.familiar ? ' (familiar)' : ''}</a>
+                  ))}
+                </div>
+              )}
               {f.resumen?.stats && (
                 <div class="stats">
                   {f.resumen.stats.map((s) => (

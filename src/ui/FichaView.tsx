@@ -1,6 +1,7 @@
 import { Fragment } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
-import { buscar, actualizar, exportar, guardado, guardarOcultas, guardarResumen } from '../store';
+import { buscar, actualizar, exportar, fichas, guardado, guardarOcultas, guardarResumen, sincronizarFamiliares } from '../store';
+import { mostrarPestaña } from '../criaturas';
 import { abrir, abierta, errorMotor, motor, valores } from '../engine';
 import { nombreDe, entradasMotor } from '../model/ficha';
 import { Icon } from './Icon';
@@ -25,6 +26,7 @@ import { Gremio } from './Gremio';
 import { Equipo } from './Equipo';
 import { GrimorioPsiquica } from './GrimorioPsiquica';
 import { Personalizacion } from './Personalizacion';
+import { BandaCriatura, Criaturas } from './Criaturas';
 
 // Secciones de la ficha y el paso del plan en que se implementan
 const SECCIONES = [
@@ -38,6 +40,7 @@ const SECCIONES = [
   { id: 'tecnicas', t: 'Técnicas de Ki', paso: 5 },
   { id: 'magia', t: 'Magia', paso: 6 },
   { id: 'metamagia', t: 'Metamagia', paso: 6 },
+  { id: 'criaturas', t: 'Criaturas', paso: 6 },
   { id: 'psiquica', t: 'Psíquica', paso: 7 },
   { id: 'grimorios', t: 'Grimorios de magia', paso: 6 },
   { id: 'equipo', t: 'Equipo', paso: 8 },
@@ -53,7 +56,9 @@ export function FichaView({ id, seccion }: { id: string; seccion: string }) {
   const f = buscar(id);
 
   useEffect(() => {
-    if (f) void abrir(id, entradasMotor(f));
+    if (!f) return;
+    sincronizarFamiliares(f.criatura?.padre ?? id); // recupera desfases (fichas importadas o editadas en otra versión)
+    void abrir(id, entradasMotor(buscar(id) ?? f));
   }, [id]);
 
   // copia de unos valores calculados para la lista de fichas
@@ -77,10 +82,11 @@ export function FichaView({ id, seccion }: { id: string; seccion: string }) {
       </main>
     );
   }
-  const sec = SECCIONES.find((s) => s.id === seccion) ?? SECCIONES[0];
+  const sec = SECCIONES.find((s) => s.id === seccion && (s.id !== 'criaturas' || !f.criatura)) ?? SECCIONES[0];
   const nombre = nombreDe(f);
   const ocultas = f.ocultas ?? [];
-  const menu = SECCIONES.filter((s) => s.id === sec.id || !ocultas.includes(s.id)); // la que estás viendo no desaparece
+  const hayCriaturas = listo && mostrarPestaña(f, fichas.value, (k) => Number(txt(k)) || 0);
+  const menu = SECCIONES.filter((s) => s.id === sec.id || (!ocultas.includes(s.id) && (s.id !== 'criaturas' || hayCriaturas))); // la que estás viendo no desaparece
 
   return (
     <div class="page">
@@ -103,6 +109,8 @@ export function FichaView({ id, seccion }: { id: string; seccion: string }) {
 
       {motor.value === 'error' && <p class="banner error" role="alert">No se pudo cargar el motor de cálculo: {errorMotor.value}</p>}
       {motor.value !== 'error' && !listo && <p class="banner" role="status">Preparando los cálculos de la ficha…</p>}
+
+      <BandaCriatura f={f} />
 
       <div class="sheet">
         <div class="sidebar">
@@ -130,6 +138,7 @@ export function FichaView({ id, seccion }: { id: string; seccion: string }) {
           {listo && sec.id === 'tecnicas' && <Tecnicas f={f} />}
           {listo && sec.id === 'magia' && <Magia f={f} />}
           {listo && sec.id === 'metamagia' && <Metamagia f={f} />}
+          {listo && sec.id === 'criaturas' && <Criaturas f={f} />}
           {listo && sec.id === 'grimorios' && <><GrimorioVias /><GrimorioMagia f={f} /><GrimorioVia f={f} /></>}
           {listo && sec.id === 'psiquica' && <><Psiquica f={f} /><GrimorioDisciplinas /><GrimorioPsiquica f={f} /></>}
           {listo && sec.id === 'sheele' && <Sheele f={f} />}
@@ -143,7 +152,7 @@ export function FichaView({ id, seccion }: { id: string; seccion: string }) {
                 onInput={(e) => actualizar(id, { notas: e.currentTarget.value })} />
             </Panel>
           )}
-          {listo && !['principal', 'trasfondo', 'desarrollo', 'ventajas', 'combate', 'ki', 'tecnicas', 'magia', 'metamagia', 'grimorios', 'psiquica', 'sheele', 'elan', 'equipo', 'notas', 'personalizacion'].includes(sec.id) && (
+          {listo && !['principal', 'trasfondo', 'desarrollo', 'ventajas', 'combate', 'ki', 'tecnicas', 'magia', 'metamagia', 'criaturas', 'grimorios', 'psiquica', 'sheele', 'elan', 'equipo', 'notas', 'personalizacion'].includes(sec.id) && (
             <Panel title={sec.t}>
               {sec.extra && <p class="extra-note">Añade aquí ventajas, poderes, armas, armaduras… que no están en las reglas de Anima.</p>}
               <p class="muted">Esta sección se implementa en el paso {sec.paso}.</p>

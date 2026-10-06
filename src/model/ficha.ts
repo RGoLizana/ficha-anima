@@ -15,6 +15,13 @@ export interface Resumen {
   stats?: { k: string; v: string | number }[];
 }
 
+/** Enlace de una criatura atada con su convocador. Sin este campo, la ficha es un personaje normal. */
+export interface Vinculo {
+  padre: string;      // id del convocador
+  familiar: boolean;  // true: sube con el convocador; false: atada o estancada, nivel fijo
+  nivelAmo: number;   // nivel del convocador la última vez que se sincronizó
+}
+
 export interface Ficha {
   version: number;
   id: string;
@@ -32,7 +39,14 @@ export interface Ficha {
   categorias?: CategoriaGremio[];
   /** Pestañas del menú que el jugador ha ocultado en este personaje (p. ej. «psiquica» en un mago). Solo afecta al menú. */
   ocultas?: string[];
+  /** Si es una criatura atada o familiar de otro personaje (el convocador). */
+  criatura?: Vinculo;
 }
+
+/** Casillas de nivel de cada categoría de PDs (la suma es el nivel del personaje). */
+export const CASILLAS_NIVEL = ['PDs!S7', 'PDs!S9', 'PDs!S11', 'PDs!S13', 'PDs!S15'];
+/** Nivel total escrito en la ficha (sin motor). */
+export const nivelDe = (f: Ficha) => CASILLAS_NIVEL.reduce((t, c) => t + (Number(f.entradas[c]) || 0), 0);
 
 export const RECURSOS = ['pv', 'zeon', 'ki', 'cv', 'cans', 'acc'] as const;
 export type Recurso = (typeof RECURSOS)[number];
@@ -111,9 +125,13 @@ export function parse(data: unknown): Ficha {
   const retrato = typeof d.retrato === 'string' && /^data:image\/(jpeg|png|webp);base64,/.test(d.retrato) && d.retrato.length < 400_000 ? d.retrato : undefined;
   const categorias = parseCategorias(d.categorias);
   const ocultas = Array.isArray(d.ocultas) ? [...new Set(d.ocultas.filter((x): x is string => typeof x === 'string' && /^[a-z]{2,20}$/.test(x)))] : [];
+  const id = typeof d.id === 'string' ? d.id : crypto.randomUUID();
+  const v = typeof d.criatura === 'object' && d.criatura !== null ? (d.criatura as Record<string, unknown>) : undefined;
+  const criatura: Vinculo | undefined = v && typeof v.padre === 'string' && v.padre && v.padre !== id && num(v.nivelAmo) !== undefined
+    ? { padre: v.padre, familiar: v.familiar === true, nivelAmo: v.nivelAmo as number } : undefined;
   return {
     version: VERSION,
-    id: typeof d.id === 'string' ? d.id : crypto.randomUUID(),
+    id,
     entradas,
     notas: typeof d.notas === 'string' ? d.notas : '',
     actualizada: typeof d.actualizada === 'string' ? d.actualizada : new Date().toISOString(),
@@ -123,5 +141,6 @@ export function parse(data: unknown): Ficha {
     ...(retrato ? { retrato } : {}),
     ...(categorias.length ? { categorias } : {}),
     ...(ocultas.length ? { ocultas } : {}),
+    ...(criatura ? { criatura } : {}),
   };
 }

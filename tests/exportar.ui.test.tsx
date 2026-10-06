@@ -86,4 +86,24 @@ describe('Exportar Excel', () => {
     expect(aviso).toMatch(/«Novel» se sustituye por «Caballero rúnico»/);
     expect(aviso).toMatch(/no cuenta lo que consumen \(nivel de vía 22\)/);
   }, T);
+
+  it('avisa de que el enlace con el convocador y «Familiar» no viajan en el Excel', async () => {
+    const { zipSync, strToU8 } = await import('fflate');
+    vi.stubGlobal('URL', Object.assign(URL, { createObjectURL: () => 'blob:x', revokeObjectURL: () => {} }));
+    const descargas: string[] = [];
+    vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function (this: HTMLAnchorElement) { descargas.push(this.download); });
+    const p = store.importar(JSON.stringify(read('ref/fichas/lock.json')));
+    const c = store.crearCriatura(p.id)!;
+    render(<FichaView id={c.id} seccion="principal" />);
+    await waitFor(() => expect(document.querySelector('.exportar-excel')).toBeTruthy(), { timeout: 20_000 });
+    const hojas = ['Principal', 'General', 'Tablas'];
+    const libro = zipSync({
+      'xl/workbook.xml': strToU8(`<workbook><sheets>${hojas.map((h, i) => `<sheet name="${h}" sheetId="${i + 1}" r:id="rId${i + 1}"/>`).join('')}</sheets></workbook>`),
+      'xl/_rels/workbook.xml.rels': strToU8(`<Relationships>${hojas.map((_, i) => `<Relationship Id="rId${i + 1}" Target="worksheets/sheet${i + 1}.xml"/>`).join('')}</Relationships>`),
+      ...Object.fromEntries(hojas.map((_, i) => [`xl/worksheets/sheet${i + 1}.xml`, strToU8('<worksheet><sheetData/></worksheet>')])),
+    });
+    subir(new File([libro], 'base.xlsm'));
+    await waitFor(() => expect(descargas).toHaveLength(1), { timeout: 30_000 });
+    expect(document.querySelector('.exportar-excel [role=alert]')!.textContent).toMatch(/no viajan en el Excel/);
+  }, T);
 });

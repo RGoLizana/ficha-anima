@@ -3,7 +3,8 @@
 // Sin dados (decisión del usuario). Los límites avisan, nunca bloquean.
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { Fragment, type ComponentChildren } from 'preact';
-import { buscar, guardado, guardarSesion } from '../store';
+import { buscar, fichas, guardado, guardarSesion } from '../store';
+import { convocadorDe, criaturasDe } from '../criaturas';
 import { abrir, abierta, errorMotor, motor, valores } from '../engine';
 import { nombreDe, type Ficha, type Recurso, type Sesion, entradasMotor } from '../model/ficha';
 import { Icon } from './Icon';
@@ -117,6 +118,7 @@ function Cabecera({ f, children }: { f: Ficha; children?: ComponentChildren }) {
         <div class="char-name">{nombre || 'Sin nombre'}</div>
         <div class="muted small">{[txt('Principal!K5'), txt('Principal!O6') && `Nivel ${txt('Principal!O6')}`, txt('General!F23')].filter(Boolean).join(' · ')}</div>
       </div>
+      {convocadorDe(fichas.value, f) && <a class="btn" href={`#/juego/${f.criatura!.padre}`}>← {nombreDe(convocadorDe(fichas.value, f)!) || 'Convocador'}</a>}
       {children}
     </header>
   );
@@ -402,6 +404,14 @@ function Estado({ ctx, nuevoAsalto, descansar }: { ctx: Ctx; nuevoAsalto: () => 
   const visibles = (['pv', 'zeon', 'ki', 'cv', 'cans', 'acc'] as Recurso[]).filter((k) => ['pv', 'cans', 'acc'].includes(k) || max[k] > 0 || cur[k] !== 0);
   return (
     <>
+      {criaturasDe(fichas.value, ctx.f.id).length > 0 && (
+        <Panel t="Criaturas atadas" pill="solo navegar">
+          <div class="row wrap">
+            {criaturasDe(fichas.value, ctx.f.id).map((c) => <a class="btn" key={c.id} href={`#/juego/${c.id}`}>{nombreDe(c) || 'Sin nombre'}{c.criatura!.familiar ? ' (familiar)' : ''}</a>)}
+          </div>
+        </Panel>
+      )}
+
       <Panel t="Estado actual" pill="solo sesión">
         {visibles.map((k) => (
           <Fragment key={k}>

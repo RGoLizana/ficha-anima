@@ -527,3 +527,8 @@ details.juego-panel[open] > summary { border-bottom: 1px solid var(--line); }
 /* Psíquica: ayudante de poderes mantenidos */
 .mant-psi { display: flex; flex-direction: column; gap: 4px; padding: 8px 0; border-top: 1px solid var(--surface-2); }
 .mant-psi:first-of-type { border-top: 0; }
+
+/* Criaturas atadas y familiares */
+.criatura-banda { align-items: center; gap: 12px; margin: 0; }
+.chip.familiar { color: var(--gold); }
+.criatura .btn.danger { color: var(--danger); }

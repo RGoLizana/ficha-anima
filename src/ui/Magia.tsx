@@ -1,4 +1,6 @@
-import type { Ficha } from '../model/ficha';
+import { fichas } from '../store';
+import { criaturasDe } from '../criaturas';
+import { nombreDe, type Ficha } from '../model/ficha';
 import { ElementosGremio } from './ElementosGremio';
 import { Avisos, Campo, Panel, txt } from './campos';
 
@@ -23,6 +25,7 @@ function AvisoDe({ clave, re }: { clave: string; re: RegExp }) {
 }
 
 export function Magia({ f }: { f: Ficha }) {
+  const hijas = criaturasDe(fichas.value, f.id);
   const viasQueTiene = [LIBRE, ...new Set(rango(15, 25).map((r) => txt(m('C', r))).filter(Boolean))];
   return (
     <>
@@ -110,11 +113,13 @@ export function Magia({ f }: { f: Ficha }) {
       </Panel>
 
       <Panel title="Conjuros activos, criaturas atadas e invocaciones" plegable extra={<span class="muted small">Coste zeónico al día: <strong>{txt(m('H', 61)) || txt(m('G', 61)) || 0}</strong></span>}>
+        {hijas.length > 0 && <p class="small"><a href={`#/ficha/${f.id}/criaturas`}>Ver criaturas →</a></p>}
         {visibles(f, rango(33, 60), ['C', 'H', 'J']).map((r) => (
           <div class="compra" key={r}>
             <Campo f={f} clave={m('C', r)} label="Conjuro activo / criatura atada" class="grow" />
             <Campo f={f} clave={m('H', r)} label="Zeón diario" tipo="numero" class="mini" />
             <Campo f={f} clave={m('J', r)} label="Invocación o encarnación" class="grow" />
+            {hijas.filter((c) => nombreDe(c) && nombreDe(c) === String(f.entradas[m('C', r)] ?? '').trim()).slice(0, 1).map((c) => <a class="small" key={c.id} href={`#/ficha/${c.id}`}>Abrir ficha</a>)}
             {f.entradas[m('J', r)] && <span class="muted small">Dif. {txt(m('P', r))} · Zeón {txt(m('Q', r))}</span>}
           </div>
         ))}

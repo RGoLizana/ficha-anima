@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'preact/hooks';
 import type { Ficha } from '../model/ficha';
 import { nombreDe } from '../model/ficha';
+import { fichas } from '../store';
+import { criaturasDe } from '../criaturas';
 import { borrarBase, descargar, guardarBase, leerBase } from '../export/base';
 import { categoriasUsadas, entradasCategorias, sustituciones } from '../gremio/categorias';
 import { consumo } from '../gremio/modelo';
@@ -23,6 +25,7 @@ export function ExportarExcel({ f }: { f: Ficha }) {
       const gasto = consumo(f.propio ?? []);
       const gastos = [gasto.nivel && `nivel de vía ${gasto.nivel}`, gasto.cv && `CV ${gasto.cv}`, gasto.cm && `CM ${gasto.cm}`, gasto.pd.some(Boolean) && `PD ${gasto.pd.reduce((a, b) => a + b, 0)}`].filter(Boolean);
       const avisos = [
+        (f.criatura || criaturasDe(fichas.value, f.id).length) && 'El enlace con el convocador y la casilla «Familiar» no viajan en el Excel; las criaturas se exportan una a una.',
         cambios.length && `En este Excel, ${cambios.map((c) => `«${c.oficial}» se sustituye por «${c.propia}»`).join(' y ')}.`,
         gastos.length && `El Excel no sabe de tus elementos de gremio: no cuenta lo que consumen (${gastos.join(', ')}), así que mostrará esos totales sin ello.`,
       ].filter(Boolean);
