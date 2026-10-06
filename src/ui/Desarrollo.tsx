@@ -115,7 +115,7 @@ export function ResumenCategoria({ i, nombre }: { i: number; nombre: string }) {
   );
 }
 
-function Barra({ v: x, max }: { v: number; max: number }) {
+export function Barra({ v: x, max }: { v: number; max: number }) {
   const p = max > 0 ? Math.min(100, (100 * x) / max) : 0;
   return <div class="barra"><div class={x > max ? 'over' : ''} style={{ width: `${p}%` }} /></div>;
 }

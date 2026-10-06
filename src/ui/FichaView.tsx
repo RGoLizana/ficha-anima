@@ -26,6 +26,7 @@ import { Gremio } from './Gremio';
 import { Equipo } from './Equipo';
 import { Personalizacion } from './Personalizacion';
 import { BandaCriatura, Criaturas } from './Criaturas';
+import { TarjetaNivel } from './TarjetaNivel';
 
 // Secciones de la ficha y el paso del plan en que se implementan
 const SECCIONES = [
@@ -128,6 +129,7 @@ export function FichaView({ id, seccion }: { id: string; seccion: string }) {
         <main class="content stack">
           {/* hasta que el motor tenga esta ficha no se pintan las secciones: los desplegables dependen de sus datos */}
           {!listo && <Panel title={sec.t}><p class="muted">Preparando los cálculos de la ficha…</p></Panel>}
+          {listo && (sec.id === 'principal' || sec.id === 'desarrollo') && <TarjetaNivel f={f} />}
           {listo && sec.id === 'principal' && <Principal f={f} />}
           {listo && sec.id === 'trasfondo' && <Trasfondo f={f} />}
           {listo && sec.id === 'desarrollo' && <Desarrollo f={f} />}

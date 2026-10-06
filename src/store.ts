@@ -1,5 +1,6 @@
 import { signal, effect } from '@preact/signals';
 import { nueva, parse, nombreDe, nivelDe, NOMBRE, entradasMotor, type Ficha, type Resumen, type Sesion, type VistaJuego } from './model/ficha';
+import { filasActuales, type Programado } from './nivel';
 import { criaturasDe, entradasIniciales, fijarNivel, sincronizar } from './criaturas';
 import { CASILLAS_CATEGORIA, type CategoriaGremio } from './gremio/categorias';
 import { entradasConsumo, type Elegido } from './gremio/modelo';
@@ -114,6 +115,22 @@ export function guardarSesion(id: string, sesion: Sesion) {
 /** Guarda qué bloques del modo juego se ven y su orden (vacío = vista por defecto). No toca `entradas` ni el motor. */
 export function guardarVistaJuego(id: string, v: VistaJuego) {
   cambiar(id, (f) => { const { vistaJuego: _vieja, ...resto } = f; return v.ocultos.length || v.orden.length ? { ...resto, vistaJuego: v } : resto; });
+}
+
+/** Programa (o anula con null) un cambio de categoría: solo reserva PD en la ficha, no toca `entradas` ni el motor. */
+export function programarCambio(id: string, programado: Programado | null) {
+  cambiar(id, (f) => { const { programado: _viejo, ...resto } = f; return programado ? { ...resto, programado, actualizada: new Date().toISOString() } : resto; });
+}
+
+/** Cambia de categoría: la nueva ocupa la siguiente fila de PDs y se anotan los PD que paga cada una (PDs!Z/AA de la fila de la antigua). Quita el programado. */
+export function aplicarCambio(id: string, p: Programado, copia?: CategoriaGremio): boolean {
+  const f = buscar(id);
+  const { actual, siguiente } = f ? filasActuales(f.entradas) : { actual: 0, siguiente: undefined };
+  if (!f || !siguiente) return false;
+  elegirCategoria(id, `PDs!O${siguiente}`, p.a, copia);
+  editarVarias(id, { [`PDs!Z${actual}`]: p.z || null, [`PDs!AA${actual}`]: p.aa || null });
+  programarCambio(id, null);
+  return true;
 }
 
 /** Guarda la copia de valores calculados que usa la lista (no cuenta como edición). */

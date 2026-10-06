@@ -176,19 +176,26 @@ export function CategoriasGremio({ f }: { f: Ficha }) {
 }
 
 /** Selector de categoría de PDs (Principal y asistente): las oficiales no ocultas, las propias de la biblioteca y las que ya tiene la ficha. */
-export function CampoCategoria({ f, clave, label }: { f: Ficha; clave: string; label: ComponentChildren }) {
+/** Categorías que se pueden elegir en una ficha: las oficiales no ocultas, las propias de la biblioteca y las que la ficha ya trae. */
+export function opcionesCategoria(f: Ficha, actual: string) {
   const b = biblioteca.value;
-  const actual = String(f.entradas[clave] ?? '');
   const propias = [...b.categorias.filter((c) => !c.oficial), ...(f.categorias ?? []).filter((c) => !c.oficial && !b.categorias.some((x) => !x.oficial && x.n === c.n))];
   const oficiales = OFICIALES.map((o) => o.n).filter((n) => !b.ocultas.includes(n) || n === actual);
-  const todas = [...oficiales, ...propias.map((c) => c.n)];
+  return { propias, oficiales, todas: [...oficiales, ...propias.map((c) => c.n)] };
+}
+/** Copia de una categoría propia para llevarla a la ficha al elegirla (undefined si es oficial). */
+export const copiaPropia = (propias: CategoriaGremio[], n: string): CategoriaGremio | undefined => JSON.parse(JSON.stringify(propias.find((c) => c.n === n) ?? null)) ?? undefined;
+
+export function CampoCategoria({ f, clave, label }: { f: Ficha; clave: string; label: ComponentChildren }) {
+  const actual = String(f.entradas[clave] ?? '');
+  const { propias, oficiales, todas } = opcionesCategoria(f, actual);
   const id = `c-${clave.replace(/[^A-Za-z0-9]/g, '_')}`;
   return (
     <div class="field" data-clave={clave}>
       <label for={id}>{label}</label>
       <select id={id} value={actual} onChange={(e) => {
         const n = e.currentTarget.value;
-        elegirCategoria(f.id, clave, n, JSON.parse(JSON.stringify(propias.find((c) => c.n === n) ?? null)) ?? undefined);
+        elegirCategoria(f.id, clave, n, copiaPropia(propias, n));
       }}>
         <option value="">—</option>
         {actual && !todas.includes(actual) && <option value={actual}>{actual}</option>}

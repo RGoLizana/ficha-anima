@@ -3,6 +3,7 @@
 import type { Entrada, Entradas } from '../engine/libro';
 import { entradasConsumo, parseElegidos, type Elegido } from '../gremio/modelo';
 import { categoriasUsadas, entradasCategorias, parseCategorias, type CategoriaGremio } from '../gremio/categorias';
+import { parseProgramado, type Programado } from '../nivel';
 
 export const VERSION = 2;
 export const NOMBRE = 'General!F22';
@@ -43,6 +44,8 @@ export interface Ficha {
   criatura?: Vinculo;
   /** Qué bloques del modo juego se ven y en qué orden (por personaje). Solo afecta a la vista: no toca `entradas`. */
   vistaJuego?: VistaJuego;
+  /** Cambio de categoría programado: reserva PD sin cambiar de categoría ni de nivel hasta que se aplica. No entra en el motor. */
+  programado?: Programado;
 }
 
 export interface VistaJuego { ocultos: string[]; orden: string[] }
@@ -136,6 +139,7 @@ export function parse(data: unknown): Ficha {
   const v = typeof d.criatura === 'object' && d.criatura !== null ? (d.criatura as Record<string, unknown>) : undefined;
   const criatura: Vinculo | undefined = v && typeof v.padre === 'string' && v.padre && v.padre !== id && num(v.nivelAmo) !== undefined
     ? { padre: v.padre, familiar: v.familiar === true, nivelAmo: v.nivelAmo as number } : undefined;
+  const programado = parseProgramado(d.programado);
   return {
     version: VERSION,
     id,
@@ -150,5 +154,6 @@ export function parse(data: unknown): Ficha {
     ...(ocultas.length ? { ocultas } : {}),
     ...(criatura ? { criatura } : {}),
     ...(vistaJuego ? { vistaJuego } : {}),
+    ...(programado ? { programado } : {}),
   };
 }
